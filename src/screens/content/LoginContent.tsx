@@ -41,9 +41,9 @@ const LoginContent: React.FC<{
 
   React.useEffect(() => {
     if (authorized) {
-      console.log('Close login page');
+      navigation.navigate('EventsStack');
     }
-  }, [authorized]);
+  }, [authorized, navigation]);
 
   React.useEffect(() => {
     if (signInErrorMessage) {
