@@ -14,8 +14,7 @@ export type TMethod = typeof M_GET | typeof M_POST | typeof M_PUT | typeof M_PAT
 export const BASE_URL_PRODUCTION = 'https://80ala1muig.execute-api.us-east-1.amazonaws.com/dev/';
 export const BASE_URL_DEVELOPMENT = 'http://127.0.0.1:3000/dev/';
 
-export const BASE_URL =
-  Constants.isDevice || process.env.NODE_ENV !== 'development' ? BASE_URL_PRODUCTION : BASE_URL_DEVELOPMENT;
+export const BASE_URL = process.env.NODE_ENV !== 'development' ? BASE_URL_PRODUCTION : BASE_URL_DEVELOPMENT;
 
 export const ENDPOINTS: {
   [key: string]: (config?: any) => string;
