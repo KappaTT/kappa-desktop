@@ -24,11 +24,7 @@ module.exports = function (api) {
             '@services': './src/services',
             '@services/*': './src/services/*',
             '@types': './src/types',
-            '@types/*': './src/types/*',
-            '@argon': './libs/argon',
-            '@argon/*': './libs/argon/*',
-            '@galio': './libs/galio',
-            '@galio/*': './libs/galio/*'
+            '@types/*': './src/types/*'
           }
         }
       ]
