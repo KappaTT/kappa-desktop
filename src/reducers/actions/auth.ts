@@ -12,19 +12,14 @@ import {
   SIGN_IN_FAILURE,
   SIGN_OUT,
   SHOW_SIGN_IN,
-  SIGN_IN_WITH_GOOGLE,
-  SIGN_IN_WITH_GOOGLE_SUCCESS,
-  SIGN_IN_WITH_GOOGLE_FAILURE,
   UPDATE_USER,
   UPDATE_USER_SUCCESS,
   UPDATE_USER_FAILURE,
   MODIFY_USER
 } from '@reducers/auth';
-import { TUser, initialUser, TUserResponse, TGoogleUser, purge } from '@backend/auth';
-import { getBatch, setBatch, deleteBatch } from '@services/secureStorage';
-import * as GoogleService from '@services/googleService';
+import { TUser, initialUser, purge } from '@backend/auth';
+import { getBatch, setBatch, deleteBatch } from '@services/asyncStorage';
 import { log } from '@services/logService';
-import { DEMO_USER } from '@services/demoService';
 
 export const showOnboarding = (editing: boolean = false) => {
   return {
@@ -117,7 +112,7 @@ const signInFailure = (err) => {
   };
 };
 
-export const authenticate = (email: string, idToken: string, googleUser: TGoogleUser) => {
+export const authenticate = (email: string, idToken: string) => {
   return (dispatch) => {
     dispatch(signingIn());
 
@@ -136,53 +131,17 @@ export const authenticate = (email: string, idToken: string, googleUser: TGoogle
   };
 };
 
-const signingInWithGoogle = () => {
-  return {
-    type: SIGN_IN_WITH_GOOGLE
-  };
-};
-
-const signInWithGoogleSuccess = () => {
-  return {
-    type: SIGN_IN_WITH_GOOGLE_SUCCESS
-  };
-};
-
-const signInWithGoogleFailure = (err) => {
-  return {
-    type: SIGN_IN_WITH_GOOGLE_FAILURE,
-    error: err
-  };
-};
-
-export const signInWithGoogle = () => {
+export const signInWithGoogle = (data: { email: string; idToken: string }) => {
   return (dispatch) => {
-    dispatch(signingInWithGoogle());
-
-    GoogleService.login().then((res) => {
-      if (res.success) {
-        if (res.data.email.endsWith('@illinois.edu')) {
-          dispatch(signInWithGoogleSuccess());
-          dispatch(authenticate(res.data.email, res.data.idToken, res.data));
-        } else if (res.data.email === 'thetataudemo@gmail.com') {
-          dispatch(signInWithGoogleSuccess());
-          dispatch(setUser(DEMO_USER));
-          dispatch(signInSuccess());
-        } else {
-          dispatch(
-            signInWithGoogleFailure({
-              message: 'must use a valid illinois.edu email'
-            })
-          );
-        }
-      } else {
-        dispatch(
-          signInWithGoogleFailure({
-            message: 'Canceled'
-          })
-        );
-      }
-    });
+    if (data.email.endsWith('@illinois.edu')) {
+      dispatch(authenticate(data.email, data.idToken));
+    } else {
+      dispatch(
+        signInFailure({
+          message: 'must use a valid illinois.edu email'
+        })
+      );
+    }
   };
 };
 

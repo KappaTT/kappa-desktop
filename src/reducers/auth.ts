@@ -1,5 +1,5 @@
 import { TBlame } from '@backend/backend';
-import { TUser, initialUser, TGoogleUser, initialGoogleUser } from '@backend/auth';
+import { TUser, initialUser } from '@backend/auth';
 
 export const SHOW_ONBOARDING = 'SHOW_ONBOARDING';
 export const HIDE_ONBOARDING = 'HIDE_ONBOARDING';
@@ -16,10 +16,6 @@ export const SIGN_IN_SUCCESS = 'SIGN_IN_SUCCESS';
 export const SIGN_IN_FAILURE = 'SIGN_IN_FAILURE';
 export const SIGN_OUT = 'SIGN_OUT';
 
-export const SIGN_IN_WITH_GOOGLE = 'SIGN_IN_WITH_GOOGLE';
-export const SIGN_IN_WITH_GOOGLE_SUCCESS = 'SIGN_IN_WITH_GOOGLE_SUCCESS';
-export const SIGN_IN_WITH_GOOGLE_FAILURE = 'SIGN_IN_WITH_GOOGLE_FAILURE';
-
 export const SHOW_SIGN_IN = 'SHOW_SIGN_IN';
 
 export const UPDATE_USER = 'UPDATE_USER';
@@ -30,11 +26,6 @@ export interface TAuthState {
   visible: boolean;
   isEditingUser: boolean;
   onboardingVisible: boolean;
-
-  isSigningInWithGoogle: boolean;
-  authorizedGoogle: boolean;
-  signInWithGoogleError: boolean;
-  signInWithGoogleErrorMessage: string;
 
   isAuthenticating: boolean;
   loadedUser: boolean;
@@ -54,11 +45,6 @@ const initialState: TAuthState = {
   visible: false,
   isEditingUser: false,
   onboardingVisible: false,
-
-  isSigningInWithGoogle: false,
-  authorizedGoogle: false,
-  signInWithGoogleError: false,
-  signInWithGoogleErrorMessage: '',
 
   isAuthenticating: false,
   loadedUser: false,
@@ -144,28 +130,7 @@ export default (state = initialState, action: any): TAuthState => {
         signInError: true,
         signInErrorMessage: action.error.message,
         authorized: false,
-        authorizedGoogle: false,
         user: initialUser
-      };
-    case SIGN_IN_WITH_GOOGLE:
-      return {
-        ...state,
-        isSigningInWithGoogle: true,
-        signInWithGoogleError: false,
-        signInWithGoogleErrorMessage: ''
-      };
-    case SIGN_IN_WITH_GOOGLE_SUCCESS:
-      return {
-        ...state,
-        isSigningInWithGoogle: false,
-        authorizedGoogle: true
-      };
-    case SIGN_IN_WITH_GOOGLE_FAILURE:
-      return {
-        ...state,
-        isSigningInWithGoogle: false,
-        signInWithGoogleError: true,
-        signInWithGoogleErrorMessage: action.error.message
       };
     case UPDATE_USER:
       return {
@@ -191,8 +156,7 @@ export default (state = initialState, action: any): TAuthState => {
       return {
         ...state,
         authorized: false,
-        user: initialUser,
-        authorizedGoogle: false
+        user: initialUser
       };
     default:
       return state;
