@@ -1,4 +1,4 @@
-# ktt-frontend
+# ktt-web
 
 <img src="assets/icon.png#rounded" style="border-radius: 25%; overflow: hidden;" width="256" />
 
