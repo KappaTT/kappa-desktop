@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, Image } from 'react-native';
+import { StyleSheet, View, Text, Image, ActivityIndicator } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useIsFocused } from 'react-navigation-hooks';
 import { GoogleLoginResponse } from 'react-google-login';
@@ -58,7 +58,11 @@ const LoginContent: React.FC<{
         <Image style={styles.logo} source={Images.Kappa} resizeMode="contain" />
         <Text style={styles.subtitle}>Theta Tau</Text>
         <View style={styles.bottomArea}>
-          <GoogleSignInButton onSuccess={onGoogleSuccess} onFailure={onGoogleFailure} />
+          {isAuthenticating ? (
+            <ActivityIndicator />
+          ) : (
+            <GoogleSignInButton onSuccess={onGoogleSuccess} onFailure={onGoogleFailure} />
+          )}
         </View>
       </View>
     </View>
