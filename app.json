@@ -2,11 +2,8 @@
   "expo": {
     "name": "ktt-web",
     "slug": "ktt-web",
-    "platforms": [
-      "ios",
-      "android",
-      "web"
-    ],
+    "privacy": "unlisted",
+    "platforms": ["web"],
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -18,11 +15,6 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "ios": {
-      "supportsTablet": true
-    }
+    "assetBundlePatterns": ["**/*"]
   }
 }

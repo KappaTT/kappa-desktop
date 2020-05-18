@@ -1,12 +1,36 @@
 {
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "jsx": "react-native",
-    "lib": ["dom", "esnext"],
-    "moduleResolution": "node",
     "noEmit": true,
-    "skipLibCheck": true,
+    "lib": ["dom", "esnext"],
+    "jsx": "react-native",
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-    "strict": true
+    "skipLibCheck": true,
+    "baseUrl": "src",
+    "paths": {
+      "@backend": ["backend"],
+      "@backend/*": ["backend/*"],
+      "@components": ["components"],
+      "@components/*": ["components/*"],
+      "@constants": ["constants"],
+      "@constants/*": ["constants/*"],
+      "@navigation": ["navigation"],
+      "@navigation/*": ["navigation/*"],
+      "@pages": ["pages"],
+      "@pages/*": ["pages/*"],
+      "@reducers": ["reducers"],
+      "@reducers/*": ["reducers/*"],
+      "@screens": ["screens"],
+      "@screens/*": ["screens/*"],
+      "@services": ["services"],
+      "@services/*": ["services/*"],
+      "@types": ["types"],
+      "@types/*": ["types/*"],
+      "@argon": ["../libs/argon"],
+      "@argon/*": ["../libs/argon/*"],
+      "@galio": ["../libs/galio"],
+      "@galio/*": ["../libs/galio/*"]
+    }
   }
 }

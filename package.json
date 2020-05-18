@@ -22,5 +22,10 @@
     "babel-preset-expo": "~8.1.0",
     "typescript": "~3.8.3"
   },
-  "private": true
+  "private": true,
+  "prettier": {
+    "trailingComma": "none",
+    "singleQuote": true,
+    "printWidth": 120
+  }
 }
