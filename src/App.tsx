@@ -11,6 +11,7 @@ import { incompleteUser } from '@backend/auth';
 import { Images, theme } from '@constants';
 import AppNavigator from '@navigation/StackAppNavigator';
 import { setTopLevelNavigator, navigate } from '@navigation/NavigationService';
+import { Sidebar } from '@components';
 
 const assetImages = [Images.Kappa];
 
@@ -77,7 +78,11 @@ const App = () => {
   } else {
     return (
       <View style={styles.container}>
-        <View style={styles.sidebarContainer}></View>
+        {authorized && (
+          <View style={styles.sidebarContainer}>
+            <Sidebar />
+          </View>
+        )}
 
         <View style={styles.appContainer}>
           <AppNavigator
@@ -98,7 +103,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row'
   },
   sidebarContainer: {
-    width: 256
+    width: 220
   },
   appContainer: {
     flex: 1
