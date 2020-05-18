@@ -39,6 +39,18 @@ const LoginContent: React.FC<{
     console.warn(error);
   }, []);
 
+  React.useEffect(() => {
+    if (authorized) {
+      console.log('Close login page');
+    }
+  }, [authorized]);
+
+  React.useEffect(() => {
+    if (signInErrorMessage) {
+      alert(signInErrorMessage);
+    }
+  }, [signInErrorMessage]);
+
   return (
     <View style={styles.container}>
       <View style={styles.content}>
