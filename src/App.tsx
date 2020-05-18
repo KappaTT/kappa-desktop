@@ -4,7 +4,6 @@ import { AppLoading } from 'expo';
 import { Asset } from 'expo-asset';
 import * as Font from 'expo-font';
 import { useSelector, useDispatch } from 'react-redux';
-import { enableScreens } from 'react-native-screens';
 
 import { TRedux } from '@reducers';
 import { _auth } from '@reducers/actions';
@@ -12,8 +11,6 @@ import { incompleteUser } from '@backend/auth';
 import { Images, theme } from '@constants';
 import AppNavigator from '@navigation/StackAppNavigator';
 import { setTopLevelNavigator } from '@navigation/NavigationService';
-
-enableScreens();
 
 const assetImages = [Images.Kappa];
 
