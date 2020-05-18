@@ -7,7 +7,10 @@ const LoginStack = createStackNavigator({
   Login: {
     screen: LoginScreen,
     navigationOptions: ({ navigation }) => ({
-      header: null
+      header: null,
+      headerStyle: {
+        height: 0
+      }
     })
   }
 });
@@ -16,7 +19,10 @@ const EventsStack = createStackNavigator({
   Events: {
     screen: EventsScreen,
     navigationOptions: ({ navigation }) => ({
-      header: null
+      header: null,
+      headerStyle: {
+        height: 0
+      }
     })
   }
 });

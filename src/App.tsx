@@ -77,12 +77,16 @@ const App = () => {
   } else {
     return (
       <View style={styles.container}>
-        <AppNavigator
-          ref={(navigatorRef) => {
-            setTopLevelNavigator(navigatorRef);
-            setIsNavigatorReady(true);
-          }}
-        />
+        <View style={styles.sidebarContainer}></View>
+
+        <View style={styles.appContainer}>
+          <AppNavigator
+            ref={(navigatorRef) => {
+              setTopLevelNavigator(navigatorRef);
+              setIsNavigatorReady(true);
+            }}
+          />
+        </View>
       </View>
     );
   }
@@ -90,6 +94,13 @@ const App = () => {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    flexDirection: 'row'
+  },
+  sidebarContainer: {
+    width: 256
+  },
+  appContainer: {
     flex: 1
   }
 });

@@ -1,4 +1,5 @@
 import GoogleSignInButton from './GoogleSignInButton';
 import Icon from './Icon';
+import Sidebar from './Sidebar';
 
-export { GoogleSignInButton, Icon };
+export { GoogleSignInButton, Icon, Sidebar };
