@@ -23,8 +23,7 @@ const SidebarDropdown: React.FC<{
       Animated.timing(progress, {
         toValue: target,
         easing: Easing.out(Easing.poly(4)),
-        duration: 200,
-        useNativeDriver: true
+        duration: 200
       }).start(() => {
         onPress(element);
         setAnimating(false);

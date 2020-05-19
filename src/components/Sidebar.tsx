@@ -54,7 +54,9 @@ const Sidebar: React.FC = () => {
         <Text style={styles.title}>Kappa Theta Tau</Text>
         <Text style={styles.subtitle}>{`${user.familyName}, ${user.givenName}`}</Text>
       </View>
+
       <View style={styles.messagesArea} />
+
       <View style={styles.navigationArea}>
         {SidebarLayout.filter((element) => user.privileged || !element.privileged).map((element) => (
           <React.Fragment key={element.label}>
