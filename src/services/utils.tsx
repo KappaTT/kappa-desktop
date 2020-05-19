@@ -1,3 +1,5 @@
+export const HEADER_HEIGHT = 56;
+
 export const castTo = (value: string, type: string) => {
   if (typeof value === type) {
     return value;

@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 24,
     paddingHorizontal: 8,
-    borderRadius: 8,
+    borderRadius: 4,
     justifyContent: 'center'
   },
   subContainer: {

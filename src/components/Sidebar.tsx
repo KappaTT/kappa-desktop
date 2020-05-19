@@ -37,6 +37,8 @@ const Sidebar: React.FC = () => {
   const onPressElement = React.useCallback(
     (element: TSidebarElement) => {
       if (element.type === 'DROP') {
+        // Set this element to be expanded
+
         setSidebarNav({
           ...sidebarNav,
           [element.label]: {
@@ -64,7 +66,7 @@ const Sidebar: React.FC = () => {
         </View>
 
         <View style={styles.messagesArea}>
-          <TouchableOpacity>
+          <TouchableOpacity activeOpacity={0.6} onPress={() => console.log('TODO')}>
             <Icon family="Feather" name="message-square" size={24} color={theme.COLORS.DARK_GRAY} />
 
             {unreadMessages && (
@@ -106,15 +108,15 @@ const Sidebar: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 16
+    paddingHorizontal: 16,
+    borderRightColor: theme.COLORS.LIGHT_BORDER,
+    borderRightWidth: 1
   },
   headerArea: {
     paddingTop: 16,
     paddingBottom: 16,
     flexDirection: 'row',
-    alignItems: 'center',
-    borderBottomColor: theme.COLORS.LIGHT_GRAY,
-    borderBottomWidth: 1
+    alignItems: 'center'
   },
   title: {
     fontFamily: 'OpenSans-Bold',
