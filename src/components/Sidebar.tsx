@@ -9,11 +9,13 @@ import { navigate } from '@navigation/NavigationService';
 import SidebarLayout, { TSidebarElement } from '@navigation/SidebarLayout';
 import SidebarDropdown from '@components/SidebarDropdown';
 import SidebarNavButton from '@components/SidebarNavButton';
+import Icon from '@components/Icon';
 
 const Sidebar: React.FC = () => {
   const authorized = useSelector((state: TRedux) => state.auth.authorized);
   const user = useSelector((state: TRedux) => state.auth.user);
   const selectedPageLabel = useSelector((state: TRedux) => state.nav.selectedPageLabel);
+  const pendingExcusesArray = useSelector((state: TRedux) => state.kappa.pendingExcusesArray);
 
   const [sidebarNav, setSidebarNav] = React.useState<{ [label: string]: TSidebarElement }>(() => {
     const nav = {};
@@ -24,6 +26,11 @@ const Sidebar: React.FC = () => {
 
     return nav;
   });
+  const unreadMessages = React.useMemo(() => {
+    if (pendingExcusesArray.length > 0) return true;
+
+    return false;
+  }, [pendingExcusesArray]);
 
   const dispatch = useDispatch();
 
@@ -51,11 +58,25 @@ const Sidebar: React.FC = () => {
   return (
     <View style={styles.container}>
       <View style={styles.headerArea}>
-        <Text style={styles.title}>Kappa Theta Tau</Text>
-        <Text style={styles.subtitle}>{`${user.familyName}, ${user.givenName}`}</Text>
-      </View>
+        <View style={styles.titleArea}>
+          <Text style={styles.title}>Kappa Theta Tau</Text>
+          <Text style={styles.subtitle}>{`${user.familyName}, ${user.givenName}`}</Text>
+        </View>
 
-      <View style={styles.messagesArea} />
+        <View style={styles.messagesArea}>
+          <TouchableOpacity>
+            <Icon family="Feather" name="message-square" size={24} color={theme.COLORS.DARK_GRAY} />
+
+            {unreadMessages && (
+              <View style={styles.badgeWrapper}>
+                <View style={styles.badgeContainer}>
+                  <View style={styles.badge} />
+                </View>
+              </View>
+            )}
+          </TouchableOpacity>
+        </View>
+      </View>
 
       <View style={styles.navigationArea}>
         {SidebarLayout.filter((element) => user.privileged || !element.privileged).map((element) => (
@@ -88,8 +109,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16
   },
   headerArea: {
-    height: 56,
-    paddingTop: 16
+    paddingTop: 16,
+    paddingBottom: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderBottomColor: theme.COLORS.LIGHT_GRAY,
+    borderBottomWidth: 1
   },
   title: {
     fontFamily: 'OpenSans-Bold',
@@ -103,8 +128,36 @@ const styles = StyleSheet.create({
     lineHeight: 13,
     color: theme.COLORS.DARK_GRAY
   },
-  messagesArea: {},
+  titleArea: {},
+  messagesArea: {
+    position: 'absolute',
+    right: 0,
+    height: '100%',
+    paddingHorizontal: 8,
+    backgroundColor: theme.COLORS.WHITE,
+    justifyContent: 'center',
+    alignItems: 'flex-end'
+  },
+  badgeWrapper: {
+    position: 'absolute',
+    top: -2,
+    right: -3
+  },
+  badgeContainer: {
+    borderColor: theme.COLORS.WHITE,
+    borderWidth: 3,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  badge: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: theme.COLORS.PRIMARY
+  },
   navigationArea: {
+    marginTop: 12,
     flex: 1,
     flexDirection: 'column'
   }
