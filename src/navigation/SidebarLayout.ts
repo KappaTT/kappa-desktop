@@ -28,7 +28,8 @@ const SidebarLayout: TSidebarElement[] = [
   Header('Chapter', [Nav('Events', 'EventsStack'), Nav('Brothers', 'DirectoryStack')]),
   Header('Attendance', [Nav('Check In', 'CheckInStack'), Nav('Request Excuse', 'ExcuseStack')]),
   Header('Admin', [Nav('Event Templates', 'TemplatesStack'), Nav('Chapter Settings', 'ChapterSettingsStack')], true),
-  Nav('Profile', 'ProfileStack')
+  Nav('Profile', 'ProfileStack'),
+  Nav('Sign Out', '')
 ];
 
 export default SidebarLayout;

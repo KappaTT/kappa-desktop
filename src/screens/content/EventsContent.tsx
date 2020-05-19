@@ -1,23 +1,23 @@
 import React from 'react';
-import { StyleSheet, View, Text, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useIsFocused } from 'react-navigation-hooks';
 
 import { ParamType } from '@navigation/NavigationTypes';
 import { TRedux } from '@reducers';
-import { _auth } from '@reducers/actions';
+import { _auth, _kappa } from '@reducers/actions';
 import { theme } from '@constants';
 import { Header, Icon } from '@components';
 
 const EventsContent: React.FC<{
   navigation: ParamType;
 }> = ({ navigation }) => {
-  const authorized = useSelector((state: TRedux) => state.auth.authorized);
   const user = useSelector((state: TRedux) => state.auth.user);
 
   const [showing, setShowing] = React.useState<'Full Year' | 'Upcoming'>('Upcoming');
 
   const dispatch = useDispatch();
+  const dispatchEditNewEvent = React.useCallback(() => dispatch(_kappa.editNewEvent()), [dispatch]);
 
   const onPressShowing = React.useCallback(() => {
     if (showing === 'Upcoming') {
@@ -31,7 +31,11 @@ const EventsContent: React.FC<{
     <View style={styles.container}>
       <Header title="Events" subtitle={showing} subtitleIsPressable={true} onSubtitlePress={onPressShowing}>
         <View style={styles.headerChildren}>
-          {user.privileged && <Text style={styles.headerButtonText}>New Event</Text>}
+          {user.privileged && (
+            <TouchableOpacity activeOpacity={0.6} onPress={dispatchEditNewEvent}>
+              <Text style={styles.headerButtonText}>New Event</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </Header>
     </View>

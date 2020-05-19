@@ -57,6 +57,7 @@ const LoginContent: React.FC<{
         <Text style={styles.title}>Kappa</Text>
         <Image style={styles.logo} source={Images.Kappa} resizeMode="contain" />
         <Text style={styles.subtitle}>Theta Tau</Text>
+
         <View style={styles.bottomArea}>
           {isAuthenticating ? (
             <ActivityIndicator color={theme.COLORS.PRIMARY} />
