@@ -18,7 +18,7 @@ import {
   MODIFY_USER
 } from '@reducers/auth';
 import { TUser, initialUser, purge } from '@backend/auth';
-import { getBatch, setBatch, deleteBatch } from '@services/asyncStorage';
+import { getBatch, setBatch } from '@services/asyncStorage';
 import { log } from '@services/logService';
 
 export const showOnboarding = (editing: boolean = false) => {
