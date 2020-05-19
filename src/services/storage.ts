@@ -22,6 +22,19 @@ export const setItemTemplate = async (f: TExternalSetItem, key: string, value: a
   }
 };
 
+export const setJsonTemplate = async (f: TExternalSetItem, key: string, data: any) => {
+  try {
+    await f(key, JSON.stringify(data));
+
+    return {
+      [key]: data
+    };
+  } catch (error) {
+    log(error);
+    return undefined;
+  }
+};
+
 export const setBatchTemplate = async (f: TSetItem, parent: string, data: any) => {
   const promises = [];
 
@@ -51,6 +64,19 @@ export const getItemTemplate = async (f: TExternalGetItem, key: string) => {
   } catch (error) {
     log(error);
     return undefined;
+  }
+};
+
+export const getJsonTemplate = async (f: TExternalGetItem, key: string) => {
+  try {
+    const res = await f(key);
+
+    return {
+      [key]: JSON.stringify(res)
+    };
+  } catch (error) {
+    log(error);
+    undefined;
   }
 };
 
