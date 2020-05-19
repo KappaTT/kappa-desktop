@@ -59,7 +59,7 @@ const LoginContent: React.FC<{
         <Text style={styles.subtitle}>Theta Tau</Text>
         <View style={styles.bottomArea}>
           {isAuthenticating ? (
-            <ActivityIndicator />
+            <ActivityIndicator color={theme.COLORS.PRIMARY} />
           ) : (
             <GoogleSignInButton onSuccess={onGoogleSuccess} onFailure={onGoogleFailure} />
           )}
