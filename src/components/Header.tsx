@@ -41,6 +41,7 @@ const styles = StyleSheet.create({
     right: 0,
     height: HEADER_HEIGHT,
     paddingHorizontal: 16,
+    backgroundColor: theme.COLORS.WHITE,
     borderBottomColor: theme.COLORS.LIGHT_BORDER,
     borderBottomWidth: 1,
     flexDirection: 'row',

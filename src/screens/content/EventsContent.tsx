@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, ActivityIndicator, TouchableOpacity, ScrollView } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useIsFocused } from 'react-navigation-hooks';
 
@@ -7,6 +7,7 @@ import { ParamType } from '@navigation/NavigationTypes';
 import { TRedux } from '@reducers';
 import { _auth, _kappa } from '@reducers/actions';
 import { theme } from '@constants';
+import { HEADER_HEIGHT } from '@services/utils';
 import { Header, Icon } from '@components';
 
 const EventsContent: React.FC<{
@@ -38,15 +39,17 @@ const EventsContent: React.FC<{
           )}
         </View>
       </Header>
+
+      <View style={styles.content}>
+        <ScrollView></ScrollView>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
+    flex: 1
   },
   headerChildren: {
     flex: 1,
@@ -58,6 +61,13 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans',
     fontSize: 14,
     color: theme.COLORS.PRIMARY
+  },
+  content: {
+    position: 'absolute',
+    top: HEADER_HEIGHT,
+    left: 0,
+    right: 0,
+    bottom: 0
   }
 });
 
