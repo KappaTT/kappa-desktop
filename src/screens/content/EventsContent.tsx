@@ -1,14 +1,5 @@
 import React from 'react';
-import {
-  StyleSheet,
-  Dimensions,
-  View,
-  Text,
-  ActivityIndicator,
-  TouchableOpacity,
-  ScrollView,
-  SectionList
-} from 'react-native';
+import { StyleSheet, Dimensions, View, Text, ActivityIndicator, TouchableOpacity, SectionList } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useIsFocused } from 'react-navigation-hooks';
 import moment from 'moment';
@@ -20,7 +11,7 @@ import { theme } from '@constants';
 import { TEvent } from '@backend/kappa';
 import { HEADER_HEIGHT } from '@services/utils';
 import { hasValidCheckIn, getEventById, shouldLoad } from '@services/kappaService';
-import { Header, Icon } from '@components';
+import { Header, Icon, EventItem } from '@components';
 
 const { height } = Dimensions.get('window');
 
@@ -45,6 +36,7 @@ const EventsContent: React.FC<{
   const upcomingSections = useSelector((state: TRedux) => state.kappa.upcomingSections);
   const editingEventId = useSelector((state: TRedux) => state.kappa.editingEventId);
   const getEventsErrorMessage = useSelector((state: TRedux) => state.kappa.getEventsErrorMessage);
+  const selectedEventId = useSelector((state: TRedux) => state.kappa.selectedEventId);
 
   const [refreshing, setRefreshing] = React.useState<boolean>(
     isGettingEvents || isGettingDirectory || isGettingAttendance
@@ -59,7 +51,6 @@ const EventsContent: React.FC<{
   );
   const dispatchGetDirectory = React.useCallback(() => dispatch(_kappa.getDirectory(user)), [dispatch, user]);
   const dispatchGetExcuses = React.useCallback(() => dispatch(_kappa.getExcuses(user)), [dispatch, user]);
-  const dispatchSelectEvent = React.useCallback((eventId: string) => dispatch(_kappa.selectEvent(eventId)), [dispatch]);
   const dispatchEditNewEvent = React.useCallback(() => dispatch(_kappa.editNewEvent()), [dispatch]);
   const dispatchSaveEditEvent = React.useCallback(
     (event: Partial<TEvent>, eventId?: string) => dispatch(_kappa.saveEditEvent(user, event, eventId)),
@@ -138,38 +129,7 @@ const EventsContent: React.FC<{
   const renderItem = ({ item }: { item: TEvent }) => {
     return (
       <React.Fragment>
-        <TouchableOpacity onPress={() => dispatchSelectEvent(item._id)}>
-          <View style={styles.eventContainer}>
-            <View style={styles.eventHeader}>
-              <Text style={styles.eventTitle}>{item.title}</Text>
-              <Text style={styles.eventDate}>{moment(item.start).format('h:mm A')}</Text>
-
-              {item.mandatory && (
-                <Icon
-                  style={styles.mandatoryIcon}
-                  family="Feather"
-                  name="alert-circle"
-                  size={16}
-                  color={theme.COLORS.PRIMARY}
-                />
-              )}
-
-              {hasValidCheckIn(records, user.email, item._id) && (
-                <Icon
-                  style={styles.checkIcon}
-                  family="Feather"
-                  name="check"
-                  size={16}
-                  color={theme.COLORS.PRIMARY_GREEN}
-                />
-              )}
-            </View>
-
-            <View style={styles.eventDescriptionWrapper}>
-              <Text style={styles.eventDescription}>{item.description}</Text>
-            </View>
-          </View>
-        </TouchableOpacity>
+        <EventItem user={user} records={records} event={item} />
 
         <View style={styles.separator} />
       </React.Fragment>
@@ -213,12 +173,7 @@ const EventsContent: React.FC<{
           keyExtractor={keyExtractor}
           renderSectionHeader={renderSectionHeader}
           renderItem={renderItem}
-          ListEmptyComponent={
-            <React.Fragment>
-              <Text style={styles.errorMessage}>{getEventsErrorMessage || 'No upcoming events'}</Text>
-            </React.Fragment>
-          }
-          onScrollToIndexFailed={() => {}}
+          ListEmptyComponent={<Text style={styles.errorMessage}>{getEventsErrorMessage || 'No upcoming events'}</Text>}
         />
       </View>
     </View>
@@ -269,43 +224,6 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     borderBottomColor: theme.COLORS.LIGHT_BORDER,
     borderBottomWidth: 1
-  },
-  eventContainer: {
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 16
-  },
-  eventHeader: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    marginBottom: 8,
-    flexWrap: 'wrap'
-  },
-  eventTitle: {
-    fontFamily: 'OpenSans-SemiBold',
-    fontSize: 13
-  },
-  eventDate: {
-    marginLeft: 8,
-    fontFamily: 'OpenSans',
-    fontSize: 13,
-    color: theme.COLORS.DARK_GRAY
-  },
-  mandatoryIcon: {
-    marginLeft: 8
-  },
-  checkIcon: {
-    marginLeft: 8
-  },
-  eventDescriptionWrapper: {
-    marginTop: 8,
-    marginBottom: 12
-  },
-  eventDescription: {
-    fontFamily: 'OpenSans',
-    fontSize: 15
   },
   errorMessage: {
     marginTop: '40vh',
