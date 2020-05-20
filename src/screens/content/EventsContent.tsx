@@ -22,7 +22,6 @@ const EventsContent: React.FC<{
 
   const user = useSelector((state: TRedux) => state.auth.user);
   const loadHistory = useSelector((state: TRedux) => state.kappa.loadHistory);
-  const records = useSelector((state: TRedux) => state.kappa.records);
   const isGettingEvents = useSelector((state: TRedux) => state.kappa.isGettingEvents);
   const getEventsError = useSelector((state: TRedux) => state.kappa.getEventsError);
   const isGettingDirectory = useSelector((state: TRedux) => state.kappa.isGettingDirectory);
@@ -41,7 +40,7 @@ const EventsContent: React.FC<{
   const [refreshing, setRefreshing] = React.useState<boolean>(
     isGettingEvents || isGettingDirectory || isGettingAttendance
   );
-  const [showing, setShowing] = React.useState<'Full Year' | 'Upcoming'>('Upcoming');
+  const [showing, setShowing] = React.useState<'Full Year' | 'Upcoming'>('Full Year');
 
   const dispatch = useDispatch();
   const dispatchGetEvents = React.useCallback(() => dispatch(_kappa.getEvents(user)), [dispatch, user]);
