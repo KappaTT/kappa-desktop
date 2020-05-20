@@ -1,14 +1,5 @@
 import React from 'react';
-import {
-  StyleSheet,
-  Dimensions,
-  View,
-  Text,
-  ActivityIndicator,
-  TouchableOpacity,
-  ScrollView,
-  FlatList
-} from 'react-native';
+import { StyleSheet, View, Text, ActivityIndicator, TouchableOpacity, FlatList } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useIsFocused } from 'react-navigation-hooks';
 import moment from 'moment';
@@ -22,8 +13,6 @@ import { theme } from '@constants';
 import { HEADER_HEIGHT } from '@services/utils';
 import { hasValidCheckIn, getEventById, shouldLoad, sortUserByName } from '@services/kappaService';
 import { Header, Icon } from '@components';
-
-const { height } = Dimensions.get('window');
 
 const DirectoryContent: React.FC<{
   navigation: ParamType;
