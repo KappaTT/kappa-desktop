@@ -1,5 +1,14 @@
 import React from 'react';
-import { StyleSheet, View, Text, ActivityIndicator, TouchableOpacity, ScrollView, SectionList } from 'react-native';
+import {
+  StyleSheet,
+  Dimensions,
+  View,
+  Text,
+  ActivityIndicator,
+  TouchableOpacity,
+  ScrollView,
+  SectionList
+} from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useIsFocused } from 'react-navigation-hooks';
 import moment from 'moment';
@@ -12,6 +21,8 @@ import { TEvent } from '@backend/kappa';
 import { HEADER_HEIGHT } from '@services/utils';
 import { hasValidCheckIn, getEventById, shouldLoad } from '@services/kappaService';
 import { Header, Icon } from '@components';
+
+const { height } = Dimensions.get('window');
 
 const EventsContent: React.FC<{
   navigation: ParamType;
@@ -260,7 +271,7 @@ const styles = StyleSheet.create({
     fontSize: 15
   },
   errorMessage: {
-    marginTop: '50%',
+    marginTop: '40vh',
     textAlign: 'center',
     fontFamily: 'OpenSans'
   }
