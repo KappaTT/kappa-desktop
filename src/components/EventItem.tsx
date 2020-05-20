@@ -17,12 +17,15 @@ import {
 } from '@services/kappaService';
 import { theme } from '@constants';
 import { TUser } from '@backend/auth';
-import { TEvent, TRecords } from '@backend/kappa';
+import { TEvent } from '@backend/kappa';
 import RoundButton from '@components/RoundButton';
 import Icon from '@components/Icon';
 import Switch from '@components/Switch';
 
-const EventItem: React.FC<{ user: TUser; records: TRecords; event: TEvent }> = ({ user, records, event }) => {
+const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
+  const user = useSelector((state: TRedux) => state.auth.user);
+  const records = useSelector((state: TRedux) => state.kappa.records);
+
   const dispatch = useDispatch();
   const dispatchSelectEvent = React.useCallback(() => dispatch(_kappa.selectEvent(event._id)), [dispatch, event]);
 

@@ -129,7 +129,7 @@ const EventsContent: React.FC<{
   const renderItem = ({ item }: { item: TEvent }) => {
     return (
       <React.Fragment>
-        <EventItem user={user} records={records} event={item} />
+        <EventItem event={item} />
 
         <View style={styles.separator} />
       </React.Fragment>
