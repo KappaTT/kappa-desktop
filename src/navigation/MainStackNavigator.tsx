@@ -46,6 +46,13 @@ export default createStackNavigator(
     DirectoryStack
   },
   {
-    headerMode: 'none'
+    headerMode: 'none',
+    transitionConfig: () => {
+      return {
+        duration: 0,
+        transitionSpec: null,
+        screenInterpolator: null
+      };
+    }
   }
 );
