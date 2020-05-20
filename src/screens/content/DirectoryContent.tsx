@@ -7,7 +7,7 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   ScrollView,
-  SectionList
+  FlatList
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useIsFocused } from 'react-navigation-hooks';
@@ -16,10 +16,11 @@ import moment from 'moment';
 import { ParamType } from '@navigation/NavigationTypes';
 import { TRedux } from '@reducers';
 import { _auth, _kappa, _nav } from '@reducers/actions';
-import { theme } from '@constants';
+import { TUser } from '@backend/auth';
 import { TEvent } from '@backend/kappa';
+import { theme } from '@constants';
 import { HEADER_HEIGHT } from '@services/utils';
-import { hasValidCheckIn, getEventById, shouldLoad } from '@services/kappaService';
+import { hasValidCheckIn, getEventById, shouldLoad, sortUserByName } from '@services/kappaService';
 import { Header, Icon } from '@components';
 
 const { height } = Dimensions.get('window');
@@ -31,7 +32,7 @@ const DirectoryContent: React.FC<{
 
   const user = useSelector((state: TRedux) => state.auth.user);
   const loadHistory = useSelector((state: TRedux) => state.kappa.loadHistory);
-  const records = useSelector((state: TRedux) => state.kappa.records);
+  const directory = useSelector((state: TRedux) => state.kappa.directory);
   const isGettingEvents = useSelector((state: TRedux) => state.kappa.isGettingEvents);
   const getEventsError = useSelector((state: TRedux) => state.kappa.getEventsError);
   const isGettingDirectory = useSelector((state: TRedux) => state.kappa.isGettingDirectory);
@@ -40,6 +41,7 @@ const DirectoryContent: React.FC<{
   const getAttendanceError = useSelector((state: TRedux) => state.kappa.getAttendanceError);
   const isGettingExcuses = useSelector((state: TRedux) => state.kappa.isGettingExcuses);
   const getExcusesError = useSelector((state: TRedux) => state.kappa.getExcusesError);
+  const getDirectoryErrorMessage = useSelector((state: TRedux) => state.kappa.getDirectoryErrorMessage);
 
   const [refreshing, setRefreshing] = React.useState<boolean>(
     isGettingEvents || isGettingDirectory || isGettingAttendance
@@ -53,6 +55,7 @@ const DirectoryContent: React.FC<{
   );
   const dispatchGetDirectory = React.useCallback(() => dispatch(_kappa.getDirectory(user)), [dispatch, user]);
   const dispatchGetExcuses = React.useCallback(() => dispatch(_kappa.getExcuses(user)), [dispatch, user]);
+  const dispatchSelectUser = React.useCallback((email: string) => dispatch(_kappa.selectUser(email)), [dispatch]);
 
   const scrollRef = React.useRef(undefined);
 
@@ -102,6 +105,31 @@ const DirectoryContent: React.FC<{
     }
   }, [isFocused, loadData, user.sessionToken]);
 
+  const keyExtractor = (item: TUser) => item._id;
+
+  const renderItem = ({ item }: { item: TUser }) => {
+    return (
+      <React.Fragment>
+        <TouchableOpacity onPress={() => dispatchSelectUser(item.email)}>
+          <View style={styles.userContainer}>
+            <View style={styles.userHeader}>
+              <View style={styles.selectIcon}>
+                <Text style={styles.userRole}>{item.role}</Text>
+                <Icon family="MaterialIcons" name="keyboard-arrow-right" size={36} color={theme.COLORS.PRIMARY} />
+              </View>
+            </View>
+
+            <View style={styles.userNameContainer}>
+              <Text style={styles.userName}>
+                {item.familyName}, {item.givenName}
+              </Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+      </React.Fragment>
+    );
+  };
+
   return (
     <View style={styles.container}>
       <Header title="Brothers">
@@ -124,7 +152,19 @@ const DirectoryContent: React.FC<{
         </View>
       </Header>
 
-      <View style={styles.content}></View>
+      <View style={styles.content}>
+        <FlatList
+          ref={(ref) => (scrollRef.current = ref)}
+          data={Object.values(directory).sort(sortUserByName)}
+          keyExtractor={keyExtractor}
+          renderItem={renderItem}
+          ListEmptyComponent={
+            <React.Fragment>
+              <Text style={styles.errorMessage}>{getDirectoryErrorMessage || 'No users'}</Text>
+            </React.Fragment>
+          }
+        />
+      </View>
     </View>
   );
 };
@@ -157,6 +197,60 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0
+  },
+  separator: {
+    marginHorizontal: 16,
+    marginBottom: 16,
+    borderBottomColor: theme.COLORS.LIGHT_BORDER,
+    borderBottomWidth: 1
+  },
+  userContainer: {
+    marginHorizontal: 16,
+    height: 48,
+    borderBottomColor: theme.COLORS.LIGHT_BORDER,
+    borderBottomWidth: 1
+  },
+  userHeader: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center'
+  },
+  userName: {
+    fontFamily: 'OpenSans',
+    fontSize: 16,
+    color: theme.COLORS.BLACK
+  },
+  userNameContainer: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingRight: 4,
+    backgroundColor: theme.COLORS.WHITE
+  },
+  mandatoryIcon: {
+    marginLeft: 4
+  },
+  userRole: {
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 13,
+    color: theme.COLORS.GRAY,
+    textTransform: 'uppercase'
+  },
+  selectIcon: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  errorMessage: {
+    marginTop: '40vh',
+    textAlign: 'center',
+    fontFamily: 'OpenSans'
   }
 });
 
