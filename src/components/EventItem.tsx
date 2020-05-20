@@ -111,17 +111,67 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
         <Text style={styles.eventDate}>{moment(event.start).format('h:mm A')}</Text>
 
         {event.mandatory && (
+          <View style={styles.propertyWrapper}>
+            <Icon
+              style={styles.propertyIcon}
+              family="Feather"
+              name="alert-circle"
+              size={16}
+              color={theme.COLORS.PRIMARY}
+            />
+
+            <Text style={[styles.propertyText, { color: theme.COLORS.PRIMARY }]}>Mandatory</Text>
+          </View>
+        )}
+
+        {excused !== undefined && !excused.approved && (
           <Icon
-            style={styles.mandatoryIcon}
+            style={styles.propertyIcon}
             family="Feather"
-            name="alert-circle"
+            name="clock"
             size={16}
-            color={theme.COLORS.PRIMARY}
+            color={theme.COLORS.YELLOW_GRADIENT_END}
           />
         )}
 
-        {hasValidCheckIn(records, user.email, event._id) && (
-          <Icon style={styles.checkIcon} family="Feather" name="check" size={16} color={theme.COLORS.PRIMARY_GREEN} />
+        {attended !== undefined && (
+          <View style={styles.propertyWrapper}>
+            <Icon
+              style={styles.propertyIcon}
+              family="Feather"
+              name="check"
+              size={16}
+              color={theme.COLORS.PRIMARY_GREEN}
+            />
+
+            <Text style={[styles.propertyText, { color: theme.COLORS.PRIMARY_GREEN }]}>Checked In</Text>
+          </View>
+        )}
+        {excused !== undefined && excused.approved && (
+          <View style={styles.propertyWrapper}>
+            <Icon
+              style={styles.propertyIcon}
+              family="Feather"
+              name="check"
+              size={16}
+              color={theme.COLORS.PRIMARY_GREEN}
+            />
+
+            <Text style={[styles.propertyText, { color: theme.COLORS.PRIMARY_GREEN }]}>Excused</Text>
+          </View>
+        )}
+        {excused !== undefined && !excused.approved && (
+          <View style={styles.propertyWrapper}>
+            <Icon
+              style={styles.propertyIcon}
+              family="Feather"
+              name="clock"
+              size={16}
+              color={theme.COLORS.YELLOW_GRADIENT_END}
+            />
+
+            <Text style={[styles.propertyText, { color: theme.COLORS.YELLOW_GRADIENT_END }]}>Excuse under review</Text>
+          </View>
         )}
       </View>
 
@@ -156,11 +206,18 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: theme.COLORS.DARK_GRAY
   },
-  mandatoryIcon: {
+  propertyWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  propertyIcon: {
     marginLeft: 8
   },
-  checkIcon: {
-    marginLeft: 8
+  propertyText: {
+    marginLeft: 4,
+    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 13
   },
   eventDescriptionWrapper: {
     marginTop: 8,
