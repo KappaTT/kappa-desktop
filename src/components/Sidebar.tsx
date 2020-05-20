@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { TRedux } from '@reducers';
-import { _auth } from '@reducers/actions';
+import { _auth, _nav } from '@reducers/actions';
 import { theme } from '@constants';
 import { navigate } from '@navigation/NavigationService';
 import SidebarLayout, { TSidebarElement } from '@navigation/SidebarLayout';
@@ -26,13 +26,17 @@ const Sidebar: React.FC = () => {
 
     return nav;
   });
+
+  const dispatch = useDispatch();
+  const dispatchSetSelectedPage = React.useCallback((label: string) => dispatch(_nav.setSelectedPage(label)), [
+    dispatch
+  ]);
+
   const unreadMessages = React.useMemo(() => {
     if (pendingExcusesArray.length > 0) return true;
 
     return false;
   }, [pendingExcusesArray]);
-
-  const dispatch = useDispatch();
 
   const onPressElement = React.useCallback(
     (element: TSidebarElement) => {
@@ -48,9 +52,10 @@ const Sidebar: React.FC = () => {
         });
       } else if (element.target) {
         navigate(element.target);
+        dispatchSetSelectedPage(element.label);
       }
     },
-    [sidebarNav]
+    [dispatchSetSelectedPage, sidebarNav]
   );
 
   if (!authorized) {
