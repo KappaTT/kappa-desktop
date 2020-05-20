@@ -180,6 +180,14 @@ const EventsContent: React.FC<{
     <View style={styles.container}>
       <Header title="Events" subtitle={showing} subtitleIsPressable={true} onSubtitlePress={onPressShowing}>
         <View style={styles.headerChildren}>
+          {user.privileged && (
+            <View style={styles.headerButtonContainer}>
+              <TouchableOpacity activeOpacity={0.6} onPress={dispatchEditNewEvent}>
+                <Text style={styles.headerButtonText}>New Event</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
           <View style={styles.refreshContainer}>
             {refreshing ? (
               <ActivityIndicator style={styles.refreshIcon} color={theme.COLORS.PRIMARY} />
@@ -195,14 +203,6 @@ const EventsContent: React.FC<{
               </TouchableOpacity>
             )}
           </View>
-
-          {user.privileged && (
-            <View style={styles.headerButtonContainer}>
-              <TouchableOpacity activeOpacity={0.6} onPress={dispatchEditNewEvent}>
-                <Text style={styles.headerButtonText}>New Event</Text>
-              </TouchableOpacity>
-            </View>
-          )}
         </View>
       </Header>
 
@@ -240,7 +240,7 @@ const styles = StyleSheet.create({
     padding: 8
   },
   headerButtonContainer: {
-    marginLeft: 8
+    marginRight: 8
   },
   headerButtonText: {
     fontFamily: 'OpenSans',
