@@ -21,8 +21,17 @@ const Header: React.FC<{
           <View style={styles.subtitleArea}>
             <Icon family="Feather" name="chevron-right" size={24} color={theme.COLORS.BORDER} />
 
-            <TouchableOpacity disabled={!subtitleIsPressable} onPress={onSubtitlePress}>
-              <Text style={styles.subtitle}>{subtitle}</Text>
+            <TouchableOpacity activeOpacity={0.6} disabled={!subtitleIsPressable} onPress={onSubtitlePress}>
+              <Text
+                style={[
+                  styles.subtitle,
+                  subtitleIsPressable && {
+                    color: theme.COLORS.PRIMARY
+                  }
+                ]}
+              >
+                {subtitle}
+              </Text>
             </TouchableOpacity>
           </View>
         )}
