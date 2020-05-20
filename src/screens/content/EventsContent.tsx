@@ -97,6 +97,12 @@ const EventsContent: React.FC<{
     ]
   );
 
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+
+    loadData(true);
+  }, [loadData]);
+
   const onPressShowing = React.useCallback(() => {
     if (showing === 'Upcoming') {
       setShowing('Full Year');
@@ -104,6 +110,12 @@ const EventsContent: React.FC<{
       setShowing('Upcoming');
     }
   }, [showing]);
+
+  React.useEffect(() => {
+    if (!isGettingEvents && !isGettingDirectory && !isGettingAttendance) {
+      setRefreshing(false);
+    }
+  }, [isGettingEvents, isGettingDirectory, isGettingAttendance]);
 
   React.useEffect(() => {
     if (isFocused && user.sessionToken) {
@@ -168,10 +180,28 @@ const EventsContent: React.FC<{
     <View style={styles.container}>
       <Header title="Events" subtitle={showing} subtitleIsPressable={true} onSubtitlePress={onPressShowing}>
         <View style={styles.headerChildren}>
+          <View style={styles.refreshContainer}>
+            {refreshing ? (
+              <ActivityIndicator style={styles.refreshIcon} color={theme.COLORS.PRIMARY} />
+            ) : (
+              <TouchableOpacity onPress={onRefresh}>
+                <Icon
+                  style={styles.refreshIcon}
+                  family="Feather"
+                  name="refresh-cw"
+                  size={17}
+                  color={theme.COLORS.PRIMARY}
+                />
+              </TouchableOpacity>
+            )}
+          </View>
+
           {user.privileged && (
-            <TouchableOpacity activeOpacity={0.6} onPress={dispatchEditNewEvent}>
-              <Text style={styles.headerButtonText}>New Event</Text>
-            </TouchableOpacity>
+            <View style={styles.headerButtonContainer}>
+              <TouchableOpacity activeOpacity={0.6} onPress={dispatchEditNewEvent}>
+                <Text style={styles.headerButtonText}>New Event</Text>
+              </TouchableOpacity>
+            </View>
           )}
         </View>
       </Header>
@@ -204,6 +234,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center'
+  },
+  refreshContainer: {},
+  refreshIcon: {
+    padding: 8
+  },
+  headerButtonContainer: {
+    marginLeft: 8
   },
   headerButtonText: {
     fontFamily: 'OpenSans',
