@@ -12,6 +12,7 @@ const RoundButton: React.FC<{
   right?: boolean;
   alt?: boolean;
   flex?: boolean;
+  size?: 'small' | 'medium';
   onPress?(): void;
 }> = ({
   color = theme.COLORS.PRIMARY,
@@ -22,6 +23,7 @@ const RoundButton: React.FC<{
   right = false,
   alt = false,
   flex = false,
+  size = 'small',
   onPress = () => {}
 }) => {
   const buttonColorStyle = alt
@@ -44,12 +46,21 @@ const RoundButton: React.FC<{
         }
       }}
     >
-      <View style={[styles.button, buttonColorStyle, flex && { flexGrow: 1 }]}>
+      <View
+        style={[
+          styles.button,
+          size === 'medium' && styles.buttonMedium,
+          buttonColorStyle,
+          flex && { flexGrow: 1 },
+          disabled && { opacity: 0.3 }
+        ]}
+      >
         {!right && icon}
 
         <Text
           style={[
             styles.buttonText,
+            size === 'medium' && styles.buttonTextMedium,
             !right && icon && { marginLeft: 8 },
             right && icon && { marginRight: 8 },
             alt
@@ -68,7 +79,7 @@ const RoundButton: React.FC<{
       </View>
 
       {loading && (
-        <View style={[styles.loadingContainer, buttonColorStyle]}>
+        <View style={[styles.loadingContainer, size === 'medium' && styles.loadingContainerMedium, buttonColorStyle]}>
           <ActivityIndicator color={alt ? color : theme.COLORS.WHITE} />
         </View>
       )}
@@ -78,14 +89,21 @@ const RoundButton: React.FC<{
 
 const styles = StyleSheet.create({
   button: {
-    height: 38,
+    height: 26,
     paddingHorizontal: 16,
-    borderRadius: 19,
+    borderRadius: 13,
     justifyContent: 'center',
     alignItems: 'center'
   },
+  buttonMedium: {
+    height: 38,
+    borderRadius: 19
+  },
   buttonText: {
     fontFamily: 'OpenSans-SemiBold',
+    fontSize: 14
+  },
+  buttonTextMedium: {
     fontSize: 17
   },
   loadingContainer: {
@@ -94,9 +112,12 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    borderRadius: 19,
+    borderRadius: 13,
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  loadingContainerMedium: {
+    borderRadius: 19
   }
 });
 
