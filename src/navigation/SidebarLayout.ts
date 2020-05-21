@@ -25,9 +25,23 @@ const Nav = (label: string, target: string, privileged: boolean = false): TSideb
 });
 
 const SidebarLayout: TSidebarElement[] = [
-  Header('Chapter', [Nav('Events', 'EventsStack'), Nav('Brothers', 'DirectoryStack')]),
+  Header('Chapter', [
+    Nav('Events', 'EventsStack'),
+    Nav('Brothers', 'DirectoryStack'),
+    Nav('Voting', 'VotingStack', true)
+  ]),
   Header('Attendance', [Nav('Check In', 'CheckInStack'), Nav('Request Excuse', 'ExcuseStack')]),
-  Header('Admin', [Nav('Event Templates', 'TemplatesStack'), Nav('Chapter Settings', 'ChapterSettingsStack')], true),
+  Header(
+    'Admin',
+    [
+      Nav('Event Templates', 'TemplatesStack'),
+      Nav('Study Abroad', 'StudyAbroadStack'),
+      Nav('Point Requirements', 'PointRequirementsStack'),
+      Nav('Voting Management', 'VotingManagementStack'),
+      Nav('Chapter Settings', 'ChapterSettingsStack')
+    ],
+    true
+  ),
   Nav('Profile', 'ProfileStack'),
   Nav('Sign Out', '')
 ];
