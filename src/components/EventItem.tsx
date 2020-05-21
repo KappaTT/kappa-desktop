@@ -77,13 +77,9 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
     setExpanded(!expanded);
   }, [expanded]);
 
-  const attended = React.useMemo(() => {
-    return getAttendance(records, user.email, event._id);
-  }, [event._id, records, user.email]);
+  const attended = getAttendance(records, user.email, event._id);
 
-  const excused = React.useMemo(() => {
-    return getExcuse(records, user.email, event._id);
-  }, [event._id, records, user.email]);
+  const excused = getExcuse(records, user.email, event._id);
 
   const recordCounts = getEventRecordCounts(records, event._id);
 
