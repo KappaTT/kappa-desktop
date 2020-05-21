@@ -403,6 +403,10 @@ export const prettyPoints = (points: TPointsDict) => {
     pretty += `${count} ${getCategoryLongName(category)}`;
   }
 
+  if (pretty === '') {
+    return 'N/A';
+  }
+
   return pretty;
 };
 

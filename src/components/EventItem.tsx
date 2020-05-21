@@ -108,11 +108,49 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
     return attended !== undefined || !moment(event.start).isSame(moment(), 'day');
   }, [attended, event.start]);
 
+  const renderExpanded = () => {
+    return (
+      <View style={styles.expandedContent}>
+        <View style={styles.splitPropertyRow}>
+          <View style={[styles.splitProperty, { marginLeft: 0 }]}>
+            <Text style={styles.propertyHeader}>Location</Text>
+            <Text style={styles.propertyValue}>{event.location}</Text>
+          </View>
+
+          <View style={styles.splitProperty}>
+            <Text style={styles.propertyHeader}>Duration</Text>
+            <Text style={styles.propertyValue}>
+              {event.duration < 60
+                ? `${event.duration} minutes`
+                : moment.duration(event.duration, 'minutes').humanize()}
+            </Text>
+          </View>
+
+          <View style={styles.splitProperty}>
+            <Text style={styles.propertyHeader}>Points</Text>
+            <Text style={styles.propertyValue}>{prettyPoints(event.points)}</Text>
+          </View>
+
+          {user.privileged && (
+            <View style={styles.splitProperty}>
+              <Text style={styles.propertyHeader}>Check-In Code</Text>
+              <Text style={styles.propertyValue}>{event.eventCode}</Text>
+            </View>
+          )}
+        </View>
+      </View>
+    );
+  };
+
+  React.useEffect(() => {
+    console.log(event.points);
+  }, [event]);
+
   return (
     <View style={styles.eventContainer}>
       <View style={styles.eventRow}>
         <View style={styles.eventContent}>
-          <TouchableOpacity>
+          <TouchableOpacity activeOpacity={0.4} onPress={onPressExpand}>
             <View style={styles.eventHeader}>
               <Text style={styles.eventTitle}>{event.title}</Text>
               <Text style={styles.eventDate}>{moment(event.start).format('h:mm A')}</Text>
@@ -188,6 +226,8 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
               <Text style={styles.eventDescription}>{event.description}</Text>
             </View>
           </TouchableOpacity>
+
+          {expanded && renderExpanded()}
         </View>
 
         <View>
@@ -274,6 +314,28 @@ const styles = StyleSheet.create({
     marginTop: 8
   },
   eventDescription: {
+    fontFamily: 'OpenSans',
+    fontSize: 15
+  },
+  expandedContent: {
+    marginTop: 16
+  },
+  splitPropertyRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap'
+  },
+  splitProperty: {
+    marginLeft: 16,
+    marginRight: 16
+  },
+  propertyHeader: {
+    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 13,
+    textTransform: 'uppercase',
+    color: theme.COLORS.GRAY
+  },
+  propertyValue: {
+    marginTop: 4,
     fontFamily: 'OpenSans',
     fontSize: 15
   }
