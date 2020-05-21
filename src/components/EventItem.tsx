@@ -100,79 +100,114 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
     return Object.values(getMissedMandatoryByEvent(missedMandatory, directory, event._id)).sort(sortUserByName);
   }, [user, missedMandatory, directory, event._id]);
 
+  const excuseDisabled = React.useMemo(() => {
+    return excused !== undefined || attended !== undefined;
+  }, [attended, excused]);
+
+  const checkInDisabled = React.useMemo(() => {
+    return attended !== undefined || !moment(event.start).isSame(moment(), 'day');
+  }, [attended, event.start]);
+
   return (
     <View style={styles.eventContainer}>
-      <View style={styles.eventHeader}>
-        <Text style={styles.eventTitle}>{event.title}</Text>
-        <Text style={styles.eventDate}>{moment(event.start).format('h:mm A')}</Text>
+      <View style={styles.eventRow}>
+        <View style={styles.eventContent}>
+          <TouchableOpacity>
+            <View style={styles.eventHeader}>
+              <Text style={styles.eventTitle}>{event.title}</Text>
+              <Text style={styles.eventDate}>{moment(event.start).format('h:mm A')}</Text>
 
-        {event.mandatory && (
-          <View style={styles.propertyWrapper}>
-            <Icon
-              style={styles.propertyIcon}
-              family="Feather"
-              name="alert-circle"
-              size={16}
-              color={theme.COLORS.PRIMARY}
-            />
+              {event.mandatory && (
+                <View style={styles.propertyWrapper}>
+                  <Icon
+                    style={styles.propertyIcon}
+                    family="Feather"
+                    name="alert-circle"
+                    size={16}
+                    color={theme.COLORS.PRIMARY}
+                  />
 
-            <Text style={[styles.propertyText, { color: theme.COLORS.PRIMARY }]}>Mandatory</Text>
+                  <Text style={[styles.propertyText, { color: theme.COLORS.PRIMARY }]}>Mandatory</Text>
+                </View>
+              )}
+
+              {excused !== undefined && !excused.approved && (
+                <Icon
+                  style={styles.propertyIcon}
+                  family="Feather"
+                  name="clock"
+                  size={16}
+                  color={theme.COLORS.YELLOW_GRADIENT_END}
+                />
+              )}
+
+              {attended !== undefined && (
+                <View style={styles.propertyWrapper}>
+                  <Icon
+                    style={styles.propertyIcon}
+                    family="Feather"
+                    name="check"
+                    size={16}
+                    color={theme.COLORS.PRIMARY_GREEN}
+                  />
+
+                  <Text style={[styles.propertyText, { color: theme.COLORS.PRIMARY_GREEN }]}>Checked In</Text>
+                </View>
+              )}
+              {excused !== undefined && excused.approved && (
+                <View style={styles.propertyWrapper}>
+                  <Icon
+                    style={styles.propertyIcon}
+                    family="Feather"
+                    name="check"
+                    size={16}
+                    color={theme.COLORS.PRIMARY_GREEN}
+                  />
+
+                  <Text style={[styles.propertyText, { color: theme.COLORS.PRIMARY_GREEN }]}>Excused</Text>
+                </View>
+              )}
+              {excused !== undefined && !excused.approved && (
+                <View style={styles.propertyWrapper}>
+                  <Icon
+                    style={styles.propertyIcon}
+                    family="Feather"
+                    name="clock"
+                    size={16}
+                    color={theme.COLORS.YELLOW_GRADIENT_END}
+                  />
+
+                  <Text style={[styles.propertyText, { color: theme.COLORS.YELLOW_GRADIENT_END }]}>
+                    Excuse under review
+                  </Text>
+                </View>
+              )}
+            </View>
+
+            <View style={styles.eventDescriptionWrapper}>
+              <Text style={styles.eventDescription}>{event.description}</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+
+        <View>
+          <View style={styles.checkInButton}>
+            <RoundButton label="Check In" alt={true} disabled={checkInDisabled} />
           </View>
-        )}
 
-        {excused !== undefined && !excused.approved && (
-          <Icon
-            style={styles.propertyIcon}
-            family="Feather"
-            name="clock"
-            size={16}
-            color={theme.COLORS.YELLOW_GRADIENT_END}
-          />
-        )}
-
-        {attended !== undefined && (
-          <View style={styles.propertyWrapper}>
-            <Icon
-              style={styles.propertyIcon}
-              family="Feather"
-              name="check"
-              size={16}
-              color={theme.COLORS.PRIMARY_GREEN}
-            />
-
-            <Text style={[styles.propertyText, { color: theme.COLORS.PRIMARY_GREEN }]}>Checked In</Text>
-          </View>
-        )}
-        {excused !== undefined && excused.approved && (
-          <View style={styles.propertyWrapper}>
-            <Icon
-              style={styles.propertyIcon}
-              family="Feather"
-              name="check"
-              size={16}
-              color={theme.COLORS.PRIMARY_GREEN}
-            />
-
-            <Text style={[styles.propertyText, { color: theme.COLORS.PRIMARY_GREEN }]}>Excused</Text>
-          </View>
-        )}
-        {excused !== undefined && !excused.approved && (
-          <View style={styles.propertyWrapper}>
-            <Icon
-              style={styles.propertyIcon}
-              family="Feather"
-              name="clock"
-              size={16}
-              color={theme.COLORS.YELLOW_GRADIENT_END}
-            />
-
-            <Text style={[styles.propertyText, { color: theme.COLORS.YELLOW_GRADIENT_END }]}>Excuse under review</Text>
-          </View>
-        )}
-      </View>
-
-      <View style={styles.eventDescriptionWrapper}>
-        <Text style={styles.eventDescription}>{event.description}</Text>
+          <TouchableOpacity disabled={excuseDisabled}>
+            <Text
+              style={[
+                styles.requestExcuseText,
+                excuseDisabled && {
+                  opacity: 0.4
+                }
+              ]}
+            >
+              Request Excuse
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -183,6 +218,26 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 8,
     paddingBottom: 16
+  },
+  eventRow: {
+    width: '100%',
+    marginBottom: 4,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start'
+  },
+  eventContent: {
+    flex: 1
+  },
+  checkInButton: {
+    marginBottom: 8
+  },
+  requestExcuseText: {
+    height: '100%',
+    textAlign: 'center',
+    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 14,
+    color: theme.COLORS.PRIMARY
   },
   eventHeader: {
     display: 'flex',
@@ -216,8 +271,7 @@ const styles = StyleSheet.create({
     fontSize: 13
   },
   eventDescriptionWrapper: {
-    marginTop: 8,
-    marginBottom: 12
+    marginTop: 8
   },
   eventDescription: {
     fontFamily: 'OpenSans',
