@@ -168,6 +168,7 @@ const EventsContent: React.FC<{
       <View style={styles.content}>
         <SectionList
           ref={(ref) => (scrollRef.current = ref)}
+          contentContainerStyle={styles.sectionContent}
           sections={showing === 'Upcoming' ? upcomingSections : eventSections}
           keyExtractor={keyExtractor}
           renderSectionHeader={renderSectionHeader}
@@ -207,6 +208,9 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0
+  },
+  sectionContent: {
+    paddingTop: 8
   },
   sectionHeaderContainer: {
     backgroundColor: theme.COLORS.WHITE
