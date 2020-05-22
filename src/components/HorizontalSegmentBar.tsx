@@ -93,6 +93,10 @@ const HorizontalSegmentBar: React.FC<{
       ) => {
         count += section.count;
 
+        if (section.count === 0) {
+          return <React.Fragment />;
+        }
+
         const leftSide = sectionIndex === 0 || count === section.count;
         const rightSide = count === totalCount;
 

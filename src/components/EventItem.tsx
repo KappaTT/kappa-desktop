@@ -94,13 +94,17 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
 
   const recordCounts = getEventRecordCounts(records, event._id);
 
-  const recordStats = React.useMemo(() => {
-    const fraction = directorySize === 0 ? 0 : recordCounts.sum / directorySize;
-
-    return {
-      raw: fraction,
-      percent: `${Math.round(fraction * 100)}%`
-    };
+  const chartData = React.useMemo(() => {
+    return [
+      { count: recordCounts.attended, label: 'Attended', color: theme.COLORS.PRIMARY },
+      { count: recordCounts.excused, label: 'Excused', color: theme.COLORS.PRIMARY },
+      { count: recordCounts.pending, label: 'Pending', color: theme.COLORS.INPUT_ERROR_LIGHT },
+      {
+        count: directorySize - recordCounts.attended - recordCounts.excused - recordCounts.pending,
+        label: 'Absent',
+        color: theme.COLORS.LIGHT_BORDER
+      }
+    ];
   }, [recordCounts, directorySize]);
 
   const mandatory = React.useMemo(() => {
@@ -155,16 +159,11 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
             </View>
           )}
 
-          <View style={{ marginLeft: 16, flex: 1 }}>
-            <HorizontalSegmentBar
-              data={[
-                { count: 20, label: 'Attended', color: theme.COLORS.PRIMARY },
-                { count: 40, label: 'Excused', color: theme.COLORS.PRIMARY },
-                { count: 20, label: 'Pending', color: theme.COLORS.INPUT_ERROR_LIGHT },
-                { count: 30, label: '', color: theme.COLORS.LIGHT_BORDER }
-              ]}
-            />
-          </View>
+          {user.privileged && (
+            <View style={styles.chartArea}>
+              <HorizontalSegmentBar data={chartData} />
+            </View>
+          )}
         </View>
 
         {user.privileged && (
@@ -403,6 +402,10 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontFamily: 'OpenSans',
     fontSize: 15
+  },
+  chartArea: {
+    marginLeft: 16,
+    flex: 1
   },
   dangerZone: {
     marginTop: 16,
