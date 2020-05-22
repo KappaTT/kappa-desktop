@@ -108,6 +108,12 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
     return attended !== undefined || !moment(event.start).isSame(moment(), 'day');
   }, [attended, event.start]);
 
+  React.useEffect(() => {
+    if (expanded) {
+      loadData(false);
+    }
+  }, [expanded, loadData]);
+
   const renderExpanded = () => {
     return (
       <View style={styles.expandedContent}>
@@ -142,10 +148,6 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
     );
   };
 
-  React.useEffect(() => {
-    console.log(event.points);
-  }, [event]);
-
   return (
     <View style={styles.eventContainer}>
       <View style={styles.eventRow}>
@@ -169,16 +171,6 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
                 </View>
               )}
 
-              {excused !== undefined && !excused.approved && (
-                <Icon
-                  style={styles.propertyIcon}
-                  family="Feather"
-                  name="clock"
-                  size={16}
-                  color={theme.COLORS.YELLOW_GRADIENT_END}
-                />
-              )}
-
               {attended !== undefined && (
                 <View style={styles.propertyWrapper}>
                   <Icon
@@ -192,6 +184,7 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
                   <Text style={[styles.propertyText, { color: theme.COLORS.PRIMARY_GREEN }]}>Checked In</Text>
                 </View>
               )}
+
               {excused !== undefined && excused.approved && (
                 <View style={styles.propertyWrapper}>
                   <Icon
@@ -205,6 +198,7 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
                   <Text style={[styles.propertyText, { color: theme.COLORS.PRIMARY_GREEN }]}>Excused</Text>
                 </View>
               )}
+
               {excused !== undefined && !excused.approved && (
                 <View style={styles.propertyWrapper}>
                   <Icon
