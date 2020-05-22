@@ -61,7 +61,7 @@ const SidebarDropdown: React.FC<{
           styles.navArea,
           {
             height: Animated.multiply(navHeightBase, progress),
-            opacity: Animated.multiply(opacityBase, progress)
+            opacity: progress
           }
         ]}
       >
