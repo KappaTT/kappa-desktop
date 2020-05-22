@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Animated, View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { StyleSheet, Animated, Easing, View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment';
 
@@ -31,8 +31,14 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
   const missedMandatory = useSelector((state: TRedux) => state.kappa.missedMandatory);
   const isGettingAttendance = useSelector((state: TRedux) => state.kappa.isGettingAttendance);
   const getAttendanceError = useSelector((state: TRedux) => state.kappa.getAttendanceError);
+  const isDeletingEvent = useSelector((state: TRedux) => state.kappa.isDeletingEvent);
+
+  const opacityBase = new Animated.Value(1);
+  const maxHeightBase = new Animated.Value(256);
 
   const [expanded, setExpanded] = React.useState<boolean>(false);
+  const [animating, setAnimating] = React.useState<boolean>(false);
+  const [progress, setProgress] = React.useState<Animated.Value>(new Animated.Value(0));
   const [readyToDelete, setReadyToDelete] = React.useState<boolean>(false);
 
   const dispatch = useDispatch();
@@ -45,6 +51,31 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
   const dispatchGetMyAttendance = React.useCallback(
     (overwrite: boolean = false) => dispatch(_kappa.getMyAttendance(user, overwrite)),
     [dispatch, user]
+  );
+  const dispatchEditEvent = React.useCallback(() => dispatch(_kappa.editExistingEvent(event._id)), [
+    dispatch,
+    event._id
+  ]);
+  const dispatchDeleteEvent = React.useCallback(() => dispatch(_kappa.deleteEvent(user, event)), [
+    dispatch,
+    event,
+    user
+  ]);
+
+  const animate = React.useCallback(
+    (target: number, finalExpanded: boolean) => {
+      Animated.timing(progress, {
+        toValue: target,
+        easing: Easing.in(Easing.poly(2)),
+        duration: 100
+      }).start(() => {
+        setExpanded(finalExpanded);
+        setAnimating(false);
+      });
+
+      setAnimating(true);
+    },
+    [progress]
   );
 
   const loadData = React.useCallback(
@@ -74,8 +105,12 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
   );
 
   const onPressExpand = React.useCallback(() => {
-    setExpanded(!expanded);
-  }, [expanded]);
+    if (expanded) {
+      animate(0, false);
+    } else {
+      animate(1, true);
+    }
+  }, [animate, expanded]);
 
   const attended = getAttendance(records, user.email, event._id);
 
@@ -116,7 +151,15 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
 
   const renderExpanded = () => {
     return (
-      <View style={styles.expandedContent}>
+      <Animated.View
+        style={[
+          styles.expandedContent,
+          {
+            maxHeight: Animated.multiply(maxHeightBase, progress),
+            opacity: progress
+          }
+        ]}
+      >
         <View style={styles.splitPropertyRow}>
           <View style={[styles.splitProperty, { marginLeft: 0 }]}>
             <Text style={styles.propertyHeader}>Location</Text>
@@ -144,7 +187,56 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
             </View>
           )}
         </View>
-      </View>
+
+        {user.privileged && (
+          <View style={styles.dangerZone}>
+            <View style={styles.editZone}>
+              <View style={styles.warning}>
+                <Text style={styles.zoneLabel}>Edit this event</Text>
+                <Text style={styles.description}>
+                  Edits to events will only show up when users refresh. Please make sure you have refreshed the latest
+                  event details before editing.
+                </Text>
+              </View>
+
+              <TouchableOpacity onPress={() => {}}>
+                <Icon style={styles.zoneIcon} family="Feather" name="edit" size={32} color={theme.COLORS.PRIMARY} />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.deleteZone}>
+              <View style={styles.warning}>
+                <Text style={styles.zoneLabel}>Delete this event</Text>
+                <Text style={styles.description}>
+                  Deleting an event will delete all associated points, attendance and excuse records. Please double
+                  check and be certain this is the event you want to delete.
+                </Text>
+              </View>
+
+              {isDeletingEvent ? (
+                <ActivityIndicator style={styles.zoneIcon} />
+              ) : (
+                <TouchableOpacity
+                  style={!readyToDelete && styles.disabledButton}
+                  disabled={!readyToDelete}
+                  onPress={dispatchDeleteEvent}
+                >
+                  <Icon
+                    style={styles.zoneIcon}
+                    family="Feather"
+                    name="trash-2"
+                    size={32}
+                    color={theme.COLORS.PRIMARY}
+                  />
+                </TouchableOpacity>
+              )}
+            </View>
+            <View style={styles.enableDeleteContainer}>
+              <Switch value={readyToDelete} onValueChange={(newValue: boolean) => setReadyToDelete(newValue)} />
+              <Text style={styles.readyToDelete}>I am ready to delete this event</Text>
+            </View>
+          </View>
+        )}
+      </Animated.View>
     );
   };
 
@@ -220,8 +312,6 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
               <Text style={styles.eventDescription}>{event.description}</Text>
             </View>
           </TouchableOpacity>
-
-          {expanded && renderExpanded()}
         </View>
 
         <View>
@@ -243,6 +333,8 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
           </TouchableOpacity>
         </View>
       </View>
+
+      {(expanded || animating) && renderExpanded()}
     </View>
   );
 };
@@ -332,6 +424,56 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontFamily: 'OpenSans',
     fontSize: 15
+  },
+  dangerZone: {
+    marginTop: 16,
+    padding: 16,
+    borderRadius: 8,
+    backgroundColor: theme.COLORS.INPUT_ERROR_LIGHT
+  },
+  editZone: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  deleteZone: {
+    marginTop: 16,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  warning: {
+    flex: 1,
+    marginRight: 8
+  },
+  zoneLabel: {
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 14
+  },
+  description: {
+    marginTop: 2,
+    fontFamily: 'OpenSans',
+    fontSize: 12
+  },
+  zoneIcon: {
+    width: 32
+  },
+  enableDeleteContainer: {
+    marginTop: 8,
+    marginLeft: 16,
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  readyToDelete: {
+    marginLeft: 8,
+    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 13
+  },
+  disabledButton: {
+    opacity: 0.4
   }
 });
 
