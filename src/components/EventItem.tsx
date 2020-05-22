@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Animated, Easing, View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment';
 
@@ -33,12 +33,7 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
   const getAttendanceError = useSelector((state: TRedux) => state.kappa.getAttendanceError);
   const isDeletingEvent = useSelector((state: TRedux) => state.kappa.isDeletingEvent);
 
-  const opacityBase = new Animated.Value(1);
-  const maxHeightBase = new Animated.Value(256);
-
   const [expanded, setExpanded] = React.useState<boolean>(false);
-  const [animating, setAnimating] = React.useState<boolean>(false);
-  const [progress, setProgress] = React.useState<Animated.Value>(new Animated.Value(0));
   const [readyToDelete, setReadyToDelete] = React.useState<boolean>(false);
 
   const dispatch = useDispatch();
@@ -61,22 +56,6 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
     event,
     user
   ]);
-
-  const animate = React.useCallback(
-    (target: number, finalExpanded: boolean) => {
-      Animated.timing(progress, {
-        toValue: target,
-        easing: Easing.in(Easing.poly(2)),
-        duration: 100
-      }).start(() => {
-        setExpanded(finalExpanded);
-        setAnimating(false);
-      });
-
-      setAnimating(true);
-    },
-    [progress]
-  );
 
   const loadData = React.useCallback(
     (force: boolean) => {
@@ -105,12 +84,8 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
   );
 
   const onPressExpand = React.useCallback(() => {
-    if (expanded) {
-      animate(0, false);
-    } else {
-      animate(1, true);
-    }
-  }, [animate, expanded]);
+    setExpanded(!expanded);
+  }, [expanded]);
 
   const attended = getAttendance(records, user.email, event._id);
 
@@ -151,15 +126,7 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
 
   const renderExpanded = () => {
     return (
-      <Animated.View
-        style={[
-          styles.expandedContent,
-          {
-            maxHeight: Animated.multiply(maxHeightBase, progress),
-            opacity: progress
-          }
-        ]}
-      >
+      <View style={styles.expandedContent}>
         <View style={styles.splitPropertyRow}>
           <View style={[styles.splitProperty, { marginLeft: 0 }]}>
             <Text style={styles.propertyHeader}>Location</Text>
@@ -236,7 +203,7 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
             </View>
           </View>
         )}
-      </Animated.View>
+      </View>
     );
   };
 
@@ -334,7 +301,7 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
         </View>
       </View>
 
-      {(expanded || animating) && renderExpanded()}
+      {expanded && renderExpanded()}
     </View>
   );
 };
