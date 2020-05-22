@@ -22,13 +22,11 @@ import RoundButton from '@components/RoundButton';
 import Icon from '@components/Icon';
 import Switch from '@components/Switch';
 import HorizontalSegmentBar from '@components/HorizontalSegmentBar';
-import GeneralMeetingChart from './GeneralMeetingChart';
 
 const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
   const user = useSelector((state: TRedux) => state.auth.user);
   const loadHistory = useSelector((state: TRedux) => state.kappa.loadHistory);
   const records = useSelector((state: TRedux) => state.kappa.records);
-  const events = useSelector((state: TRedux) => state.kappa.events);
   const directory = useSelector((state: TRedux) => state.kappa.directory);
   const directorySize = useSelector((state: TRedux) => state.kappa.directorySize);
   const missedMandatory = useSelector((state: TRedux) => state.kappa.missedMandatory);
@@ -156,66 +154,64 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
               <Text style={styles.propertyValue}>{event.eventCode}</Text>
             </View>
           )}
+
+          <View style={{ marginLeft: 16, flex: 1 }}>
+            <HorizontalSegmentBar
+              data={[
+                { count: 20, label: 'Attended', color: theme.COLORS.PRIMARY },
+                { count: 40, label: 'Excused', color: theme.COLORS.PRIMARY },
+                { count: 20, label: 'Pending', color: theme.COLORS.INPUT_ERROR_LIGHT },
+                { count: 30, label: '', color: theme.COLORS.LIGHT_BORDER }
+              ]}
+            />
+          </View>
         </View>
 
         {user.privileged && (
-          <View style={styles.expandedAdminContainer}>
-            <View style={styles.dangerZoneContainer}>
-              <View style={styles.dangerZone}>
-                <View style={styles.editZone}>
-                  <View style={styles.warning}>
-                    <Text style={styles.zoneLabel}>Edit this event</Text>
-                    <Text style={styles.description}>
-                      Edits to events will only show up when users refresh. Please make sure you have refreshed the
-                      latest event details before editing.
-                    </Text>
-                  </View>
-
-                  <TouchableOpacity onPress={() => {}}>
-                    <Icon style={styles.zoneIcon} family="Feather" name="edit" size={32} color={theme.COLORS.PRIMARY} />
-                  </TouchableOpacity>
-                </View>
-                <View style={styles.deleteZone}>
-                  <View style={styles.warning}>
-                    <Text style={styles.zoneLabel}>Delete this event</Text>
-                    <Text style={styles.description}>
-                      Deleting an event will delete all associated points, attendance and excuse records. Please double
-                      check and be certain this is the event you want to delete.
-                    </Text>
-                  </View>
-
-                  {isDeletingEvent ? (
-                    <ActivityIndicator style={styles.zoneIcon} />
-                  ) : (
-                    <TouchableOpacity
-                      style={!readyToDelete && styles.disabledButton}
-                      disabled={!readyToDelete}
-                      onPress={dispatchDeleteEvent}
-                    >
-                      <Icon
-                        style={styles.zoneIcon}
-                        family="Feather"
-                        name="trash-2"
-                        size={32}
-                        color={theme.COLORS.PRIMARY}
-                      />
-                    </TouchableOpacity>
-                  )}
-                </View>
-                <View style={styles.enableDeleteContainer}>
-                  <Switch value={readyToDelete} onValueChange={(newValue: boolean) => setReadyToDelete(newValue)} />
-                  <Text style={styles.readyToDelete}>I am ready to delete this event</Text>
-                </View>
+          <View style={styles.dangerZone}>
+            <View style={styles.editZone}>
+              <View style={styles.warning}>
+                <Text style={styles.zoneLabel}>Edit this event</Text>
+                <Text style={styles.description}>
+                  Edits to events will only show up when users refresh. Please make sure you have refreshed the latest
+                  event details before editing.
+                </Text>
               </View>
+
+              <TouchableOpacity onPress={() => {}}>
+                <Icon style={styles.zoneIcon} family="Feather" name="edit" size={32} color={theme.COLORS.PRIMARY} />
+              </TouchableOpacity>
             </View>
-            <View style={styles.chartArea}>
-              <GeneralMeetingChart
-                isGettingAttendance={isGettingAttendance}
-                email={'jjt4@illinois.edu'}
-                records={records}
-                events={events}
-                gmCount={100}
-              />
+            <View style={styles.deleteZone}>
+              <View style={styles.warning}>
+                <Text style={styles.zoneLabel}>Delete this event</Text>
+                <Text style={styles.description}>
+                  Deleting an event will delete all associated points, attendance and excuse records. Please double
+                  check and be certain this is the event you want to delete.
+                </Text>
+              </View>
+
+              {isDeletingEvent ? (
+                <ActivityIndicator style={styles.zoneIcon} />
+              ) : (
+                <TouchableOpacity
+                  style={!readyToDelete && styles.disabledButton}
+                  disabled={!readyToDelete}
+                  onPress={dispatchDeleteEvent}
+                >
+                  <Icon
+                    style={styles.zoneIcon}
+                    family="Feather"
+                    name="trash-2"
+                    size={32}
+                    color={theme.COLORS.PRIMARY}
+                  />
+                </TouchableOpacity>
+              )}
+            </View>
+            <View style={styles.enableDeleteContainer}>
+              <Switch value={readyToDelete} onValueChange={(newValue: boolean) => setReadyToDelete(newValue)} />
+              <Text style={styles.readyToDelete}>I am ready to delete this event</Text>
             </View>
           </View>
         )}
@@ -408,21 +404,8 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans',
     fontSize: 15
   },
-  expandedAdminContainer: {
-    marginTop: 16,
-    flexDirection: 'row',
-    justifyContent: 'space-between'
-  },
-  chartArea: {
-    marginLeft: 16,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  dangerZoneContainer: {
-    flex: 1,
-    justifyContent: 'center'
-  },
   dangerZone: {
+    marginTop: 16,
     padding: 16,
     borderRadius: 8,
     backgroundColor: theme.COLORS.INPUT_ERROR_LIGHT
