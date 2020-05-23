@@ -16,7 +16,7 @@ const SidebarDropdown: React.FC<{
   const opacityBase = new Animated.Value(1);
 
   const [animating, setAnimating] = React.useState<boolean>(false);
-  const [progress, setProgress] = React.useState<Animated.Value>(new Animated.Value(1));
+  const progress = React.useRef<Animated.Value>(new Animated.Value(1)).current;
 
   const animate = React.useCallback(
     (target: number) => {
