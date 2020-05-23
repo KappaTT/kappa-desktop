@@ -4,6 +4,7 @@ import GoogleSignInButton from './GoogleSignInButton';
 import Header from './Header';
 import HorizontalSegmentBar from './HorizontalSegmentBar';
 import Icon from './Icon';
+import PopupModal from './PopupModal';
 import RoundButton from './RoundButton';
 import Sidebar from './Sidebar';
 import SidebarDropdown from './SidebarDropdown';
@@ -17,6 +18,7 @@ export {
   Header,
   HorizontalSegmentBar,
   Icon,
+  PopupModal,
   RoundButton,
   Sidebar,
   SidebarDropdown,
