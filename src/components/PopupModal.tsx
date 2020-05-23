@@ -8,9 +8,9 @@ const { width, height } = Dimensions.get('window');
 const PopupModal: React.FC<{
   visible: boolean;
   allowClose?: boolean;
-  onDoneClosing(): void;
+  onDoneClosing?(): void;
   children?: React.ReactNode;
-}> = ({ visible, allowClose = true, onDoneClosing, children }) => {
+}> = ({ visible, allowClose = true, onDoneClosing = () => {}, children }) => {
   const heightBase = new Animated.Value(height * 0.05);
 
   const progress = React.useRef<Animated.Value>(new Animated.Value(1)).current;
@@ -24,7 +24,7 @@ const PopupModal: React.FC<{
     Animated.timing(progress, {
       toValue: 1,
       easing: Easing.out(Easing.poly(4)),
-      duration: 400
+      duration: 200
     }).start(() => {
       onDoneClosing();
     });
@@ -41,12 +41,16 @@ const PopupModal: React.FC<{
       Animated.timing(progress, {
         toValue: 0,
         easing: Easing.out(Easing.poly(4)),
-        duration: 400
+        duration: 200
       }).start();
     } else {
       handleClose();
     }
   }, [handleClose, progress, visible]);
+
+  if (!visible) {
+    return <React.Fragment />;
+  }
 
   return (
     <Animated.View
@@ -105,7 +109,7 @@ const styles = StyleSheet.create({
   container: {
     width: width - 80,
     minHeight: 80,
-    borderRadius: 10,
+    borderRadius: 8,
     backgroundColor: theme.COLORS.WHITE,
     padding: 20
   }

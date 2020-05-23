@@ -11,7 +11,7 @@ import { incompleteUser } from '@backend/auth';
 import { Images, theme } from '@constants';
 import AppNavigator from '@navigation/StackAppNavigator';
 import { setTopLevelNavigator, navigate } from '@navigation/NavigationService';
-import { Sidebar } from '@components';
+import { Sidebar, ModalController } from '@components';
 
 const assetImages = [Images.Kappa];
 
@@ -92,6 +92,8 @@ const App = () => {
             }}
           />
         </View>
+
+        <ModalController />
       </View>
     );
   }
