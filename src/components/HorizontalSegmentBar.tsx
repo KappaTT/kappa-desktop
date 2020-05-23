@@ -66,6 +66,10 @@ const HorizontalSegmentBar: React.FC<{
         },
         sectionIndex: number
       ) => {
+        if (section.count === 0) {
+          return <React.Fragment />;
+        }
+
         return (
           <HorizontalLabel
             key={sectionIndex}
@@ -91,11 +95,11 @@ const HorizontalSegmentBar: React.FC<{
         },
         sectionIndex: number
       ) => {
-        count += section.count;
-
         if (section.count === 0) {
           return <React.Fragment />;
         }
+
+        count += section.count;
 
         const leftSide = sectionIndex === 0 || count === section.count;
         const rightSide = count === totalCount;
