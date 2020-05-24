@@ -37,9 +37,6 @@ const EventsContent: React.FC<{
   const getEventsErrorMessage = useSelector((state: TRedux) => state.kappa.getEventsErrorMessage);
   const selectedEventId = useSelector((state: TRedux) => state.kappa.selectedEventId);
 
-  const [refreshing, setRefreshing] = React.useState<boolean>(
-    isGettingEvents || isGettingDirectory || isGettingAttendance
-  );
   const [showing, setShowing] = React.useState<'Full Year' | 'Upcoming'>('Full Year');
 
   const dispatch = useDispatch();
@@ -58,6 +55,12 @@ const EventsContent: React.FC<{
   const dispatchCancelEditEvent = React.useCallback(() => dispatch(_kappa.cancelEditEvent()), [dispatch]);
 
   const scrollRef = React.useRef(undefined);
+
+  const refreshing = React.useMemo(() => isGettingEvents || isGettingDirectory || isGettingAttendance, [
+    isGettingAttendance,
+    isGettingDirectory,
+    isGettingEvents
+  ]);
 
   const loadData = React.useCallback(
     (force: boolean) => {
@@ -88,8 +91,6 @@ const EventsContent: React.FC<{
   );
 
   const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-
     loadData(true);
   }, [loadData]);
 
@@ -100,12 +101,6 @@ const EventsContent: React.FC<{
       setShowing('Upcoming');
     }
   }, [showing]);
-
-  React.useEffect(() => {
-    if (!isGettingEvents && !isGettingDirectory && !isGettingAttendance) {
-      setRefreshing(false);
-    }
-  }, [isGettingEvents, isGettingDirectory, isGettingAttendance]);
 
   React.useEffect(() => {
     if (isFocused && user.sessionToken) {
@@ -192,7 +187,8 @@ const styles = StyleSheet.create({
   },
   refreshContainer: {},
   refreshIcon: {
-    padding: 8
+    margin: 8,
+    width: 17
   },
   headerButtonContainer: {
     marginRight: 8

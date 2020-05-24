@@ -32,10 +32,6 @@ const DirectoryContent: React.FC<{
   const getExcusesError = useSelector((state: TRedux) => state.kappa.getExcusesError);
   const getDirectoryErrorMessage = useSelector((state: TRedux) => state.kappa.getDirectoryErrorMessage);
 
-  const [refreshing, setRefreshing] = React.useState<boolean>(
-    isGettingEvents || isGettingDirectory || isGettingAttendance
-  );
-
   const dispatch = useDispatch();
   const dispatchGetEvents = React.useCallback(() => dispatch(_kappa.getEvents(user)), [dispatch, user]);
   const dispatchGetMyAttendance = React.useCallback(
@@ -47,6 +43,12 @@ const DirectoryContent: React.FC<{
   const dispatchSelectUser = React.useCallback((email: string) => dispatch(_kappa.selectUser(email)), [dispatch]);
 
   const scrollRef = React.useRef(undefined);
+
+  const refreshing = React.useMemo(() => isGettingEvents || isGettingDirectory || isGettingAttendance, [
+    isGettingAttendance,
+    isGettingDirectory,
+    isGettingEvents
+  ]);
 
   const loadData = React.useCallback(
     (force: boolean) => {
@@ -77,16 +79,8 @@ const DirectoryContent: React.FC<{
   );
 
   const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-
     loadData(true);
   }, [loadData]);
-
-  React.useEffect(() => {
-    if (!isGettingEvents && !isGettingDirectory && !isGettingAttendance) {
-      setRefreshing(false);
-    }
-  }, [isGettingEvents, isGettingDirectory, isGettingAttendance]);
 
   React.useEffect(() => {
     if (isFocused && user.sessionToken) {
