@@ -11,6 +11,8 @@ import {
 } from 'react-native';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 import { TRedux } from '@reducers';
 import { TEvent, TPointsDict } from '@backend/kappa';
@@ -31,7 +33,6 @@ const EditEventPage: React.FC<{
   const [showErrors, setShowErrors] = React.useState<boolean>(false);
   const [title, setTitle] = React.useState<string>(initialEvent ? initialEvent.title : '');
   const [description, setDescription] = React.useState<string>(initialEvent ? initialEvent.description : '');
-  const [pickerMode, setPickerMode] = React.useState<'date' | 'time'>(null);
   const [startDate, setStartDate] = React.useState(
     initialEvent ? moment(initialEvent.start) : moment(new Date()).startOf('hour')
   );
@@ -133,21 +134,16 @@ const EditEventPage: React.FC<{
     setType(chosen);
   }, []);
 
-  const onPressStartDate = React.useCallback(() => {
-    setPickerMode('date');
-  }, []);
-
-  const onPressStartTime = React.useCallback(() => {
-    setPickerMode('time');
-  }, []);
-
-  const onPressClosePicker = React.useCallback(() => {
-    setPickerMode(null);
-  }, []);
-
   const onChangeDate = React.useCallback(
     (selectedDate) => {
       setStartDate(moment(selectedDate || startDate));
+    },
+    [startDate]
+  );
+
+  const onChangeTime = React.useCallback(
+    (selectedDate) => {
+      setStartDate(moment(`${startDate.format('YYYY-MM-DD')} ${moment(selectedDate).format('HH:mm')}`));
     },
     [startDate]
   );
@@ -212,7 +208,30 @@ const EditEventPage: React.FC<{
   const renderDateSection = () => {
     return (
       <View style={styles.sectionContent}>
-        <ScrollView></ScrollView>
+        <ScrollView>
+          <View style={styles.propertyHeaderContainer}>
+            <Text style={styles.propertyHeader}>Date</Text>
+          </View>
+
+          <DatePicker selected={startDate.toDate()} onChange={onChangeDate} inline />
+
+          <View style={styles.propertyHeaderContainer}>
+            <Text style={styles.propertyHeader}>Start Time ({timezone})</Text>
+          </View>
+
+          <DatePicker
+            selected={startDate.toDate()}
+            onChange={onChangeTime}
+            showTimeSelect
+            showTimeSelectOnly
+            timeIntervals={15}
+            dateFormat="h:mm aa"
+          />
+
+          <View style={styles.propertyHeaderContainer}>
+            <Text style={styles.propertyHeader}>Duration (minutes)</Text>
+          </View>
+        </ScrollView>
       </View>
     );
   };
@@ -309,7 +328,8 @@ const styles = StyleSheet.create({
     marginTop: 44,
     minHeight: 520,
     flex: 1,
-    flexDirection: 'row'
+    flexDirection: 'row',
+    paddingHorizontal: 8
   },
   section: {
     flex: 1
@@ -320,7 +340,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    paddingHorizontal: 16
+    paddingHorizontal: 8
   },
   propertyHeaderContainer: {
     marginTop: 16,
