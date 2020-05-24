@@ -31,6 +31,7 @@ const Sidebar: React.FC = () => {
   const dispatchSetSelectedPage = React.useCallback((label: string) => dispatch(_nav.setSelectedPage(label)), [
     dispatch
   ]);
+  const dispatchSignOut = React.useCallback(() => dispatch(_auth.signOut()), [dispatch]);
 
   const unreadMessages = React.useMemo(() => {
     if (pendingExcusesArray.length > 0) return true;
@@ -53,9 +54,15 @@ const Sidebar: React.FC = () => {
       } else if (element.target) {
         navigate(element.target);
         dispatchSetSelectedPage(element.label);
+      } else {
+        switch (element.label) {
+          case 'Sign Out':
+            dispatchSignOut();
+            break;
+        }
       }
     },
-    [dispatchSetSelectedPage, sidebarNav]
+    [dispatchSetSelectedPage, dispatchSignOut, sidebarNav]
   );
 
   if (!authorized) {
