@@ -167,52 +167,68 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
         </View>
 
         {user.privileged && (
-          <View style={styles.dangerZone}>
-            <View style={styles.editZone}>
-              <View style={styles.warning}>
-                <Text style={styles.zoneLabel}>Edit this event</Text>
-                <Text style={styles.description}>
-                  Edits to events will only show up when users refresh. Please make sure you have refreshed the latest
-                  event details before editing.
-                </Text>
-              </View>
+          <React.Fragment>
+            <View style={styles.dangerZone}>
+              <View style={styles.editZone}>
+                <View style={styles.warning}>
+                  <Text style={styles.zoneLabel}>Edit this event</Text>
+                  <Text style={styles.description}>
+                    Edits to events will only show up when users refresh. Please make sure you have refreshed the latest
+                    event details before editing.
+                  </Text>
+                </View>
 
-              <TouchableOpacity onPress={dispatchEditEvent}>
-                <Icon style={styles.zoneIcon} family="Feather" name="edit" size={32} color={theme.COLORS.PRIMARY} />
-              </TouchableOpacity>
-            </View>
-            <View style={styles.deleteZone}>
-              <View style={styles.warning}>
-                <Text style={styles.zoneLabel}>Delete this event</Text>
-                <Text style={styles.description}>
-                  Deleting an event will delete all associated points, attendance and excuse records. Please double
-                  check and be certain this is the event you want to delete.
-                </Text>
-              </View>
-
-              {isDeletingEvent ? (
-                <ActivityIndicator style={styles.zoneIcon} />
-              ) : (
-                <TouchableOpacity
-                  style={!readyToDelete && styles.disabledButton}
-                  disabled={!readyToDelete}
-                  onPress={dispatchDeleteEvent}
-                >
-                  <Icon
-                    style={styles.zoneIcon}
-                    family="Feather"
-                    name="trash-2"
-                    size={32}
-                    color={theme.COLORS.PRIMARY}
-                  />
+                <TouchableOpacity onPress={dispatchEditEvent}>
+                  <Icon style={styles.zoneIcon} family="Feather" name="edit" size={32} color={theme.COLORS.PRIMARY} />
                 </TouchableOpacity>
-              )}
+              </View>
+              <View style={styles.deleteZone}>
+                <View style={styles.warning}>
+                  <Text style={styles.zoneLabel}>Delete this event</Text>
+                  <Text style={styles.description}>
+                    Deleting an event will delete all associated points, attendance and excuse records. Please double
+                    check and be certain this is the event you want to delete.
+                  </Text>
+                </View>
+
+                {isDeletingEvent ? (
+                  <ActivityIndicator style={styles.zoneIcon} />
+                ) : (
+                  <TouchableOpacity
+                    style={!readyToDelete && styles.disabledButton}
+                    disabled={!readyToDelete}
+                    onPress={dispatchDeleteEvent}
+                  >
+                    <Icon
+                      style={styles.zoneIcon}
+                      family="Feather"
+                      name="trash-2"
+                      size={32}
+                      color={theme.COLORS.PRIMARY}
+                    />
+                  </TouchableOpacity>
+                )}
+              </View>
+              <View style={styles.enableDeleteContainer}>
+                <Switch value={readyToDelete} onValueChange={(newValue: boolean) => setReadyToDelete(newValue)} />
+                <Text style={styles.readyToDelete}>I am ready to delete this event</Text>
+              </View>
             </View>
-            <View style={styles.enableDeleteContainer}>
-              <Switch value={readyToDelete} onValueChange={(newValue: boolean) => setReadyToDelete(newValue)} />
-              <Text style={styles.readyToDelete}>I am ready to delete this event</Text>
-            </View>
-          </View>
+
+            {mandatory.length > 0 && (
+              <React.Fragment>
+                <Text style={styles.mandatoryHeaderText}>Missed Mandatory</Text>
+
+                <View style={styles.mandatoryContainer}>
+                  {mandatory.map((missed: TUser) => (
+                    <Text style={styles.mandatoryUser}>
+                      {missed.familyName}, {missed.givenName}
+                    </Text>
+                  ))}
+                </View>
+              </React.Fragment>
+            )}
+          </React.Fragment>
         )}
       </View>
     );
@@ -456,6 +472,22 @@ const styles = StyleSheet.create({
   },
   disabledButton: {
     opacity: 0.4
+  },
+  mandatoryContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap'
+  },
+  mandatoryHeaderText: {
+    marginTop: 16,
+    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 13,
+    textTransform: 'uppercase',
+    color: theme.COLORS.PRIMARY
+  },
+  mandatoryUser: {
+    marginRight: 16,
+    fontFamily: 'OpenSans',
+    fontSize: 13
   }
 });
 
