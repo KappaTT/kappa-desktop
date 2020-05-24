@@ -107,11 +107,13 @@ const styles = StyleSheet.create({
     right: 0
   },
   container: {
-    width: width - 80,
+    position: 'absolute',
+    left: 40,
+    right: 40,
     minHeight: 80,
     borderRadius: 8,
     backgroundColor: theme.COLORS.WHITE,
-    padding: 20
+    overflow: 'hidden'
   }
 });
 

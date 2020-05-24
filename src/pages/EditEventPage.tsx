@@ -1,5 +1,14 @@
 import React from 'react';
-import { StyleSheet, View, Text, ScrollView, TouchableWithoutFeedback, TouchableOpacity, Alert } from 'react-native';
+import {
+  StyleSheet,
+  Dimensions,
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+  ActivityIndicator
+} from 'react-native';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
 
@@ -9,12 +18,19 @@ import { theme } from '@constants';
 import { Icon, Switch } from '@components';
 import { extractPoints } from '@services/kappaService';
 
+const { height } = Dimensions.get('window');
+
 const EditEventPage: React.FC<{
   initialEvent: TEvent;
   onPressCancel(): void;
   onPressSave(event: Partial<TEvent>, eventId?: string): void;
 }> = ({ initialEvent, onPressCancel, onPressSave }) => {
   const isSavingEvent = useSelector((state: TRedux) => state.kappa.isSavingEvent);
+
+  const [readyStateType, setReadyStateType] = React.useState<boolean>(false);
+  const [readyStateDate, setReadyStateDate] = React.useState<boolean>(false);
+  const [readyStateDetails, setReadyStateDetails] = React.useState<boolean>(false);
+  const [readyStatePoints, setReadyStatePoints] = React.useState<boolean>(false);
 
   const [type, setType] = React.useState<string>(initialEvent ? initialEvent.eventType : '');
   const [showErrors, setShowErrors] = React.useState<boolean>(false);
@@ -43,6 +59,13 @@ const EditEventPage: React.FC<{
   const [anyPoints, setAnyPoints] = React.useState<string>(
     initialEvent ? extractPoints(initialEvent.points, 'ANY') : ''
   );
+
+  const readyToSave = React.useMemo(() => readyStateType && readyStateDate && readyStateDetails && readyStatePoints, [
+    readyStateDate,
+    readyStateDetails,
+    readyStatePoints,
+    readyStateType
+  ]);
 
   const timezone = React.useMemo(() => {
     const date = new Date().toString();
@@ -119,50 +142,89 @@ const EditEventPage: React.FC<{
     [startDate]
   );
 
+  const renderHeader = () => {
+    return (
+      <React.Fragment>
+        <TouchableOpacity activeOpacity={0.6} onPress={onPressCancel}>
+          <Text style={styles.cancelText}>Cancel</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={{
+            opacity: readyToSave ? 1 : 0.6
+          }}
+          activeOpacity={0.6}
+          disabled={!readyToSave}
+          onPress={onPressSaveButton}
+        >
+          {isSavingEvent ? (
+            <ActivityIndicator style={styles.saveLoader} color={theme.COLORS.PRIMARY} />
+          ) : (
+            <Text style={styles.saveText}>Save</Text>
+          )}
+        </TouchableOpacity>
+      </React.Fragment>
+    );
+  };
+
   const renderTypeSection = () => {
-    return <View />;
+    return (
+      <View style={styles.sectionContent}>
+        <ScrollView></ScrollView>
+      </View>
+    );
   };
 
   const renderDateSection = () => {
-    return <View />;
+    return (
+      <View style={styles.sectionContent}>
+        <ScrollView></ScrollView>
+      </View>
+    );
   };
 
   const renderDetailsSection = () => {
-    return <View />;
+    return (
+      <View style={styles.sectionContent}>
+        <ScrollView></ScrollView>
+      </View>
+    );
   };
 
   const renderPointsSection = () => {
-    return <View />;
+    return (
+      <View style={styles.sectionContent}>
+        <ScrollView></ScrollView>
+      </View>
+    );
+  };
+
+  const renderDivider = (readyStatus: boolean) => {
+    return (
+      <View style={styles.dividerWrapper}>
+        <View style={styles.divider} />
+        <Icon style={styles.dividerIcon} family="Feather" name="x-circle" size={20} color={theme.COLORS.BORDER} />
+        <View style={styles.divider} />
+      </View>
+    );
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}></View>
+      <View style={styles.header}>{renderHeader()}</View>
 
       <View style={styles.content}>
         <View style={styles.section}>{renderTypeSection()}</View>
 
-        <View style={styles.dividerWrapper}>
-          <View style={styles.divider} />
-          <Icon style={styles.dividerIcon} family="Feather" name="x-circle" size={20} color={theme.COLORS.BORDER} />
-          <View style={styles.divider} />
-        </View>
+        {renderDivider(false)}
 
         <View style={styles.section}>{renderDateSection()}</View>
 
-        <View style={styles.dividerWrapper}>
-          <View style={styles.divider} />
-          <Icon style={styles.dividerIcon} family="Feather" name="x-circle" size={20} color={theme.COLORS.BORDER} />
-          <View style={styles.divider} />
-        </View>
+        {renderDivider(false)}
 
         <View style={styles.section}>{renderDetailsSection()}</View>
 
-        <View style={styles.dividerWrapper}>
-          <View style={styles.divider} />
-          <Icon style={styles.dividerIcon} family="Feather" name="x-circle" size={20} color={theme.COLORS.BORDER} />
-          <View style={styles.divider} />
-        </View>
+        {renderDivider(false)}
 
         <View style={styles.section}>{renderPointsSection()}</View>
       </View>
@@ -171,20 +233,52 @@ const EditEventPage: React.FC<{
 };
 
 const styles = StyleSheet.create({
-  container: {
-    minHeight: 440
+  container: {},
+  header: {
+    position: 'absolute',
+    height: 44,
+    top: 0,
+    left: 0,
+    right: 0,
+    borderBottomColor: theme.COLORS.LIGHT_BORDER,
+    borderBottomWidth: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
   },
-  header: {},
+  saveText: {
+    paddingHorizontal: 16,
+    fontFamily: 'OpenSans',
+    fontSize: 17,
+    color: theme.COLORS.PRIMARY
+  },
+  saveLoader: {
+    paddingHorizontal: 16
+  },
+  cancelText: {
+    paddingHorizontal: 16,
+    fontFamily: 'OpenSans',
+    fontSize: 17,
+    color: theme.COLORS.GRAY
+  },
   content: {
+    marginTop: 44,
+    minHeight: 480,
     flex: 1,
     flexDirection: 'row'
   },
   section: {
-    backgroundColor: 'black'
+    flex: 1
+  },
+  sectionContent: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0
   },
   dividerWrapper: {
     marginHorizontal: 8,
-    marginVertical: 20,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
@@ -192,7 +286,7 @@ const styles = StyleSheet.create({
   },
   divider: {
     flexGrow: 1,
-    borderLeftColor: theme.COLORS.BORDER,
+    borderLeftColor: theme.COLORS.LIGHT_BORDER,
     borderLeftWidth: 1
   },
   dividerIcon: {
