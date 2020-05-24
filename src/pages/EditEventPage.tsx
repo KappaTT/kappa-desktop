@@ -15,7 +15,7 @@ import moment from 'moment';
 import { TRedux } from '@reducers';
 import { TEvent, TPointsDict } from '@backend/kappa';
 import { theme } from '@constants';
-import { Icon, Switch } from '@components';
+import { Icon, Switch, RadioList } from '@components';
 import { extractPoints } from '@services/kappaService';
 
 const { height } = Dimensions.get('window');
@@ -26,11 +26,6 @@ const EditEventPage: React.FC<{
   onPressSave(event: Partial<TEvent>, eventId?: string): void;
 }> = ({ initialEvent, onPressCancel, onPressSave }) => {
   const isSavingEvent = useSelector((state: TRedux) => state.kappa.isSavingEvent);
-
-  const [readyStateType, setReadyStateType] = React.useState<boolean>(false);
-  const [readyStateDate, setReadyStateDate] = React.useState<boolean>(false);
-  const [readyStateDetails, setReadyStateDetails] = React.useState<boolean>(false);
-  const [readyStatePoints, setReadyStatePoints] = React.useState<boolean>(false);
 
   const [type, setType] = React.useState<string>(initialEvent ? initialEvent.eventType : '');
   const [showErrors, setShowErrors] = React.useState<boolean>(false);
@@ -60,10 +55,21 @@ const EditEventPage: React.FC<{
     initialEvent ? extractPoints(initialEvent.points, 'ANY') : ''
   );
 
-  const readyToSave = React.useMemo(() => readyStateType && readyStateDate && readyStateDetails && readyStatePoints, [
+  const readyStateType = React.useMemo(() => {
+    return type !== '';
+  }, [type]);
+
+  const readyStateDate = React.useMemo(() => {
+    return false;
+  }, []);
+
+  const readyStateDetails = React.useMemo(() => {
+    return false;
+  }, []);
+
+  const readyToSave = React.useMemo(() => readyStateType && readyStateDate && readyStateDetails, [
     readyStateDate,
     readyStateDetails,
-    readyStatePoints,
     readyStateType
   ]);
 
@@ -123,6 +129,10 @@ const EditEventPage: React.FC<{
     onPressSave
   ]);
 
+  const onChangeType = React.useCallback((chosen) => {
+    setType(chosen);
+  }, []);
+
   const onPressStartDate = React.useCallback(() => {
     setPickerMode('date');
   }, []);
@@ -170,7 +180,31 @@ const EditEventPage: React.FC<{
   const renderTypeSection = () => {
     return (
       <View style={styles.sectionContent}>
-        <ScrollView></ScrollView>
+        <ScrollView>
+          <View style={styles.propertyHeaderContainer}>
+            <Text style={styles.propertyHeader}>Event Type</Text>
+          </View>
+
+          <RadioList
+            options={[
+              { id: 'GM', title: 'GM' },
+              { id: 'Weekly Happy Hour', title: 'Weekly Happy Hour' },
+              { id: 'Philanthropy', title: 'Philanthropy' },
+              { id: 'Professional', title: 'Professional' },
+              { id: 'Rush', title: 'Rush' },
+              { id: 'Brotherhood', title: 'Brotherhood' },
+              { id: 'Misc', title: 'Misc' }
+            ]}
+            selected={type}
+            onChange={onChangeType}
+          />
+
+          <Text style={styles.description}>
+            The type of event affects GM counts. If an event is not marked as a GM, it will not count towards the GM
+            attendance rate. Weekly Happy Hour events can only count for 1 Brother point per semester. Points must be
+            set per-event as well.
+          </Text>
+        </ScrollView>
       </View>
     );
   };
@@ -203,7 +237,13 @@ const EditEventPage: React.FC<{
     return (
       <View style={styles.dividerWrapper}>
         <View style={styles.divider} />
-        <Icon style={styles.dividerIcon} family="Feather" name="x-circle" size={20} color={theme.COLORS.BORDER} />
+        <Icon
+          style={styles.dividerIcon}
+          family="Feather"
+          name="arrow-right-circle"
+          size={20}
+          color={readyStatus ? theme.COLORS.PRIMARY : theme.COLORS.BORDER}
+        />
         <View style={styles.divider} />
       </View>
     );
@@ -216,17 +256,21 @@ const EditEventPage: React.FC<{
       <View style={styles.content}>
         <View style={styles.section}>{renderTypeSection()}</View>
 
-        {renderDivider(false)}
+        {renderDivider(readyStateType)}
 
-        <View style={styles.section}>{renderDateSection()}</View>
+        <View style={[styles.section, !readyStateType && { opacity: 0.6 }]}>{renderDateSection()}</View>
 
-        {renderDivider(false)}
+        {renderDivider(readyStateDate)}
 
-        <View style={styles.section}>{renderDetailsSection()}</View>
+        <View style={[styles.section, (!readyStateType || !readyStateDate) && { opacity: 0.6 }]}>
+          {renderDetailsSection()}
+        </View>
 
-        {renderDivider(false)}
+        {renderDivider(readyStateDetails)}
 
-        <View style={styles.section}>{renderPointsSection()}</View>
+        <View style={[styles.section, (!readyStateType || !readyStateDate || !readyStateDetails) && { opacity: 0.6 }]}>
+          {renderPointsSection()}
+        </View>
       </View>
     </View>
   );
@@ -263,7 +307,7 @@ const styles = StyleSheet.create({
   },
   content: {
     marginTop: 44,
-    minHeight: 480,
+    minHeight: 520,
     flex: 1,
     flexDirection: 'row'
   },
@@ -275,10 +319,33 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    bottom: 0
+    bottom: 0,
+    paddingHorizontal: 16
+  },
+  propertyHeaderContainer: {
+    marginTop: 16,
+    display: 'flex',
+    flexDirection: 'row'
+  },
+  propertyHeader: {
+    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 13,
+    textTransform: 'uppercase',
+    color: theme.COLORS.GRAY
+  },
+  propertyHeaderRequired: {
+    marginLeft: 2,
+    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 13,
+    textTransform: 'uppercase',
+    color: theme.COLORS.PRIMARY
+  },
+  description: {
+    marginTop: 12,
+    fontFamily: 'OpenSans',
+    fontSize: 12
   },
   dividerWrapper: {
-    marginHorizontal: 8,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
