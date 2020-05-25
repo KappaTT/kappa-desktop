@@ -1,5 +1,6 @@
 import CheckListButton from './CheckListButton';
 import EventItem from './EventItem';
+import FormattedInput from './FormattedInput';
 import GeneralMeetingChart from './GeneralMeetingChart';
 import Ghost from './Ghost';
 import GoogleSignInButton from './GoogleSignInButton';
@@ -18,6 +19,7 @@ import Switch from './Switch';
 export {
   CheckListButton,
   EventItem,
+  FormattedInput,
   GeneralMeetingChart,
   Ghost,
   GoogleSignInButton,
