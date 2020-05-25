@@ -170,6 +170,26 @@ const EditEventPage: React.FC<{
     setExcusable(value);
   }, []);
 
+  const onChangeProfessional = React.useCallback((text: string) => {
+    setProfPoints(text);
+  }, []);
+
+  const onChangePhilanthropy = React.useCallback((text: string) => {
+    setPhilPoints(text);
+  }, []);
+
+  const onChangeBrotherhood = React.useCallback((text: string) => {
+    setBroPoints(text);
+  }, []);
+
+  const onChangeRush = React.useCallback((text: string) => {
+    setRushPoints(text);
+  }, []);
+
+  const onChangeAny = React.useCallback((text: string) => {
+    setAnyPoints(text);
+  }, []);
+
   const renderHeader = () => {
     return (
       <React.Fragment>
@@ -330,7 +350,69 @@ const EditEventPage: React.FC<{
   const renderPointsSection = () => {
     return (
       <View style={styles.sectionContent}>
-        <ScrollView></ScrollView>
+        <ScrollView>
+          <View style={styles.propertyHeaderContainer}>
+            <Text style={styles.propertyHeader}>Professional</Text>
+          </View>
+
+          <FormattedInput
+            placeholderText="points"
+            maxLength={1}
+            value={profPoints}
+            formatter={numberFormatter}
+            onChangeText={onChangeProfessional}
+          />
+
+          <View style={styles.propertyHeaderContainer}>
+            <Text style={styles.propertyHeader}>Philanthropy</Text>
+          </View>
+
+          <FormattedInput
+            placeholderText="points"
+            maxLength={1}
+            value={profPoints}
+            formatter={numberFormatter}
+            onChangeText={onChangePhilanthropy}
+          />
+
+          <View style={styles.propertyHeaderContainer}>
+            <Text style={styles.propertyHeader}>Brotherhood</Text>
+          </View>
+
+          <FormattedInput
+            placeholderText="points"
+            maxLength={1}
+            value={profPoints}
+            formatter={numberFormatter}
+            onChangeText={onChangeBrotherhood}
+          />
+
+          <View style={styles.propertyHeaderContainer}>
+            <Text style={styles.propertyHeader}>Rush</Text>
+          </View>
+
+          <FormattedInput
+            placeholderText="points"
+            maxLength={1}
+            value={profPoints}
+            formatter={numberFormatter}
+            onChangeText={onChangeRush}
+          />
+
+          <View style={styles.propertyHeaderContainer}>
+            <Text style={styles.propertyHeader}>Any</Text>
+          </View>
+
+          <FormattedInput
+            placeholderText="points"
+            maxLength={1}
+            value={profPoints}
+            formatter={numberFormatter}
+            onChangeText={onChangeAny}
+          />
+
+          <Text style={styles.description}>Points in "Any" count for whatever category the brother is missing</Text>
+        </ScrollView>
       </View>
     );
   };
