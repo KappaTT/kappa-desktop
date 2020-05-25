@@ -63,8 +63,8 @@ const EditEventPage: React.FC<{
   }, [type]);
 
   const readyStateDate = React.useMemo(() => {
-    return false;
-  }, []);
+    return duration !== '' && duration !== '0';
+  }, [duration]);
 
   const readyStateDetails = React.useMemo(() => {
     return false;
@@ -242,7 +242,7 @@ const EditEventPage: React.FC<{
           <FormattedInput
             placeholderText="ex: 60"
             maxLength={4}
-            error={true}
+            error={showErrors && (duration === '' || duration === '0')}
             value={duration}
             formatter={numberFormatter}
             onChangeText={onChangeDuration}
