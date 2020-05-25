@@ -36,6 +36,8 @@ const Sidebar: React.FC = () => {
   const unreadMessages = React.useMemo(() => {
     if (pendingExcusesArray.length > 0) return true;
 
+    // any other criteria in the future: dues, messages from exec, reminders, etc?
+
     return false;
   }, [pendingExcusesArray]);
 
@@ -178,8 +180,8 @@ const styles = StyleSheet.create({
   },
   badgeWrapper: {
     position: 'absolute',
-    top: -2,
-    right: -3
+    top: 2,
+    right: 1
   },
   badgeContainer: {
     borderColor: theme.COLORS.WHITE,
