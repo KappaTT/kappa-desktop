@@ -12,6 +12,7 @@ import { Images, theme } from '@constants';
 import AppNavigator from '@navigation/StackAppNavigator';
 import { setTopLevelNavigator, navigate } from '@navigation/NavigationService';
 import { Sidebar, ModalController } from '@components';
+import './styles/global.css';
 
 const assetImages = [Images.Kappa];
 
