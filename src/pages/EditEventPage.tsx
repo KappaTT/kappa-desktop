@@ -17,10 +17,12 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { TRedux } from '@reducers';
 import { TEvent, TPointsDict } from '@backend/kappa';
 import { theme } from '@constants';
-import { Icon, Switch, RadioList } from '@components';
+import { Icon, Switch, RadioList, FormattedInput } from '@components';
 import { extractPoints } from '@services/kappaService';
 
-const { height } = Dimensions.get('window');
+const numberFormatter = (text: string) => {
+  return text !== undefined ? text.replace(/\D/g, '') : '';
+};
 
 const EditEventPage: React.FC<{
   initialEvent: TEvent;
@@ -148,6 +150,10 @@ const EditEventPage: React.FC<{
     [startDate]
   );
 
+  const onChangeDuration = React.useCallback((text: string) => {
+    setDuration(text);
+  }, []);
+
   const renderHeader = () => {
     return (
       <React.Fragment>
@@ -226,11 +232,21 @@ const EditEventPage: React.FC<{
             showTimeSelectOnly
             timeIntervals={15}
             dateFormat="h:mm aa"
+            className="custom-time-picker"
           />
 
           <View style={styles.propertyHeaderContainer}>
             <Text style={styles.propertyHeader}>Duration (minutes)</Text>
           </View>
+
+          <FormattedInput
+            placeholderText="ex: 60"
+            maxLength={4}
+            error={true}
+            value={duration}
+            formatter={numberFormatter}
+            onChangeText={onChangeDuration}
+          />
         </ScrollView>
       </View>
     );
@@ -277,17 +293,28 @@ const EditEventPage: React.FC<{
 
         {renderDivider(readyStateType)}
 
-        <View style={[styles.section, !readyStateType && { opacity: 0.6 }]}>{renderDateSection()}</View>
+        <View
+          pointerEvents={!readyStateType ? 'none' : 'auto'}
+          style={[styles.section, !readyStateType && { opacity: 0.6 }]}
+        >
+          {renderDateSection()}
+        </View>
 
         {renderDivider(readyStateDate)}
 
-        <View style={[styles.section, (!readyStateType || !readyStateDate) && { opacity: 0.6 }]}>
+        <View
+          pointerEvents={!readyStateType || !readyStateDate ? 'none' : 'auto'}
+          style={[styles.section, (!readyStateType || !readyStateDate) && { opacity: 0.6 }]}
+        >
           {renderDetailsSection()}
         </View>
 
         {renderDivider(readyStateDetails)}
 
-        <View style={[styles.section, (!readyStateType || !readyStateDate || !readyStateDetails) && { opacity: 0.6 }]}>
+        <View
+          pointerEvents={!readyStateType || !readyStateDate || !readyStateDetails ? 'none' : 'auto'}
+          style={[styles.section, (!readyStateType || !readyStateDate || !readyStateDetails) && { opacity: 0.6 }]}
+        >
           {renderPointsSection()}
         </View>
       </View>
