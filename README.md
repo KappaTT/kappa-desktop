@@ -11,12 +11,4 @@
 ## Deploy
 
 1. `npm install -g netlify-cli` if you don't have netlify installed
-
-### Manual
-
-2. `expo build:web` to build the `web-build` production directory
-3. `netlify deploy --prod`, choose `web-build` as the publish directory when prompted
-
-### Script
-
-2. `yarn deploy`, choose `web-build` as the publish directory when prompted
+2. `yarn deploy`
