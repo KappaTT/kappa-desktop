@@ -548,7 +548,7 @@ const styles = StyleSheet.create({
   },
   content: {
     marginTop: 44,
-    minHeight: 520,
+    minHeight: 560,
     flex: 1,
     flexDirection: 'row',
     paddingHorizontal: 8
