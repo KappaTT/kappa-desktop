@@ -28,13 +28,14 @@ const SidebarLayout: TSidebarElement[] = [
   Header('Chapter', [
     Nav('Events', 'EventsStack'),
     Nav('Brothers', 'DirectoryStack'),
-    Nav('Voting', 'VotingStack', true)
+    Nav('Voting', 'VotingStack'),
+    Nav('Membership', 'MembershipStack')
   ]),
-  Header('Attendance', [Nav('Check In', 'CheckInStack'), Nav('Request Excuse', 'ExcuseStack')]),
+  Header('Attendance', [Nav('Check In', ''), Nav('Request Excuse', '')]),
   Header(
     'Admin',
     [
-      Nav('Event Templates', 'TemplatesStack'),
+      Nav('Event Templates', 'EventTemplatesStack'),
       Nav('Study Abroad', 'StudyAbroadStack'),
       Nav('Point Requirements', 'PointRequirementsStack'),
       Nav('Voting Management', 'VotingManagementStack'),

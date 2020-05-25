@@ -11,14 +11,14 @@ import { theme } from '@constants';
 import { HEADER_HEIGHT } from '@services/utils';
 import { Header, Icon } from '@components';
 
-const ProfileContent: React.FC<{
+const StudyAbroadContent: React.FC<{
   navigation: ParamType;
 }> = ({ navigation }) => {
   const isFocused = useIsFocused();
 
   return (
     <View style={styles.container}>
-      <Header title="Profile">
+      <Header title="Study Abroad">
         <View style={styles.headerChildren}></View>
       </Header>
 
@@ -58,4 +58,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default ProfileContent;
+export default StudyAbroadContent;
