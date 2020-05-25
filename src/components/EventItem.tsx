@@ -38,8 +38,6 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
   const [readyToDelete, setReadyToDelete] = React.useState<boolean>(false);
 
   const dispatch = useDispatch();
-  const dispatchSelectEvent = React.useCallback(() => dispatch(_kappa.selectEvent(event._id)), [dispatch, event._id]);
-  const dispatchUnselectEvent = React.useCallback(() => dispatch(_kappa.unselectEvent()), [dispatch]);
   const dispatchGetAttendance = React.useCallback(
     (overwrite: boolean = false) => dispatch(_kappa.getEventAttendance(user, event._id, overwrite)),
     [dispatch, user, event._id]
