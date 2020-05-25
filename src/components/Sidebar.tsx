@@ -65,6 +65,14 @@ const Sidebar: React.FC = () => {
     [dispatchSetSelectedPage, dispatchSignOut, sidebarNav]
   );
 
+  const onPressMessages = React.useCallback(() => {
+    onPressElement({
+      type: 'NAV',
+      label: 'Messages',
+      target: 'MessagesStack'
+    });
+  }, [onPressElement]);
+
   if (!authorized) {
     return <React.Fragment />;
   }
@@ -74,12 +82,25 @@ const Sidebar: React.FC = () => {
       <View style={styles.headerArea}>
         <View style={styles.titleArea}>
           <Text style={styles.title}>Kappa Theta Tau</Text>
-          <Text style={styles.subtitle}>{`${user.familyName}, ${user.givenName}`}</Text>
+          <Text style={styles.subtitle} numberOfLines={1} ellipsizeMode="tail">
+            {`${user.familyName}, ${user.givenName}`} blah blah blah
+          </Text>
         </View>
 
-        <View style={styles.messagesArea}>
-          <TouchableOpacity activeOpacity={0.6} onPress={() => console.log('TODO')}>
-            <Icon family="Feather" name="message-square" size={24} color={theme.COLORS.DARK_GRAY} />
+        <View
+          style={[
+            styles.messagesCircle,
+            selectedPageLabel === 'Messages' && { backgroundColor: `${theme.COLORS.PRIMARY}0f` }
+          ]}
+        >
+          <TouchableOpacity activeOpacity={0.6} onPress={onPressMessages}>
+            <Icon
+              style={styles.messagesIcon}
+              family="Feather"
+              name="message-square"
+              size={24}
+              color={selectedPageLabel === 'Messages' ? theme.COLORS.PRIMARY : theme.COLORS.DARK_GRAY}
+            />
 
             {unreadMessages && (
               <View style={styles.badgeWrapper}>
@@ -128,7 +149,12 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     paddingBottom: 16,
     flexDirection: 'row',
-    alignItems: 'center'
+    justifyContent: 'space-between',
+    alignItems: 'flex-start'
+  },
+  titleArea: {
+    flex: 1,
+    paddingRight: 4
   },
   title: {
     fontFamily: 'OpenSans-Bold',
@@ -137,20 +163,18 @@ const styles = StyleSheet.create({
     color: theme.COLORS.DARK_GRAY
   },
   subtitle: {
+    marginTop: -2,
     fontFamily: 'OpenSans',
     fontSize: 13,
-    lineHeight: 13,
     color: theme.COLORS.DARK_GRAY
   },
-  titleArea: {},
-  messagesArea: {
-    position: 'absolute',
-    right: 0,
-    height: '100%',
-    paddingHorizontal: 8,
-    backgroundColor: theme.COLORS.WHITE,
-    justifyContent: 'center',
-    alignItems: 'flex-end'
+  messagesCircle: {
+    marginTop: -4,
+    borderRadius: 8,
+    backgroundColor: theme.COLORS.WHITE
+  },
+  messagesIcon: {
+    padding: 4
   },
   badgeWrapper: {
     position: 'absolute',
@@ -171,7 +195,6 @@ const styles = StyleSheet.create({
     backgroundColor: theme.COLORS.PRIMARY
   },
   navigationArea: {
-    marginTop: 12,
     flex: 1,
     flexDirection: 'column'
   }
