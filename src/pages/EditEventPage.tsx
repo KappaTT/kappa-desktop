@@ -193,24 +193,33 @@ const EditEventPage: React.FC<{
   const renderHeader = () => {
     return (
       <React.Fragment>
-        <TouchableOpacity activeOpacity={0.6} onPress={onPressCancel}>
-          <Text style={styles.cancelText}>Cancel</Text>
-        </TouchableOpacity>
+        <View style={styles.cancelWrapper}>
+          <TouchableOpacity activeOpacity={0.6} onPress={onPressCancel}>
+            <Text style={styles.cancelText}>Cancel</Text>
+          </TouchableOpacity>
+        </View>
 
-        <TouchableOpacity
-          style={{
-            opacity: readyToSave ? 1 : 0.6
-          }}
-          activeOpacity={0.6}
-          disabled={!readyToSave}
-          onPress={onPressSaveButton}
-        >
-          {isSavingEvent ? (
-            <ActivityIndicator style={styles.saveLoader} color={theme.COLORS.PRIMARY} />
-          ) : (
-            <Text style={styles.saveText}>Save</Text>
-          )}
-        </TouchableOpacity>
+        <View style={styles.titleContainer}>
+          <Text style={styles.titleText}>{initialEvent ? 'Editing Event' : 'New Event'}</Text>
+          {initialEvent !== null && <Text style={styles.subtitleText}>{initialEvent.title}</Text>}
+        </View>
+
+        <View style={styles.saveWrapper}>
+          <TouchableOpacity
+            style={{
+              opacity: readyToSave ? 1 : 0.6
+            }}
+            activeOpacity={0.6}
+            disabled={!readyToSave}
+            onPress={onPressSaveButton}
+          >
+            {isSavingEvent ? (
+              <ActivityIndicator style={styles.saveLoader} color={theme.COLORS.PRIMARY} />
+            ) : (
+              <Text style={styles.saveText}>Save</Text>
+            )}
+          </TouchableOpacity>
+        </View>
       </React.Fragment>
     );
   };
@@ -482,8 +491,26 @@ const styles = StyleSheet.create({
     borderBottomColor: theme.COLORS.LIGHT_BORDER,
     borderBottomWidth: 1,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center'
+  },
+  titleContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  titleText: {
+    fontFamily: 'OpenSans',
+    fontSize: 16
+  },
+  subtitleText: {
+    fontFamily: 'OpenSans',
+    fontSize: 12,
+    color: theme.COLORS.DARK_GRAY
+  },
+  saveWrapper: {
+    position: 'absolute',
+    right: 0
   },
   saveText: {
     paddingHorizontal: 16,
@@ -493,6 +520,10 @@ const styles = StyleSheet.create({
   },
   saveLoader: {
     paddingHorizontal: 16
+  },
+  cancelWrapper: {
+    position: 'absolute',
+    left: 0
   },
   cancelText: {
     paddingHorizontal: 16,
