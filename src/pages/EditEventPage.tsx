@@ -1,14 +1,5 @@
 import React from 'react';
-import {
-  StyleSheet,
-  Dimensions,
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  Alert,
-  ActivityIndicator
-} from 'react-native';
+import { StyleSheet, Dimensions, View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
 import DatePicker from 'react-datepicker';
@@ -99,7 +90,7 @@ const EditEventPage: React.FC<{
 
     if (event.title === '' || event.duration === 0) {
       setShowErrors(true);
-      Alert.alert('One or more fields is invalid');
+      alert('One or more fields is invalid');
       return;
     }
 
