@@ -154,6 +154,10 @@ const EditEventPage: React.FC<{
     setDuration(text);
   }, []);
 
+  const onChangeLocation = React.useCallback((text: string) => {
+    setLocation(text);
+  }, []);
+
   const onChangeTitle = React.useCallback((text: string) => {
     setTitle(text);
   }, []);
@@ -295,6 +299,17 @@ const EditEventPage: React.FC<{
             value={duration}
             formatter={numberFormatter}
             onChangeText={onChangeDuration}
+          />
+
+          <View style={styles.propertyHeaderContainer}>
+            <Text style={styles.propertyHeader}>Location</Text>
+          </View>
+
+          <FormattedInput
+            placeholderText="ex: EHall 106b1"
+            maxLength={64}
+            value={location}
+            onChangeText={onChangeLocation}
           />
         </ScrollView>
       </View>
