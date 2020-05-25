@@ -17,3 +17,8 @@ textarea:focus {
   background-color: #f5f6f9;
   font-size: 14px;
 }
+
+.react-datepicker__day--selected,
+.react-datepicker__time-list-item--selected {
+  background-color: #eb3349 !important;
+}
