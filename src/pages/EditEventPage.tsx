@@ -67,8 +67,8 @@ const EditEventPage: React.FC<{
   }, [duration]);
 
   const readyStateDetails = React.useMemo(() => {
-    return false;
-  }, []);
+    return title.trim() !== '';
+  }, [title]);
 
   const readyToSave = React.useMemo(() => readyStateType && readyStateDate && readyStateDetails, [
     readyStateDate,
@@ -154,6 +154,22 @@ const EditEventPage: React.FC<{
     setDuration(text);
   }, []);
 
+  const onChangeTitle = React.useCallback((text: string) => {
+    setTitle(text);
+  }, []);
+
+  const onChangeDescription = React.useCallback((text: string) => {
+    setDescription(text);
+  }, []);
+
+  const onChangeMandatory = React.useCallback((value: boolean) => {
+    setMandatory(value);
+  }, []);
+
+  const onChangeExcusable = React.useCallback((value: boolean) => {
+    setExcusable(value);
+  }, []);
+
   const renderHeader = () => {
     return (
       <React.Fragment>
@@ -185,6 +201,7 @@ const EditEventPage: React.FC<{
         <ScrollView>
           <View style={styles.propertyHeaderContainer}>
             <Text style={styles.propertyHeader}>Event Type</Text>
+            <Text style={styles.propertyHeaderRequired}>*</Text>
           </View>
 
           <RadioList
@@ -217,12 +234,14 @@ const EditEventPage: React.FC<{
         <ScrollView>
           <View style={styles.propertyHeaderContainer}>
             <Text style={styles.propertyHeader}>Date</Text>
+            <Text style={styles.propertyHeaderRequired}>*</Text>
           </View>
 
           <DatePicker selected={startDate.toDate()} onChange={onChangeDate} inline />
 
           <View style={styles.propertyHeaderContainer}>
             <Text style={styles.propertyHeader}>Start Time ({timezone})</Text>
+            <Text style={styles.propertyHeaderRequired}>*</Text>
           </View>
 
           <DatePicker
@@ -237,6 +256,7 @@ const EditEventPage: React.FC<{
 
           <View style={styles.propertyHeaderContainer}>
             <Text style={styles.propertyHeader}>Duration (minutes)</Text>
+            <Text style={styles.propertyHeaderRequired}>*</Text>
           </View>
 
           <FormattedInput
@@ -255,7 +275,54 @@ const EditEventPage: React.FC<{
   const renderDetailsSection = () => {
     return (
       <View style={styles.sectionContent}>
-        <ScrollView></ScrollView>
+        <ScrollView>
+          <View style={styles.propertyHeaderContainer}>
+            <Text style={styles.propertyHeader}>Title</Text>
+            <Text style={styles.propertyHeaderRequired}>*</Text>
+          </View>
+
+          <FormattedInput
+            placeholderText="ex: General Meeting"
+            maxLength={32}
+            error={showErrors && title.trim() === ''}
+            value={title}
+            onChangeText={onChangeTitle}
+          />
+
+          <View style={styles.propertyHeaderContainer}>
+            <Text style={styles.propertyHeader}>Short Description</Text>
+          </View>
+
+          <FormattedInput
+            style={styles.multilineInput}
+            placeholderText="ex: Weekly meeting for the whole chapter"
+            maxLength={256}
+            multiline={true}
+            numberOfLines={6}
+            value={description}
+            onChangeText={onChangeDescription}
+          />
+
+          <View style={styles.propertyHeaderContainer}>
+            <Text style={styles.propertyHeader}>Mandatory</Text>
+          </View>
+
+          <Switch value={mandatory} onValueChange={onChangeMandatory} />
+
+          <Text style={styles.description}>
+            Choose if unexcused absence results in security deposit loss (ex: voting)
+          </Text>
+
+          <View style={styles.propertyHeaderContainer}>
+            <Text style={styles.propertyHeader}>Excusable</Text>
+          </View>
+
+          <Switch value={excusable} onValueChange={onChangeExcusable} />
+
+          <Text style={styles.description}>
+            Allow a valid excuse to count as attending (for instance GM). Do not choose this if there are points
+          </Text>
+        </ScrollView>
       </View>
     );
   };
@@ -391,6 +458,9 @@ const styles = StyleSheet.create({
     marginTop: 12,
     fontFamily: 'OpenSans',
     fontSize: 12
+  },
+  multilineInput: {
+    height: 128
   },
   dividerWrapper: {
     display: 'flex',
