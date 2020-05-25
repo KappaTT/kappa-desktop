@@ -85,7 +85,7 @@ const Sidebar: React.FC = () => {
         <View style={styles.titleArea}>
           <Text style={styles.title}>Kappa Theta Tau</Text>
           <Text style={styles.subtitle} numberOfLines={1} ellipsizeMode="tail">
-            {`${user.familyName}, ${user.givenName}`} blah blah blah
+            {`${user.familyName}, ${user.givenName}`}
           </Text>
         </View>
 
