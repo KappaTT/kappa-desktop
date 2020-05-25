@@ -14,6 +14,7 @@ const PopupModal: React.FC<{
   const heightBase = new Animated.Value(height * 0.05);
 
   const progress = React.useRef<Animated.Value>(new Animated.Value(1)).current;
+  const [doneClosing, setDoneClosing] = React.useState<boolean>(true);
 
   const backgroundOpacity = progress.interpolate({
     inputRange: [0, 1],
@@ -27,6 +28,8 @@ const PopupModal: React.FC<{
       duration: 200
     }).start(() => {
       onDoneClosing();
+
+      setDoneClosing(true);
     });
   }, [onDoneClosing, progress]);
 
@@ -37,23 +40,30 @@ const PopupModal: React.FC<{
   }, [allowClose, handleClose]);
 
   React.useEffect(() => {
+    if (!visible) {
+      handleClose();
+    }
+  }, [handleClose, visible]);
+
+  React.useEffect(() => {
     if (visible) {
+      setDoneClosing(false);
+
       Animated.timing(progress, {
         toValue: 0,
         easing: Easing.out(Easing.poly(4)),
         duration: 200
       }).start();
-    } else {
-      handleClose();
     }
-  }, [handleClose, progress, visible]);
+  }, [progress, visible]);
 
-  if (!visible) {
+  if (doneClosing) {
     return <React.Fragment />;
   }
 
   return (
     <Animated.View
+      pointerEvents={visible ? 'auto' : 'none'}
       style={[
         styles.background,
         {
