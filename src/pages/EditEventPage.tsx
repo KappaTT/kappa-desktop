@@ -256,14 +256,14 @@ const EditEventPage: React.FC<{
     return (
       <View style={styles.sectionContent}>
         <ScrollView>
-          <View style={styles.propertyHeaderContainer}>
+          <View style={[styles.propertyHeaderContainer, { marginBottom: 4 }]}>
             <Text style={styles.propertyHeader}>Date</Text>
             <Text style={styles.propertyHeaderRequired}>*</Text>
           </View>
 
           <DatePicker selected={startDate.toDate()} onChange={onChangeDate} inline />
 
-          <View style={styles.propertyHeaderContainer}>
+          <View style={[styles.propertyHeaderContainer]}>
             <Text style={styles.propertyHeader}>Start Time ({timezone})</Text>
             <Text style={styles.propertyHeaderRequired}>*</Text>
           </View>
