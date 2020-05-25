@@ -1,4 +1,6 @@
+export const SIDEBAR_WIDTH = 220;
 export const HEADER_HEIGHT = 56;
+export const TOAST_HEIGHT = 28;
 
 export const castTo = (value: string, type: string) => {
   if (typeof value === type) {

@@ -11,7 +11,8 @@ import { incompleteUser } from '@backend/auth';
 import { Images, theme } from '@constants';
 import AppNavigator from '@navigation/StackAppNavigator';
 import { setTopLevelNavigator, navigate } from '@navigation/NavigationService';
-import { Sidebar, ModalController } from '@components';
+import { SIDEBAR_WIDTH } from '@services/utils';
+import { Sidebar, ModalController, ToastController } from '@components';
 import './styles/global.css';
 
 const assetImages = [Images.Kappa];
@@ -94,6 +95,7 @@ const App = () => {
           />
         </View>
 
+        <ToastController />
         <ModalController />
       </View>
     );
@@ -106,7 +108,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row'
   },
   sidebarContainer: {
-    width: 220
+    width: SIDEBAR_WIDTH
   },
   appContainer: {
     flex: 1

@@ -15,6 +15,8 @@ import Sidebar from './Sidebar';
 import SidebarDropdown from './SidebarDropdown';
 import SidebarNavButton from './SidebarNavButton';
 import Switch from './Switch';
+import Toast from './Toast';
+import ToastController from './ToastController';
 
 export {
   CheckListButton,
@@ -33,5 +35,7 @@ export {
   Sidebar,
   SidebarDropdown,
   SidebarNavButton,
-  Switch
+  Switch,
+  Toast,
+  ToastController
 };
