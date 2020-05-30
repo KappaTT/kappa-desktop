@@ -9,7 +9,7 @@ import { TRedux } from '@reducers';
 import { _auth } from '@reducers/actions';
 import { incompleteUser } from '@backend/auth';
 import { Images, theme } from '@constants';
-import AppNavigator from '@navigation/StackAppNavigator';
+import AppNavigator from '@navigation/AppNavigator';
 import { setTopLevelNavigator, navigate } from '@navigation/NavigationService';
 import { SIDEBAR_WIDTH } from '@services/utils';
 import { Sidebar, ModalController, ToastController } from '@components';
