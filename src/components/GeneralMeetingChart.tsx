@@ -40,7 +40,7 @@ const GeneralMeetingChart: React.FC<{
         />
         <View style={styles.circleChartLabels}>
           {isGettingAttendance ? (
-            <ActivityIndicator />
+            <ActivityIndicator color={theme.COLORS.PRIMARY} />
           ) : (
             <React.Fragment>
               <Text style={styles.circleChartValue}>{gmStats.percent}</Text>

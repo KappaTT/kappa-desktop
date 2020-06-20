@@ -202,7 +202,7 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
                 </View>
 
                 {isDeletingEvent ? (
-                  <ActivityIndicator style={styles.zoneIcon} />
+                  <ActivityIndicator style={styles.zoneIcon} color={theme.COLORS.PRIMARY} />
                 ) : (
                   <TouchableOpacity
                     style={!readyToDelete && styles.disabledButton}
