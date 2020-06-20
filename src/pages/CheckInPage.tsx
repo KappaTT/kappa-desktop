@@ -51,14 +51,16 @@ const CheckInPage: React.FC<{
 
   const eventOptions = React.useMemo(() => {
     return futureEventArray
-      .filter((event) => !hasValidCheckIn(records, user.email, event._id, true))
+      .filter(
+        (event) => !hasValidCheckIn(records, user.email, event._id, true) && moment(event.start).isSame(openDate, 'day')
+      )
       .sort(sortEventByDate)
       .map((event) => ({
         id: event._id,
         title: event.title,
         subtitle: moment(event.start).format('ddd LLL')
       }));
-  }, [futureEventArray, records, user.email]);
+  }, [futureEventArray, openDate, records, user.email]);
 
   const onChangeEventId = React.useCallback((chosen: string) => {
     setEventId(chosen);
