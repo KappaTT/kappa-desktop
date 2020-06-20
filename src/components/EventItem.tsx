@@ -55,6 +55,10 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
     event,
     user
   ]);
+  const dispatchSetCheckInEvent = React.useCallback(
+    (eventId: string, excuse: boolean) => dispatch(_kappa.setCheckInEvent(eventId, excuse)),
+    [dispatch]
+  );
 
   const loadData = React.useCallback(
     (force: boolean) => {
@@ -85,6 +89,14 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
   const onPressExpand = React.useCallback(() => {
     setExpanded(!expanded);
   }, [expanded]);
+
+  const onPressCheckIn = React.useCallback(() => {
+    dispatchSetCheckInEvent(event._id, false);
+  }, [dispatchSetCheckInEvent, event._id]);
+
+  const onPressExcuse = React.useCallback(() => {
+    dispatchSetCheckInEvent(event._id, true);
+  }, [dispatchSetCheckInEvent, event._id]);
 
   const attended = getAttendance(records, user.email, event._id);
 
@@ -308,10 +320,10 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
 
         <View>
           <View style={styles.checkInButton}>
-            <RoundButton label="Check In" alt={true} disabled={checkInDisabled} />
+            <RoundButton label="Check In" alt={true} disabled={checkInDisabled} onPress={onPressCheckIn} />
           </View>
 
-          <TouchableOpacity disabled={excuseDisabled}>
+          <TouchableOpacity activeOpacity={0.6} disabled={excuseDisabled} onPress={onPressExcuse}>
             <Text
               style={[
                 styles.requestExcuseText,

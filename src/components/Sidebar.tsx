@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { TRedux } from '@reducers';
-import { _auth, _nav } from '@reducers/actions';
+import { _auth, _kappa, _nav } from '@reducers/actions';
 import { theme } from '@constants';
 import { navigate } from '@navigation/NavigationService';
 import SidebarLayout, { TSidebarElement } from '@navigation/SidebarLayout';
@@ -31,6 +31,7 @@ const Sidebar: React.FC = () => {
   const dispatchSetSelectedPage = React.useCallback((label: string) => dispatch(_nav.setSelectedPage(label)), [
     dispatch
   ]);
+  const dispatchOpenCheckIn = React.useCallback(() => dispatch(_kappa.setCheckInEvent('NONE', false)), [dispatch]);
   const dispatchSignOut = React.useCallback(() => dispatch(_auth.signOut()), [dispatch]);
 
   const unreadMessages = React.useMemo(() => {
@@ -58,6 +59,9 @@ const Sidebar: React.FC = () => {
         dispatchSetSelectedPage(element.label);
       } else {
         switch (element.label) {
+          case 'Check In':
+            dispatchOpenCheckIn();
+            break;
           case 'Sign Out':
             dispatchSignOut();
             break;
