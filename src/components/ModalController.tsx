@@ -6,7 +6,7 @@ import { TRedux } from '@reducers';
 import { _auth, _kappa } from '@reducers/actions';
 import { TEvent } from '@backend/kappa';
 import { getEventById } from '@services/kappaService';
-import { CheckInPage, EditEventPage } from '@pages';
+import { CheckInPage, EditEventPage, RequestExcusePage } from '@pages';
 import Ghost from '@components/Ghost';
 import PopupModal from '@components/PopupModal';
 
@@ -35,6 +35,17 @@ const ModalController: React.FC = () => {
         onDoneClosing={dispatchCancelCheckInEvent}
       >
         <CheckInPage
+          initialEvent={checkInEventId === 'NONE' ? null : getEventById(events, checkInEventId)}
+          onPressCancel={dispatchCancelCheckInEvent}
+        />
+      </PopupModal>
+
+      <PopupModal
+        visible={checkInEventId !== '' && checkInExcuse === true}
+        allowClose={!isCheckingIn}
+        onDoneClosing={dispatchCancelCheckInEvent}
+      >
+        <RequestExcusePage
           initialEvent={checkInEventId === 'NONE' ? null : getEventById(events, checkInEventId)}
           onPressCancel={dispatchCancelCheckInEvent}
         />

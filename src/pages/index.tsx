@@ -1,5 +1,5 @@
 import CheckInPage from './CheckInPage';
 import EditEventPage from './EditEventPage';
-import LateExcusePage from './LateExcusePage';
+import RequestExcusePage from './RequestExcusePage';
 
-export { CheckInPage, EditEventPage };
+export { CheckInPage, EditEventPage, RequestExcusePage };

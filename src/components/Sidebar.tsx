@@ -32,6 +32,7 @@ const Sidebar: React.FC = () => {
     dispatch
   ]);
   const dispatchOpenCheckIn = React.useCallback(() => dispatch(_kappa.setCheckInEvent('NONE', false)), [dispatch]);
+  const dispatchOpenRequestExcuse = React.useCallback(() => dispatch(_kappa.setCheckInEvent('NONE', true)), [dispatch]);
   const dispatchSignOut = React.useCallback(() => dispatch(_auth.signOut()), [dispatch]);
 
   const unreadMessages = React.useMemo(() => {
@@ -62,13 +63,16 @@ const Sidebar: React.FC = () => {
           case 'Check In':
             dispatchOpenCheckIn();
             break;
+          case 'Request Excuse':
+            dispatchOpenRequestExcuse();
+            break;
           case 'Sign Out':
             dispatchSignOut();
             break;
         }
       }
     },
-    [dispatchSetSelectedPage, dispatchSignOut, sidebarNav]
+    [dispatchOpenCheckIn, dispatchOpenRequestExcuse, dispatchSetSelectedPage, dispatchSignOut, sidebarNav]
   );
 
   const onPressMessages = React.useCallback(() => {

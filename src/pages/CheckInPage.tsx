@@ -79,7 +79,7 @@ const CheckInPage: React.FC<{
     ) {
       dispatchShowToast({
         title: 'Success',
-        message: 'You have been checked in to the event',
+        message: 'You have been checked in to the event!',
         allowClose: true,
         timer: 2000,
         toastColor: theme.COLORS.PRIMARY_GREEN,
