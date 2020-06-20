@@ -1,10 +1,12 @@
 import React from 'react';
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment';
 
 import { TRedux } from '@reducers';
 import { TEvent } from '@backend/kappa';
+import { TToast } from '@reducers/ui';
+import { _kappa, _ui } from '@reducers/actions';
 import { theme } from '@constants';
 import { hasValidCheckIn, sortEventByDate } from '@services/kappaService';
 import { Icon, RadioList, FormattedInput } from '@components';
@@ -21,9 +23,21 @@ const CheckInPage: React.FC<{
   const records = useSelector((state: TRedux) => state.kappa.records);
   const futureEventArray = useSelector((state: TRedux) => state.kappa.futureEventArray);
   const isCheckingIn = useSelector((state: TRedux) => state.kappa.isCheckingIn);
+  const checkInRequestDate = useSelector((state: TRedux) => state.kappa.checkInRequestDate);
+  const checkInSuccessDate = useSelector((state: TRedux) => state.kappa.checkInSuccessDate);
 
+  const [openDate, setOpenDate] = React.useState<moment.Moment>(moment());
   const [eventId, setEventId] = React.useState<string>(initialEvent ? initialEvent._id : '');
   const [eventCode, setEventCode] = React.useState<string>('');
+
+  const dispatch = useDispatch();
+  const dispatchCheckIn = React.useCallback(() => dispatch(_kappa.checkIn(user, eventId, eventCode)), [
+    dispatch,
+    eventCode,
+    eventId,
+    user
+  ]);
+  const dispatchShowToast = React.useCallback((toast: Partial<TToast>) => dispatch(_ui.showToast(toast)), [dispatch]);
 
   const readyStateEvent = React.useMemo(() => {
     return eventId !== '';
@@ -46,8 +60,6 @@ const CheckInPage: React.FC<{
       }));
   }, [futureEventArray, records, user.email]);
 
-  const onPressSaveButton = React.useCallback(() => {}, []);
-
   const onChangeEventId = React.useCallback((chosen: string) => {
     setEventId(chosen);
   }, []);
@@ -55,6 +67,27 @@ const CheckInPage: React.FC<{
   const onChangeEventCode = React.useCallback((text: string) => {
     setEventCode(text);
   }, []);
+
+  React.useEffect(() => {
+    if (
+      checkInRequestDate !== null &&
+      checkInSuccessDate !== null &&
+      checkInRequestDate.isAfter(openDate) &&
+      checkInSuccessDate.isAfter(checkInRequestDate)
+    ) {
+      dispatchShowToast({
+        title: 'Success',
+        message: 'You have been checked in to the event',
+        allowClose: true,
+        timer: 2000,
+        toastColor: theme.COLORS.PRIMARY_GREEN,
+        textColor: theme.COLORS.WHITE,
+        showBackdrop: false
+      });
+
+      onPressCancel();
+    }
+  }, [openDate, checkInRequestDate, checkInSuccessDate, dispatchShowToast, onPressCancel]);
 
   const renderHeader = () => {
     return (
@@ -79,7 +112,7 @@ const CheckInPage: React.FC<{
               }}
               activeOpacity={0.6}
               disabled={!readyToSubmit}
-              onPress={onPressSaveButton}
+              onPress={dispatchCheckIn}
             >
               <Text style={styles.saveText}>Submit</Text>
             </TouchableOpacity>
