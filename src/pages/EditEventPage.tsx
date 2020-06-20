@@ -189,7 +189,7 @@ const EditEventPage: React.FC<{
     return (
       <React.Fragment>
         <View style={styles.cancelWrapper}>
-          <TouchableOpacity activeOpacity={0.6} onPress={onPressCancel}>
+          <TouchableOpacity activeOpacity={0.6} disabled={isSavingEvent} onPress={onPressCancel}>
             <Text style={styles.cancelText}>Cancel</Text>
           </TouchableOpacity>
         </View>
@@ -200,20 +200,20 @@ const EditEventPage: React.FC<{
         </View>
 
         <View style={styles.saveWrapper}>
-          <TouchableOpacity
-            style={{
-              opacity: readyToSave ? 1 : 0.6
-            }}
-            activeOpacity={0.6}
-            disabled={!readyToSave}
-            onPress={onPressSaveButton}
-          >
-            {isSavingEvent ? (
-              <ActivityIndicator style={styles.saveLoader} color={theme.COLORS.PRIMARY} />
-            ) : (
+          {isSavingEvent ? (
+            <ActivityIndicator style={styles.saveLoader} color={theme.COLORS.PRIMARY} />
+          ) : (
+            <TouchableOpacity
+              style={{
+                opacity: readyToSave ? 1 : 0.6
+              }}
+              activeOpacity={0.6}
+              disabled={!readyToSave}
+              onPress={onPressSaveButton}
+            >
               <Text style={styles.saveText}>Save</Text>
-            )}
-          </TouchableOpacity>
+            </TouchableOpacity>
+          )}
         </View>
       </React.Fragment>
     );

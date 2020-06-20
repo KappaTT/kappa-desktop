@@ -1,13 +1,13 @@
 import React from 'react';
-import { StyleSheet, Dimensions, View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
 
 import { TRedux } from '@reducers';
 import { TEvent } from '@backend/kappa';
 import { theme } from '@constants';
-import { getEventById, hasValidCheckIn, sortEventByDate } from '@services/kappaService';
-import { Icon, Switch, RadioList, FormattedInput } from '@components';
+import { hasValidCheckIn, sortEventByDate } from '@services/kappaService';
+import { Icon, RadioList, FormattedInput } from '@components';
 
 const numberFormatter = (text: string) => {
   return text !== undefined ? text.replace(/\D/g, '') : '';
@@ -60,7 +60,7 @@ const CheckInPage: React.FC<{
     return (
       <React.Fragment>
         <View style={styles.cancelWrapper}>
-          <TouchableOpacity activeOpacity={0.6} onPress={onPressCancel}>
+          <TouchableOpacity activeOpacity={0.6} disabled={isCheckingIn} onPress={onPressCancel}>
             <Text style={styles.cancelText}>Cancel</Text>
           </TouchableOpacity>
         </View>
@@ -70,20 +70,20 @@ const CheckInPage: React.FC<{
         </View>
 
         <View style={styles.saveWrapper}>
-          <TouchableOpacity
-            style={{
-              opacity: readyToSubmit ? 1 : 0.6
-            }}
-            activeOpacity={0.6}
-            disabled={!readyToSubmit}
-            onPress={onPressSaveButton}
-          >
-            {isCheckingIn ? (
-              <ActivityIndicator style={styles.saveLoader} color={theme.COLORS.PRIMARY} />
-            ) : (
-              <Text style={styles.saveText}>Save</Text>
-            )}
-          </TouchableOpacity>
+          {isCheckingIn ? (
+            <ActivityIndicator style={styles.saveLoader} color={theme.COLORS.PRIMARY} />
+          ) : (
+            <TouchableOpacity
+              style={{
+                opacity: readyToSubmit ? 1 : 0.6
+              }}
+              activeOpacity={0.6}
+              disabled={!readyToSubmit}
+              onPress={onPressSaveButton}
+            >
+              <Text style={styles.saveText}>Submit</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </React.Fragment>
     );

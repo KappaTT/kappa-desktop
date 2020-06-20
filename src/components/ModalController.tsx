@@ -14,8 +14,10 @@ const ModalController: React.FC = () => {
   const user = useSelector((state: TRedux) => state.auth.user);
   const events = useSelector((state: TRedux) => state.kappa.events);
   const editingEventId = useSelector((state: TRedux) => state.kappa.editingEventId);
+  const isSavingEvent = useSelector((state: TRedux) => state.kappa.isSavingEvent);
   const checkInEventId = useSelector((state: TRedux) => state.kappa.checkInEventId);
   const checkInExcuse = useSelector((state: TRedux) => state.kappa.checkInExcuse);
+  const isCheckingIn = useSelector((state: TRedux) => state.kappa.isCheckingIn);
 
   const dispatch = useDispatch();
   const dispatchCancelEditEvent = React.useCallback(() => dispatch(_kappa.cancelEditEvent()), [dispatch]);
@@ -27,14 +29,18 @@ const ModalController: React.FC = () => {
 
   return (
     <Ghost style={styles.container}>
-      <PopupModal visible={checkInEventId !== '' && checkInExcuse === false} onDoneClosing={dispatchCancelCheckInEvent}>
+      <PopupModal
+        visible={checkInEventId !== '' && checkInExcuse === false}
+        allowClose={!isCheckingIn}
+        onDoneClosing={dispatchCancelCheckInEvent}
+      >
         <CheckInPage
           initialEvent={checkInEventId === 'NONE' ? null : getEventById(events, checkInEventId)}
           onPressCancel={dispatchCancelCheckInEvent}
         />
       </PopupModal>
 
-      <PopupModal visible={editingEventId !== ''} onDoneClosing={dispatchCancelEditEvent}>
+      <PopupModal visible={editingEventId !== ''} allowClose={!isSavingEvent} onDoneClosing={dispatchCancelEditEvent}>
         <EditEventPage
           initialEvent={editingEventId === 'NEW' ? null : getEventById(events, editingEventId)}
           onPressCancel={dispatchCancelEditEvent}
