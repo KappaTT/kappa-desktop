@@ -254,50 +254,6 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
                   <Text style={[styles.propertyText, { color: theme.COLORS.PRIMARY }]}>Mandatory</Text>
                 </View>
               )}
-
-              {attended !== undefined && (
-                <View style={styles.propertyWrapper}>
-                  <Icon
-                    style={styles.propertyIcon}
-                    family="Feather"
-                    name="check"
-                    size={16}
-                    color={theme.COLORS.PRIMARY_GREEN}
-                  />
-
-                  <Text style={[styles.propertyText, { color: theme.COLORS.PRIMARY_GREEN }]}>Checked In</Text>
-                </View>
-              )}
-
-              {excused !== undefined && excused.approved && (
-                <View style={styles.propertyWrapper}>
-                  <Icon
-                    style={styles.propertyIcon}
-                    family="Feather"
-                    name="check"
-                    size={16}
-                    color={theme.COLORS.PRIMARY_GREEN}
-                  />
-
-                  <Text style={[styles.propertyText, { color: theme.COLORS.PRIMARY_GREEN }]}>Excused</Text>
-                </View>
-              )}
-
-              {excused !== undefined && !excused.approved && (
-                <View style={styles.propertyWrapper}>
-                  <Icon
-                    style={styles.propertyIcon}
-                    family="Feather"
-                    name="clock"
-                    size={16}
-                    color={theme.COLORS.YELLOW_GRADIENT_END}
-                  />
-
-                  <Text style={[styles.propertyText, { color: theme.COLORS.YELLOW_GRADIENT_END }]}>
-                    Excuse under review
-                  </Text>
-                </View>
-              )}
             </View>
 
             <View style={styles.eventDescriptionWrapper}>
@@ -307,22 +263,70 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
         </View>
 
         <View>
-          <View style={styles.checkInButton}>
-            <RoundButton label="Check In" alt={true} disabled={checkInDisabled} />
-          </View>
+          {attended !== undefined && (
+            <View style={styles.propertyWrapper}>
+              <Icon
+                style={styles.propertyIcon}
+                family="Feather"
+                name="check"
+                size={16}
+                color={theme.COLORS.PRIMARY_GREEN}
+              />
 
-          <TouchableOpacity disabled={excuseDisabled}>
-            <Text
-              style={[
-                styles.requestExcuseText,
-                excuseDisabled && {
-                  opacity: 0.4
-                }
-              ]}
-            >
-              Request Excuse
-            </Text>
-          </TouchableOpacity>
+              <Text style={[styles.propertyText, { color: theme.COLORS.PRIMARY_GREEN }]}>Checked In</Text>
+            </View>
+          )}
+
+          {attended === undefined && (excused === undefined || !excused.approved) && (
+            <View style={styles.checkInButton}>
+              <RoundButton label="Check In" alt={true} disabled={checkInDisabled} />
+            </View>
+          )}
+
+          {excused !== undefined && excused.approved && (
+            <View style={styles.propertyWrapper}>
+              <Icon
+                style={styles.propertyIcon}
+                family="Feather"
+                name="check"
+                size={16}
+                color={theme.COLORS.PRIMARY_GREEN}
+              />
+
+              <Text style={[styles.propertyText, { color: theme.COLORS.PRIMARY_GREEN }]}>Excused</Text>
+            </View>
+          )}
+
+          {excused !== undefined && !excused.approved && (
+            <View style={styles.propertyWrapper}>
+              <Icon
+                style={styles.propertyIcon}
+                family="Feather"
+                name="clock"
+                size={16}
+                color={theme.COLORS.YELLOW_GRADIENT_END}
+              />
+
+              <Text style={[styles.propertyText, { color: theme.COLORS.YELLOW_GRADIENT_END }]}>
+                Excuse under review
+              </Text>
+            </View>
+          )}
+
+          {excused === undefined && attended === undefined && (
+            <TouchableOpacity disabled={excuseDisabled}>
+              <Text
+                style={[
+                  styles.requestExcuseText,
+                  excuseDisabled && {
+                    opacity: 0.4
+                  }
+                ]}
+              >
+                Request Excuse
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
 
