@@ -5,7 +5,7 @@ import moment from 'moment';
 
 import { TRedux } from '@reducers';
 import { _auth, _kappa } from '@reducers/actions';
-import { prettyPoints, shouldLoad, sortEventsByDateReverse } from '@services/kappaService';
+import { prettyPoints, shouldLoad, sortEventsByDateReverse, prettyPhone } from '@services/kappaService';
 import { theme } from '@constants';
 import { TUser } from '@backend/auth';
 import { TEvent } from '@backend/kappa';
@@ -98,31 +98,22 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
     return (
       <View style={styles.expandedContent}>
         <View style={styles.splitPropertyRow}>
-          {/* <View style={[styles.splitProperty, { marginLeft: 0 }]}>
-            <Text style={styles.propertyHeader}>Location</Text>
-            <Text style={styles.propertyValue}>{event.location}</Text>
+          <View style={[styles.splitProperty, { marginLeft: 0 }]}>
+            <Text style={styles.propertyHeader}>Grad Year</Text>
+            <Text style={styles.propertyValue}>{brother.gradYear}</Text>
           </View>
-
           <View style={styles.splitProperty}>
-            <Text style={styles.propertyHeader}>Duration</Text>
-            <Text style={styles.propertyValue}>
-              {event.duration < 60
-                ? `${event.duration} minutes`
-                : moment.duration(event.duration, 'minutes').humanize()}
-            </Text>
+            <Text style={styles.propertyHeader}>Pledge Class</Text>
+            <Text style={styles.propertyValue}>{brother.semester}</Text>
           </View>
-
           <View style={styles.splitProperty}>
-            <Text style={styles.propertyHeader}>Points</Text>
-            <Text style={styles.propertyValue}>{prettyPoints(event.points)}</Text>
+            <Text style={styles.propertyHeader}>Email</Text>
+            <Text style={styles.propertyValue}>{brother.email}</Text>
           </View>
-
-          {user.privileged && (
-            <View style={styles.splitProperty}>
-              <Text style={styles.propertyHeader}>Check-In Code</Text>
-              <Text style={styles.propertyValue}>{event.eventCode}</Text>
-            </View>
-          )} */}
+          <View style={styles.splitProperty}>
+            <Text style={styles.propertyHeader}>Phone</Text>
+            <Text style={styles.propertyValue}>{brother.phone ? prettyPhone(brother.phone) : ''}</Text>
+          </View>
 
           {/* {user.privileged && (
             <View style={styles.chartArea}>
@@ -133,6 +124,59 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
 
         {user.privileged && (
           <React.Fragment>
+            <View style={[styles.splitPropertyRow, { marginTop: 8 }]}>
+              <View style={[styles.splitProperty, { marginLeft: 0 }]}>
+                <Text style={styles.propertyHeader}>Prof</Text>
+                {isGettingPoints ? (
+                  <ActivityIndicator style={styles.propertyLoader} color={theme.COLORS.PRIMARY} />
+                ) : (
+                  <Text style={styles.propertyValue}>
+                    {points.hasOwnProperty(brother.email) ? points[brother.email].PROF : '0'}
+                  </Text>
+                )}
+              </View>
+              <View style={styles.splitProperty}>
+                <Text style={styles.propertyHeader}>Phil</Text>
+                {isGettingPoints ? (
+                  <ActivityIndicator style={styles.propertyLoader} color={theme.COLORS.PRIMARY} />
+                ) : (
+                  <Text style={styles.propertyValue}>
+                    {points.hasOwnProperty(brother.email) ? points[brother.email].PHIL : '0'}
+                  </Text>
+                )}
+              </View>
+              <View style={styles.splitProperty}>
+                <Text style={styles.propertyHeader}>Bro</Text>
+                {isGettingPoints ? (
+                  <ActivityIndicator style={styles.propertyLoader} color={theme.COLORS.PRIMARY} />
+                ) : (
+                  <Text style={styles.propertyValue}>
+                    {points.hasOwnProperty(brother.email) ? points[brother.email].BRO : '0'}
+                  </Text>
+                )}
+              </View>
+              <View style={styles.splitProperty}>
+                <Text style={styles.propertyHeader}>Rush</Text>
+                {isGettingPoints ? (
+                  <ActivityIndicator style={styles.propertyLoader} color={theme.COLORS.PRIMARY} />
+                ) : (
+                  <Text style={styles.propertyValue}>
+                    {points.hasOwnProperty(brother.email) ? points[brother.email].RUSH : '0'}
+                  </Text>
+                )}
+              </View>
+              <View style={styles.splitProperty}>
+                <Text style={styles.propertyHeader}>Any</Text>
+                {isGettingPoints ? (
+                  <ActivityIndicator style={styles.propertyLoader} color={theme.COLORS.PRIMARY} />
+                ) : (
+                  <Text style={styles.propertyValue}>
+                    {points.hasOwnProperty(brother.email) ? points[brother.email].ANY : '0'}
+                  </Text>
+                )}
+              </View>
+            </View>
+
             {!isGettingAttendance && mandatory.length > 0 && (
               <React.Fragment>
                 <Text style={styles.mandatoryHeaderText}>Missed Mandatory</Text>
@@ -234,7 +278,7 @@ const styles = StyleSheet.create({
     fontSize: 13
   },
   expandedContent: {
-    marginTop: 16
+    marginBottom: 16
   },
   splitPropertyRow: {
     flexDirection: 'row',
@@ -254,6 +298,9 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontFamily: 'OpenSans',
     fontSize: 15
+  },
+  propertyLoader: {
+    alignSelf: 'flex-start'
   },
   chartArea: {
     marginLeft: 16,
@@ -279,6 +326,7 @@ const styles = StyleSheet.create({
     color: theme.COLORS.PRIMARY
   },
   eventContainer: {
+    marginRight: 16,
     height: 48,
     borderBottomWidth: 1,
     borderBottomColor: theme.COLORS.LIGHT_BORDER,
