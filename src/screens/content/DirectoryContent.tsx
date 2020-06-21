@@ -2,7 +2,6 @@ import React from 'react';
 import { StyleSheet, View, Text, ActivityIndicator, TouchableOpacity, FlatList } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useIsFocused } from 'react-navigation-hooks';
-import moment from 'moment';
 
 import { ParamType } from '@navigation/NavigationTypes';
 import { TRedux } from '@reducers';
@@ -11,8 +10,8 @@ import { TUser } from '@backend/auth';
 import { TEvent } from '@backend/kappa';
 import { theme } from '@constants';
 import { HEADER_HEIGHT } from '@services/utils';
-import { hasValidCheckIn, getEventById, shouldLoad, sortUserByName } from '@services/kappaService';
-import { Header, Icon } from '@components';
+import { shouldLoad, sortUserByName } from '@services/kappaService';
+import { Header, Icon, BrotherItem } from '@components';
 
 const DirectoryContent: React.FC<{
   navigation: ParamType;
@@ -93,22 +92,7 @@ const DirectoryContent: React.FC<{
   const renderItem = ({ item }: { item: TUser }) => {
     return (
       <React.Fragment>
-        <TouchableOpacity onPress={() => dispatchSelectUser(item.email)}>
-          <View style={styles.userContainer}>
-            <View style={styles.userHeader}>
-              <View style={styles.selectIcon}>
-                <Text style={styles.userRole}>{item.role}</Text>
-                <Icon family="MaterialIcons" name="keyboard-arrow-right" size={36} color={theme.COLORS.PRIMARY} />
-              </View>
-            </View>
-
-            <View style={styles.userNameContainer}>
-              <Text style={styles.userName}>
-                {item.familyName}, {item.givenName}
-              </Text>
-            </View>
-          </View>
-        </TouchableOpacity>
+        <BrotherItem brother={item} />
       </React.Fragment>
     );
   };
@@ -187,48 +171,8 @@ const styles = StyleSheet.create({
     borderBottomColor: theme.COLORS.LIGHT_BORDER,
     borderBottomWidth: 1
   },
-  userContainer: {
-    marginHorizontal: 16,
-    height: 48,
-    borderBottomColor: theme.COLORS.LIGHT_BORDER,
-    borderBottomWidth: 1
-  },
-  userHeader: {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center'
-  },
-  userName: {
-    fontFamily: 'OpenSans',
-    fontSize: 16,
-    color: theme.COLORS.BLACK
-  },
-  userNameContainer: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingRight: 4,
-    backgroundColor: theme.COLORS.WHITE
-  },
   mandatoryIcon: {
     marginLeft: 4
-  },
-  userRole: {
-    fontFamily: 'OpenSans-Bold',
-    fontSize: 13,
-    color: theme.COLORS.GRAY,
-    textTransform: 'uppercase'
-  },
-  selectIcon: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center'
   },
   errorMessage: {
     marginTop: '40vh',
