@@ -120,6 +120,13 @@ const ProfileContent: React.FC<{
       <Header title="Profile" subtitle={`${user.familyName}, ${user.givenName}`} subtitleIsPressable={false}>
         <View style={styles.headerChildren}>
           <Text style={styles.roleText}>{user.role}</Text>
+
+          <View style={styles.headerButtonContainer}>
+            <TouchableOpacity activeOpacity={0.6} onPress={dispatchEdit}>
+              <Text style={styles.headerButtonText}>Edit Profile</Text>
+            </TouchableOpacity>
+          </View>
+
           <View style={styles.refreshContainer}>
             {refreshing ? (
               <ActivityIndicator style={styles.refreshIcon} color={theme.COLORS.PRIMARY} />
@@ -139,6 +146,8 @@ const ProfileContent: React.FC<{
       </Header>
 
       <View style={styles.content}>
+        <Text style={[styles.headingText, { marginTop: 0 }]}>Standing</Text>
+
         <View style={styles.splitPropertyRow}>
           <View style={[styles.splitProperty, { marginLeft: 0 }]}>
             <Text style={styles.propertyHeader}>Grad Year</Text>
@@ -148,7 +157,12 @@ const ProfileContent: React.FC<{
             <Text style={styles.propertyHeader}>Pledge Class</Text>
             <Text style={styles.propertyValue}>{user.semester}</Text>
           </View>
-          <View style={styles.splitProperty}>
+        </View>
+
+        <Text style={styles.headingText}>Contact</Text>
+
+        <View style={styles.splitPropertyRow}>
+          <View style={[styles.splitProperty, { marginLeft: 0 }]}>
             <Text style={styles.propertyHeader}>Email</Text>
             <Text style={styles.propertyValue}>{user.email}</Text>
           </View>
@@ -158,7 +172,9 @@ const ProfileContent: React.FC<{
           </View>
         </View>
 
-        <View style={[styles.splitPropertyRow, { marginTop: 12 }]}>
+        <Text style={styles.headingText}>Points and GM Attendance</Text>
+
+        <View style={styles.splitPropertyRow}>
           <View style={[styles.splitProperty, { marginLeft: 0 }]}>
             <Text style={styles.propertyHeader}>Prof</Text>
             {isGettingPoints ? (
@@ -246,10 +262,11 @@ const styles = StyleSheet.create({
   },
   refreshContainer: {},
   refreshIcon: {
-    padding: 8
+    margin: 8,
+    width: 17
   },
   headerButtonContainer: {
-    marginLeft: 8
+    marginRight: 8
   },
   headerButtonText: {
     fontFamily: 'OpenSans',
@@ -271,6 +288,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: theme.COLORS.GRAY,
     textTransform: 'uppercase'
+  },
+  headingText: {
+    marginTop: 24,
+    marginBottom: 8,
+    fontFamily: 'OpenSans',
+    fontSize: 22
   },
   propertyWrapper: {
     display: 'flex',
