@@ -5,7 +5,15 @@ import moment from 'moment';
 
 import { TRedux } from '@reducers';
 import { _auth, _kappa } from '@reducers/actions';
-import { prettyPoints, shouldLoad, sortEventsByDateReverse, prettyPhone } from '@services/kappaService';
+import {
+  prettyPoints,
+  shouldLoad,
+  sortEventsByDateReverse,
+  prettyPhone,
+  getAttendedEvents,
+  getExcusedEvents,
+  getTypeCounts
+} from '@services/kappaService';
 import { theme } from '@constants';
 import { TUser } from '@backend/auth';
 import { TEvent } from '@backend/kappa';
@@ -16,6 +24,7 @@ import Icon from '@components/Icon';
 const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
   const user = useSelector((state: TRedux) => state.auth.user);
   const loadHistory = useSelector((state: TRedux) => state.kappa.loadHistory);
+  const events = useSelector((state: TRedux) => state.kappa.events);
   const records = useSelector((state: TRedux) => state.kappa.records);
   const gmCount = useSelector((state: TRedux) => state.kappa.gmCount);
   const missedMandatory = useSelector((state: TRedux) => state.kappa.missedMandatory);
@@ -26,6 +35,13 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
   const getAttendanceError = useSelector((state: TRedux) => state.kappa.getAttendanceError);
 
   const [expanded, setExpanded] = React.useState<boolean>(false);
+  const [showPointsLoader, setShowPointsLoader] = React.useState<boolean>(false);
+
+  const attended = getAttendedEvents(records, brother.email);
+
+  const excused = getExcusedEvents(records, brother.email);
+
+  const gmCounts = getTypeCounts(events, attended, excused, 'GM');
 
   const dispatch = useDispatch();
   const dispatchGetAttendance = React.useCallback(
@@ -67,18 +83,18 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
     setExpanded(!expanded);
   }, [expanded]);
 
-  //   const chartData = React.useMemo(() => {
-  //     return [
-  //       { count: recordCounts.attended, label: 'Attended', color: theme.COLORS.PRIMARY },
-  //       { count: recordCounts.excused, label: 'Excused', color: theme.COLORS.PRIMARY },
-  //       { count: recordCounts.pending, label: 'Pending', color: theme.COLORS.INPUT_ERROR_LIGHT },
-  //       {
-  //         count: directorySize - recordCounts.attended - recordCounts.excused - recordCounts.pending,
-  //         label: 'Absent',
-  //         color: theme.COLORS.LIGHT_BORDER
-  //       }
-  //     ];
-  //   }, [recordCounts, directorySize]);
+  const chartData = React.useMemo(() => {
+    return [
+      { count: gmCounts.attended, label: 'Attended', color: theme.COLORS.PRIMARY },
+      { count: gmCounts.excused, label: 'Excused', color: theme.COLORS.PRIMARY },
+      { count: gmCounts.pending, label: 'Pending', color: theme.COLORS.INPUT_ERROR_LIGHT },
+      {
+        count: gmCount - gmCounts.attended - gmCounts.excused - gmCounts.pending,
+        label: 'Absent',
+        color: theme.COLORS.LIGHT_BORDER
+      }
+    ];
+  }, [gmCounts.attended, gmCounts.excused, gmCounts.pending, gmCount]);
 
   const mandatory = React.useMemo(() => {
     if (!user.privileged) return [];
@@ -114,12 +130,6 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
             <Text style={styles.propertyHeader}>Phone</Text>
             <Text style={styles.propertyValue}>{brother.phone ? prettyPhone(brother.phone) : ''}</Text>
           </View>
-
-          {/* {user.privileged && (
-            <View style={styles.chartArea}>
-              <HorizontalSegmentBar data={chartData} />
-            </View>
-          )} */}
         </View>
 
         {user.privileged && (
@@ -174,6 +184,10 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
                     {points.hasOwnProperty(brother.email) ? points[brother.email].ANY : '0'}
                   </Text>
                 )}
+              </View>
+
+              <View style={styles.chartArea}>
+                <HorizontalSegmentBar data={chartData} />
               </View>
             </View>
 
@@ -328,8 +342,6 @@ const styles = StyleSheet.create({
   eventContainer: {
     marginRight: 16,
     height: 48,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.COLORS.LIGHT_BORDER,
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-start'

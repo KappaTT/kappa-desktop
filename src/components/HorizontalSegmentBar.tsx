@@ -126,8 +126,7 @@ const HorizontalSegmentBar: React.FC<{
 
 const styles = StyleSheet.create({
   wrapper: {
-    width: '100%',
-    maxWidth: 512
+    width: '100%'
   },
   labelsWrapper: {
     width: '100%',
