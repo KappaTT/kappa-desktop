@@ -7,10 +7,18 @@ import moment from 'moment';
 import { ParamType } from '@navigation/NavigationTypes';
 import { TRedux } from '@reducers';
 import { _auth, _kappa, _nav } from '@reducers/actions';
+import { TEvent } from '@backend/kappa';
 import { theme } from '@constants';
 import { HEADER_HEIGHT, isEmpty } from '@services/utils';
-import { shouldLoad, sortEventsByDateReverse } from '@services/kappaService';
-import { Header, Icon } from '@components';
+import {
+  shouldLoad,
+  sortEventsByDateReverse,
+  prettyPhone,
+  getAttendedEvents,
+  getExcusedEvents,
+  getTypeCounts
+} from '@services/kappaService';
+import { Header, Icon, HorizontalSegmentBar } from '@components';
 
 const ProfileContent: React.FC<{
   navigation: ParamType;
@@ -30,6 +38,10 @@ const ProfileContent: React.FC<{
   const points = useSelector((state: TRedux) => state.kappa.points);
   const isGettingPoints = useSelector((state: TRedux) => state.kappa.isGettingPoints);
   const getPointsError = useSelector((state: TRedux) => state.kappa.getPointsError);
+
+  const attended = getAttendedEvents(records, user.email);
+  const excused = getExcusedEvents(records, user.email);
+  const gmCounts = getTypeCounts(events, attended, excused, 'GM');
 
   const dispatch = useDispatch();
   const dispatchEdit = React.useCallback(() => dispatch(_auth.showOnboarding(true)), [dispatch]);
@@ -76,6 +88,19 @@ const ProfileContent: React.FC<{
     loadData(true);
   }, [loadData]);
 
+  const chartData = React.useMemo(() => {
+    return [
+      { count: gmCounts.attended, label: 'Attended', color: theme.COLORS.PRIMARY },
+      { count: gmCounts.excused, label: 'Excused', color: theme.COLORS.PRIMARY },
+      { count: gmCounts.pending, label: 'Pending', color: theme.COLORS.INPUT_ERROR_LIGHT },
+      {
+        count: gmCount - gmCounts.attended - gmCounts.excused - gmCounts.pending,
+        label: 'Absent',
+        color: theme.COLORS.LIGHT_BORDER
+      }
+    ];
+  }, [gmCounts.attended, gmCounts.excused, gmCounts.pending, gmCount]);
+
   const mandatory = React.useMemo(() => {
     if (!user.privileged) return [];
 
@@ -92,8 +117,9 @@ const ProfileContent: React.FC<{
 
   return (
     <View style={styles.container}>
-      <Header title="Profile">
+      <Header title="Profile" subtitle={`${user.familyName}, ${user.givenName}`} subtitleIsPressable={false}>
         <View style={styles.headerChildren}>
+          <Text style={styles.roleText}>{user.role}</Text>
           <View style={styles.refreshContainer}>
             {refreshing ? (
               <ActivityIndicator style={styles.refreshIcon} color={theme.COLORS.PRIMARY} />
@@ -112,7 +138,98 @@ const ProfileContent: React.FC<{
         </View>
       </Header>
 
-      <View style={styles.content}></View>
+      <View style={styles.content}>
+        <View style={styles.splitPropertyRow}>
+          <View style={[styles.splitProperty, { marginLeft: 0 }]}>
+            <Text style={styles.propertyHeader}>Grad Year</Text>
+            <Text style={styles.propertyValue}>{user.gradYear}</Text>
+          </View>
+          <View style={styles.splitProperty}>
+            <Text style={styles.propertyHeader}>Pledge Class</Text>
+            <Text style={styles.propertyValue}>{user.semester}</Text>
+          </View>
+          <View style={styles.splitProperty}>
+            <Text style={styles.propertyHeader}>Email</Text>
+            <Text style={styles.propertyValue}>{user.email}</Text>
+          </View>
+          <View style={styles.splitProperty}>
+            <Text style={styles.propertyHeader}>Phone</Text>
+            <Text style={styles.propertyValue}>{prettyPhone(user.phone)}</Text>
+          </View>
+        </View>
+
+        <View style={[styles.splitPropertyRow, { marginTop: 12 }]}>
+          <View style={[styles.splitProperty, { marginLeft: 0 }]}>
+            <Text style={styles.propertyHeader}>Prof</Text>
+            {isGettingPoints ? (
+              <ActivityIndicator style={styles.propertyLoader} color={theme.COLORS.PRIMARY} />
+            ) : (
+              <Text style={styles.propertyValue}>
+                {points.hasOwnProperty(user.email) ? points[user.email].PROF : '0'}
+              </Text>
+            )}
+          </View>
+          <View style={styles.splitProperty}>
+            <Text style={styles.propertyHeader}>Phil</Text>
+            {isGettingPoints ? (
+              <ActivityIndicator style={styles.propertyLoader} color={theme.COLORS.PRIMARY} />
+            ) : (
+              <Text style={styles.propertyValue}>
+                {points.hasOwnProperty(user.email) ? points[user.email].PHIL : '0'}
+              </Text>
+            )}
+          </View>
+          <View style={styles.splitProperty}>
+            <Text style={styles.propertyHeader}>Bro</Text>
+            {isGettingPoints ? (
+              <ActivityIndicator style={styles.propertyLoader} color={theme.COLORS.PRIMARY} />
+            ) : (
+              <Text style={styles.propertyValue}>
+                {points.hasOwnProperty(user.email) ? points[user.email].BRO : '0'}
+              </Text>
+            )}
+          </View>
+          <View style={styles.splitProperty}>
+            <Text style={styles.propertyHeader}>Rush</Text>
+            {isGettingPoints ? (
+              <ActivityIndicator style={styles.propertyLoader} color={theme.COLORS.PRIMARY} />
+            ) : (
+              <Text style={styles.propertyValue}>
+                {points.hasOwnProperty(user.email) ? points[user.email].RUSH : '0'}
+              </Text>
+            )}
+          </View>
+          <View style={styles.splitProperty}>
+            <Text style={styles.propertyHeader}>Any</Text>
+            {isGettingPoints ? (
+              <ActivityIndicator style={styles.propertyLoader} color={theme.COLORS.PRIMARY} />
+            ) : (
+              <Text style={styles.propertyValue}>
+                {points.hasOwnProperty(user.email) ? points[user.email].ANY : '0'}
+              </Text>
+            )}
+          </View>
+
+          <View style={styles.chartArea}>
+            <HorizontalSegmentBar data={chartData} />
+          </View>
+        </View>
+
+        {!isGettingAttendance && mandatory.length > 0 && (
+          <React.Fragment>
+            <Text style={styles.mandatoryHeaderText}>Missed Mandatory</Text>
+
+            <View style={styles.mandatoryContainer}>
+              {mandatory.map((event: TEvent) => (
+                <View key={event._id} style={styles.eventContainer}>
+                  <Text style={styles.eventTitle}>{event.title}</Text>
+                  <Text style={styles.eventDate}>{moment(event.start).format('M/D/Y')}</Text>
+                </View>
+              ))}
+            </View>
+          </React.Fragment>
+        )}
+      </View>
     </View>
   );
 };
@@ -144,7 +261,88 @@ const styles = StyleSheet.create({
     top: HEADER_HEIGHT,
     left: 0,
     right: 0,
-    bottom: 0
+    bottom: 0,
+    padding: 16
+  },
+  roleText: {
+    position: 'absolute',
+    left: 0,
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 14,
+    color: theme.COLORS.GRAY,
+    textTransform: 'uppercase'
+  },
+  propertyWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  propertyIcon: {
+    marginLeft: 8
+  },
+  propertyText: {
+    marginLeft: 4,
+    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 13
+  },
+  splitPropertyRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap'
+  },
+  splitProperty: {
+    marginLeft: 16,
+    marginRight: 16
+  },
+  propertyHeader: {
+    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 13,
+    textTransform: 'uppercase',
+    color: theme.COLORS.GRAY
+  },
+  propertyValue: {
+    marginTop: 4,
+    fontFamily: 'OpenSans',
+    fontSize: 15
+  },
+  propertyLoader: {
+    alignSelf: 'flex-start'
+  },
+  chartArea: {
+    marginLeft: 16,
+    flex: 1
+  },
+  description: {
+    marginTop: 2,
+    fontFamily: 'OpenSans',
+    fontSize: 12
+  },
+  mandatoryContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap'
+  },
+  mandatoryHeaderText: {
+    marginTop: 16,
+    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 13,
+    textTransform: 'uppercase',
+    color: theme.COLORS.PRIMARY
+  },
+  eventContainer: {
+    marginRight: 16,
+    height: 48,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start'
+  },
+  eventTitle: {
+    fontFamily: 'OpenSans',
+    fontSize: 16
+  },
+  eventDate: {
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 13,
+    color: theme.COLORS.GRAY,
+    textTransform: 'uppercase'
   }
 });
 

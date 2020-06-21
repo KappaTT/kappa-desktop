@@ -99,9 +99,7 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
   }, [dispatchSetCheckInEvent, event._id]);
 
   const attended = getAttendance(records, user.email, event._id);
-
   const excused = getExcuse(records, user.email, event._id);
-
   const recordCounts = getEventRecordCounts(records, event._id);
 
   const chartData = React.useMemo(() => {

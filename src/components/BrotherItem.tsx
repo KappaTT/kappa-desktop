@@ -36,12 +36,9 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
   const getAttendanceError = useSelector((state: TRedux) => state.kappa.getAttendanceError);
 
   const [expanded, setExpanded] = React.useState<boolean>(false);
-  const [showPointsLoader, setShowPointsLoader] = React.useState<boolean>(false);
 
   const attended = getAttendedEvents(records, brother.email);
-
   const excused = getExcusedEvents(records, brother.email);
-
   const gmCounts = getTypeCounts(events, attended, excused, 'GM');
 
   const dispatch = useDispatch();
@@ -169,7 +166,7 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
 
         {user.privileged && (
           <React.Fragment>
-            <View style={[styles.splitPropertyRow, { marginTop: 8 }]}>
+            <View style={[styles.splitPropertyRow, { marginTop: 12 }]}>
               <View style={[styles.splitProperty, { marginLeft: 0 }]}>
                 <Text style={styles.propertyHeader}>Prof</Text>
                 {isGettingPoints ? (
