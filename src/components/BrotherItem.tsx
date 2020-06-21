@@ -133,7 +133,7 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
 
         {user.privileged && (
           <React.Fragment>
-            {mandatory.length > 0 && (
+            {!isGettingAttendance && mandatory.length > 0 && (
               <React.Fragment>
                 <Text style={styles.mandatoryHeaderText}>Missed Mandatory</Text>
 

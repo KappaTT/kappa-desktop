@@ -225,7 +225,7 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
               </View>
             </View>
 
-            {mandatory.length > 0 && (
+            {!isGettingAttendance && mandatory.length > 0 && (
               <React.Fragment>
                 <Text style={styles.mandatoryHeaderText}>Missed Mandatory</Text>
 
