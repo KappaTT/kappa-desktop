@@ -7,7 +7,6 @@ import {
   EventsScreen,
   EventTemplatesScreen,
   LoginScreen,
-  MembershipScreen,
   MessagesScreen,
   PointRequirementsScreen,
   ProfileScreen,
@@ -96,25 +95,6 @@ const VotingStack = createStackNavigator(
   {
     Voting: {
       screen: VotingScreen,
-      navigationOptions: ({ navigation }) => ({
-        header: null,
-        headerStyle: {
-          height: 0
-        }
-      })
-    }
-  },
-  {
-    navigationOptions: ({ navigation }) => ({
-      tabBarVisible: false
-    })
-  }
-);
-
-const MembershipStack = createStackNavigator(
-  {
-    Membership: {
-      screen: MembershipScreen,
       navigationOptions: ({ navigation }) => ({
         header: null,
         headerStyle: {
@@ -250,7 +230,6 @@ export default createBottomTabNavigator({
   EventsStack,
   DirectoryStack,
   VotingStack,
-  MembershipStack,
   EventTemplatesStack,
   StudyAbroadStack,
   PointRequirementsStack,
