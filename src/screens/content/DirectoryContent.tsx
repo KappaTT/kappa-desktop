@@ -148,10 +148,11 @@ const styles = StyleSheet.create({
   },
   refreshContainer: {},
   refreshIcon: {
-    padding: 8
+    margin: 8,
+    width: 17
   },
   headerButtonContainer: {
-    marginLeft: 8
+    marginRight: 8
   },
   headerButtonText: {
     fontFamily: 'OpenSans',

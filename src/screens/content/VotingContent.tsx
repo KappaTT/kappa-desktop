@@ -39,10 +39,11 @@ const styles = StyleSheet.create({
   },
   refreshContainer: {},
   refreshIcon: {
-    padding: 8
+    margin: 8,
+    width: 17
   },
   headerButtonContainer: {
-    marginLeft: 8
+    marginRight: 8
   },
   headerButtonText: {
     fontFamily: 'OpenSans',
@@ -54,7 +55,8 @@ const styles = StyleSheet.create({
     top: HEADER_HEIGHT,
     left: 0,
     right: 0,
-    bottom: 0
+    bottom: 0,
+    padding: 16
   }
 });
 
