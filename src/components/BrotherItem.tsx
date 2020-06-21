@@ -1,10 +1,11 @@
 import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, ActivityIndicator, Clipboard } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment';
 
 import { TRedux } from '@reducers';
-import { _auth, _kappa } from '@reducers/actions';
+import { TToast } from '@reducers/ui';
+import { _auth, _kappa, _ui } from '@reducers/actions';
 import {
   prettyPoints,
   shouldLoad,
@@ -53,6 +54,8 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
     user,
     brother.email
   ]);
+
+  const dispatchShowToast = React.useCallback((toast: Partial<TToast>) => dispatch(_ui.showToast(toast)), [dispatch]);
 
   const loadData = React.useCallback(
     (force: boolean) => {
@@ -104,6 +107,34 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
     return Object.values(missedMandatory[brother.email]).sort(sortEventsByDateReverse);
   }, [user.privileged, missedMandatory, brother.email]);
 
+  const onPressEmail = React.useCallback(() => {
+    Clipboard.setString(brother.email);
+
+    dispatchShowToast({
+      title: 'Copied',
+      message: 'The email was saved to your clipboard',
+      allowClose: true,
+      timer: 1500,
+      toastColor: theme.COLORS.PRIMARY_GREEN,
+      textColor: theme.COLORS.WHITE,
+      showBackdrop: false
+    });
+  }, [brother.email, dispatchShowToast]);
+
+  const onPressPhone = React.useCallback(() => {
+    Clipboard.setString(brother.phone);
+
+    dispatchShowToast({
+      title: 'Copied',
+      message: 'The phone number was saved to your clipboard',
+      allowClose: true,
+      timer: 1500,
+      toastColor: theme.COLORS.PRIMARY_GREEN,
+      textColor: theme.COLORS.WHITE,
+      showBackdrop: false
+    });
+  }, [brother.phone, dispatchShowToast]);
+
   React.useEffect(() => {
     if (expanded) {
       loadData(false);
@@ -123,12 +154,16 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
             <Text style={styles.propertyValue}>{brother.semester}</Text>
           </View>
           <View style={styles.splitProperty}>
-            <Text style={styles.propertyHeader}>Email</Text>
-            <Text style={styles.propertyValue}>{brother.email}</Text>
+            <TouchableOpacity activeOpacity={0.6} onPress={onPressEmail}>
+              <Text style={styles.propertyHeader}>Email</Text>
+              <Text style={styles.propertyValue}>{brother.email}</Text>
+            </TouchableOpacity>
           </View>
           <View style={styles.splitProperty}>
-            <Text style={styles.propertyHeader}>Phone</Text>
-            <Text style={styles.propertyValue}>{brother.phone ? prettyPhone(brother.phone) : ''}</Text>
+            <TouchableOpacity activeOpacity={0.6} onPress={onPressPhone}>
+              <Text style={styles.propertyHeader}>Phone</Text>
+              <Text style={styles.propertyValue}>{prettyPhone(brother.phone)}</Text>
+            </TouchableOpacity>
           </View>
         </View>
 
