@@ -123,26 +123,32 @@ const Sidebar: React.FC = () => {
         </View>
       </View>
 
-      <View style={styles.navigationArea}>
-        {SidebarLayout.filter((element) => user.privileged || !element.privileged).map((element) => (
-          <React.Fragment key={element.label}>
-            {element.type === 'DROP' && (
-              <SidebarDropdown
-                element={sidebarNav[element.label]}
-                expanded={sidebarNav[element.label].expanded}
-                selectedLabel={selectedPageLabel}
-                onPress={onPressElement}
-              />
-            )}
-            {element.type === 'NAV' && (
-              <SidebarNavButton
-                element={sidebarNav[element.label]}
-                selected={element.label === selectedPageLabel}
-                onPress={onPressElement}
-              />
-            )}
-          </React.Fragment>
-        ))}
+      <View style={styles.navigationAreaContainer}>
+        <View style={styles.navigationArea}>
+          {SidebarLayout.filter(
+            (element) => (user.privileged || !element.privileged) && element.label !== 'Sign Out'
+          ).map((element) => (
+            <React.Fragment key={element.label}>
+              {element.type === 'DROP' && (
+                <SidebarDropdown
+                  element={sidebarNav[element.label]}
+                  expanded={sidebarNav[element.label].expanded}
+                  selectedLabel={selectedPageLabel}
+                  onPress={onPressElement}
+                />
+              )}
+              {element.type === 'NAV' && (
+                <SidebarNavButton
+                  element={sidebarNav[element.label]}
+                  selected={element.label === selectedPageLabel}
+                  onPress={onPressElement}
+                />
+              )}
+            </React.Fragment>
+          ))}
+        </View>
+
+        <SidebarNavButton element={sidebarNav['Sign Out']} selected={false} onPress={onPressElement} />
       </View>
     </View>
   );
@@ -203,6 +209,12 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 4,
     backgroundColor: theme.COLORS.PRIMARY
+  },
+  navigationAreaContainer: {
+    paddingBottom: 16,
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'space-between'
   },
   navigationArea: {
     flex: 1,
