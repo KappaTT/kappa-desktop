@@ -292,8 +292,8 @@ const styles = StyleSheet.create({
   headingText: {
     marginTop: 24,
     marginBottom: 8,
-    fontFamily: 'OpenSans',
-    fontSize: 22
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 20
   },
   propertyWrapper: {
     display: 'flex',
