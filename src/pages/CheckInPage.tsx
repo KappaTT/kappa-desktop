@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     fontFamily: 'OpenSans',
     fontSize: 17,
-    color: theme.COLORS.GRAY
+    color: theme.COLORS.DARK_GRAY
   },
   content: {
     marginTop: 44,
