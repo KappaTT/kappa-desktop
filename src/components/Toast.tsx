@@ -27,7 +27,8 @@ const Toast: React.FC<{
     Animated.timing(progress, {
       toValue: 1,
       easing: Easing.out(Easing.poly(4)),
-      duration: 200
+      duration: 200,
+      useNativeDriver: false
     }).start(() => {
       onDoneClosing();
     });
@@ -56,7 +57,8 @@ const Toast: React.FC<{
     Animated.timing(progress, {
       toValue: 0,
       easing: Easing.out(Easing.poly(4)),
-      duration: 200
+      duration: 200,
+      useNativeDriver: false
     }).start();
   }, [progress]);
 

@@ -13,7 +13,6 @@ const SidebarDropdown: React.FC<{
   onPress(element: TSidebarElement): void;
 }> = ({ element, expanded, selectedLabel, onPress }) => {
   const navHeightBase = new Animated.Value(element.children.length * 24);
-  const opacityBase = new Animated.Value(1);
 
   const [animating, setAnimating] = React.useState<boolean>(false);
   const progress = React.useRef<Animated.Value>(new Animated.Value(1)).current;
@@ -23,7 +22,8 @@ const SidebarDropdown: React.FC<{
       Animated.timing(progress, {
         toValue: target,
         easing: Easing.out(Easing.poly(4)),
-        duration: 200
+        duration: 200,
+        useNativeDriver: false
       }).start(() => {
         onPress(element);
         setAnimating(false);
