@@ -1,12 +1,12 @@
 import React from 'react';
 
 import { ParamType } from '@navigation/NavigationTypes';
-import Content from '@screens/content/PointRequirementsContent';
+import Content from '@screens/content/BrotherRequirementsContent';
 
-const PointRequirementsScreen: React.FC<{
+const BrotherRequirementsScreen: React.FC<{
   navigation: ParamType;
 }> = ({ navigation }) => {
   return <Content navigation={navigation} />;
 };
 
-export default PointRequirementsScreen;
+export default BrotherRequirementsScreen;

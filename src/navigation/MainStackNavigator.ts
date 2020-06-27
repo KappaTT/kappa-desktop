@@ -2,13 +2,13 @@ import { createStackNavigator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 
 import {
+  BrotherRequirementsScreen,
   ChapterSettingsScreen,
   DirectoryScreen,
   EventsScreen,
   EventTemplatesScreen,
   LoginScreen,
   MessagesScreen,
-  PointRequirementsScreen,
   ProfileScreen,
   StudyAbroadScreen,
   VotingManagementScreen,
@@ -148,10 +148,10 @@ const StudyAbroadStack = createStackNavigator(
   }
 );
 
-const PointRequirementsStack = createStackNavigator(
+const BrotherRequirementsStack = createStackNavigator(
   {
-    PointRequirements: {
-      screen: PointRequirementsScreen,
+    BrotherRequirements: {
+      screen: BrotherRequirementsScreen,
       navigationOptions: ({ navigation }) => ({
         header: null,
         headerStyle: {
@@ -232,7 +232,7 @@ export default createBottomTabNavigator({
   VotingStack,
   EventTemplatesStack,
   StudyAbroadStack,
-  PointRequirementsStack,
+  BrotherRequirementsStack,
   VotingManagementStack,
   ChapterSettingsStack,
   ProfileStack

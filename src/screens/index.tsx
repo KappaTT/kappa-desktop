@@ -4,7 +4,7 @@ import EventsScreen from './EventsScreen';
 import EventTemplatesScreen from './EventTemplatesScreen';
 import LoginScreen from './LoginScreen';
 import MessagesScreen from './MessagesScreen';
-import PointRequirementsScreen from './PointRequirementsScreen';
+import BrotherRequirementsScreen from './BrotherRequirementsScreen';
 import ProfileScreen from './ProfileScreen';
 import StudyAbroadScreen from './StudyAbroadScreen';
 import VotingManagementScreen from './VotingManagementScreen';
@@ -17,7 +17,7 @@ export {
   EventTemplatesScreen,
   LoginScreen,
   MessagesScreen,
-  PointRequirementsScreen,
+  BrotherRequirementsScreen,
   ProfileScreen,
   StudyAbroadScreen,
   VotingManagementScreen,

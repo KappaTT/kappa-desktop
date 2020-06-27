@@ -11,14 +11,14 @@ import { theme } from '@constants';
 import { HEADER_HEIGHT } from '@services/utils';
 import { Header, Icon } from '@components';
 
-const PointRequirementsContent: React.FC<{
+const BrotherRequirementsContent: React.FC<{
   navigation: ParamType;
 }> = ({ navigation }) => {
   const isFocused = useIsFocused();
 
   return (
     <View style={styles.container}>
-      <Header title="Point Requirements">
+      <Header title="Brother Requirements">
         <View style={styles.headerChildren}></View>
       </Header>
 
@@ -60,4 +60,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default PointRequirementsContent;
+export default BrotherRequirementsContent;
