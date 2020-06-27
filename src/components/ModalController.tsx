@@ -9,6 +9,7 @@ import { getEventById } from '@services/kappaService';
 import { CheckInPage, EditEventPage, EditProfilePage, RequestExcusePage } from '@pages';
 import Ghost from '@components/Ghost';
 import PopupModal from '@components/PopupModal';
+import { incompleteUser } from '@backend/auth';
 
 const ModalController: React.FC = () => {
   const user = useSelector((state: TRedux) => state.auth.user);
@@ -28,7 +29,37 @@ const ModalController: React.FC = () => {
     [dispatch, user]
   );
   const dispatchCancelCheckInEvent = React.useCallback(() => dispatch(_kappa.setCheckInEvent('', false)), [dispatch]);
+  const dispatchShowOnboarding = React.useCallback(() => dispatch(_auth.showOnboarding()), [dispatch]);
   const dispatchHideOnboarding = React.useCallback(() => dispatch(_auth.hideOnboarding()), [dispatch]);
+
+  React.useEffect(() => {
+    if (!user) {
+      if (onboardingVisible) {
+        dispatchHideOnboarding();
+      }
+
+      return;
+    }
+
+    if (isEditingUser) {
+      return;
+    }
+
+    let incomplete = false;
+
+    for (const key of Object.keys(incompleteUser)) {
+      if (user[key] === undefined || user[key] === incompleteUser[key]) {
+        incomplete = true;
+        break;
+      }
+    }
+
+    if (incomplete && !onboardingVisible) {
+      dispatchShowOnboarding();
+    } else if (!incomplete && onboardingVisible) {
+      dispatchHideOnboarding();
+    }
+  }, [user, onboardingVisible, isEditingUser, dispatchHideOnboarding, dispatchShowOnboarding]);
 
   return (
     <Ghost style={styles.container}>
@@ -62,7 +93,11 @@ const ModalController: React.FC = () => {
         />
       </PopupModal>
 
-      <PopupModal visible={onboardingVisible || isEditingUser} allowClose={isEditingUser}>
+      <PopupModal
+        visible={onboardingVisible || isEditingUser}
+        allowClose={isEditingUser}
+        onDoneClosing={dispatchHideOnboarding}
+      >
         <EditProfilePage onPressCancel={dispatchHideOnboarding} />
       </PopupModal>
     </Ghost>
