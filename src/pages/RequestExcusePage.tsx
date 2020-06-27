@@ -147,15 +147,16 @@ const RequestExcusePage: React.FC<{
 
               <Text style={styles.description}>
                 You may only check into an event on the same day it happened. If you forgot to check in and it is the
-                same day, you can still submit the code. If it isn't, please send a request from your messages page and
-                the exec board will consider it. Excuses must be requested before an event.
+                same day, you can still submit the code. If it isn't, please send a late request and the exec board will
+                consider it. Regular excuses must be requested before an event.
               </Text>
             </React.Fragment>
           ) : (
             <Text style={styles.description}>
               No events available to check in or request excuses for. You may only check into an event on the same day
               it happened. If you forgot to check in and it is the same day, you can still submit the code. If it isn't,
-              please send a request from your messages page. Excuses must be requested before an event.
+              please send a late request and the exec board will consider it. Regular excuses must be requested before
+              an event otherwise.
             </Text>
           )}
         </ScrollView>
