@@ -145,10 +145,9 @@ const CheckInPage: React.FC<{
             </React.Fragment>
           ) : (
             <Text style={styles.description}>
-              No events available to check in or request excuses for. You may only check into an event on the same day
-              it happened. If you forgot to check in and it is the same day, you can still submit the code. If it isn't,
-              please send a late request and the exec board will consider it. Regular excuses must be requested before
-              an event.
+              No events available to check in for. You may only check into an event on the same day it happened. If you
+              forgot to check in and it is the same day, you can still submit the code. If it isn't, please send a late
+              request and the exec board will consider it. Regular excuses must be requested before an event.
             </Text>
           )}
         </ScrollView>
