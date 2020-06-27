@@ -12,6 +12,35 @@ const numberFormatter = (text: string) => {
   return text !== undefined ? text.replace(/\D/g, '') : '';
 };
 
+const getGradYearOptions = () => {
+  const options = [];
+
+  const year = new Date().getFullYear();
+
+  const first = `Spring ${year}`;
+
+  options.push({
+    id: first,
+    title: first
+  });
+
+  for (let i = 0; i < 3; i++) {
+    const fall = `Fall ${year + i}`;
+    const spring = `Spring ${year + i + 1}`;
+
+    options.push({
+      id: fall,
+      title: fall
+    });
+    options.push({
+      id: spring,
+      title: spring
+    });
+  }
+
+  return options;
+};
+
 const EditProfilePage: React.FC<{
   onPressCancel(): void;
 }> = ({ onPressCancel }) => {
@@ -31,9 +60,10 @@ const EditProfilePage: React.FC<{
   ]);
 
   const prettyPhoneValue = React.useMemo(() => prettyPhone(phone), [phone]);
+  const gradYearOptions = React.useMemo(() => getGradYearOptions(), []);
 
   const readyToSave = React.useMemo(
-    () => prettyPhoneValue === '' || prettyPhoneValue === 'Invalid' || gradYear === '',
+    () => !(prettyPhoneValue === '' || prettyPhoneValue === 'Invalid' || gradYear === ''),
     [gradYear, prettyPhoneValue]
   );
 
@@ -79,11 +109,53 @@ const EditProfilePage: React.FC<{
   };
 
   const renderContactSection = () => {
-    return <View style={styles.sectionContent} />;
+    return (
+      <View style={styles.sectionContent}>
+        <ScrollView>
+          <View style={styles.propertyHeaderContainer}>
+            <Text style={styles.propertyHeader}>Phone Number</Text>
+            <Text style={styles.propertyHeaderRequired}>*</Text>
+          </View>
+
+          <FormattedInput
+            placeholderText="phone number"
+            maxLength={10}
+            value={phone}
+            formatter={numberFormatter}
+            onChangeText={onChangePhone}
+          />
+
+          <Text style={styles.description}>
+            Your phone number will be shared with brothers and used if anyone needs to contact you.
+          </Text>
+
+          <Text style={styles.description}>
+            Please fill out all missing information. Information provided by the university or our official records
+            cannot be edited at this time.
+          </Text>
+        </ScrollView>
+      </View>
+    );
   };
 
   const renderGradYearSection = () => {
-    return <View style={styles.sectionContent} />;
+    return (
+      <View style={styles.sectionContent}>
+        <ScrollView>
+          <View style={styles.propertyHeaderContainer}>
+            <Text style={styles.propertyHeader}>Grad Year</Text>
+            <Text style={styles.propertyHeaderRequired}>*</Text>
+          </View>
+
+          <RadioList options={gradYearOptions} selected={gradYear} onChange={onChangeGradYear} />
+
+          <Text style={styles.description}>
+            Choose the term that you will graduate in, not by credit hours, this is used to determine your points
+            requirements and alumni status.
+          </Text>
+        </ScrollView>
+      </View>
+    );
   };
 
   const renderDivider = (readyStatus: boolean) => {

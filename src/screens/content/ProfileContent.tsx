@@ -150,6 +150,10 @@ const ProfileContent: React.FC<{
 
         <View style={styles.splitPropertyRow}>
           <View style={[styles.splitProperty, { marginLeft: 0 }]}>
+            <Text style={styles.propertyHeader}>Freshman Year</Text>
+            <Text style={styles.propertyValue}>{user.firstYear}</Text>
+          </View>
+          <View style={styles.splitProperty}>
             <Text style={styles.propertyHeader}>Grad Year</Text>
             <Text style={styles.propertyValue}>{user.gradYear}</Text>
           </View>
