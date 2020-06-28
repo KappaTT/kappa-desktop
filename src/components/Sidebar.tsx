@@ -100,7 +100,7 @@ const Sidebar: React.FC = () => {
         <View
           style={[
             styles.messagesCircle,
-            selectedPageLabel === 'Messages' && { backgroundColor: `${theme.COLORS.PRIMARY}0f` }
+            selectedPageLabel === 'Messages' && { backgroundColor: theme.COLORS.PRIMARY_LIGHT }
           ]}
         >
           <TouchableOpacity activeOpacity={0.6} onPress={onPressMessages}>
@@ -114,7 +114,12 @@ const Sidebar: React.FC = () => {
 
             {unreadMessages && (
               <View style={styles.badgeWrapper}>
-                <View style={styles.badgeContainer}>
+                <View
+                  style={[
+                    styles.badgeContainer,
+                    selectedPageLabel === 'Messages' && { borderColor: theme.COLORS.PRIMARY_LIGHT }
+                  ]}
+                >
                   <View style={styles.badge} />
                 </View>
               </View>
@@ -200,6 +205,7 @@ const styles = StyleSheet.create({
   badgeContainer: {
     borderColor: theme.COLORS.WHITE,
     borderWidth: 3,
+    borderRadius: 7,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center'
