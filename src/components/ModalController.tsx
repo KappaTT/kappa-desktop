@@ -12,6 +12,7 @@ import PopupModal from '@components/PopupModal';
 import { incompleteUser } from '@backend/auth';
 
 const ModalController: React.FC = () => {
+  const authorized = useSelector((state: TRedux) => state.auth.authorized);
   const user = useSelector((state: TRedux) => state.auth.user);
   const events = useSelector((state: TRedux) => state.kappa.events);
   const editingEventId = useSelector((state: TRedux) => state.kappa.editingEventId);
@@ -33,7 +34,7 @@ const ModalController: React.FC = () => {
   const dispatchHideOnboarding = React.useCallback(() => dispatch(_auth.hideOnboarding()), [dispatch]);
 
   React.useEffect(() => {
-    if (!user) {
+    if (!authorized || !user) {
       if (onboardingVisible) {
         dispatchHideOnboarding();
       }
