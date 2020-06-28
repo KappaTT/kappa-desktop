@@ -9,6 +9,7 @@ import Header from './Header';
 import HorizontalSegmentBar from './HorizontalSegmentBar';
 import Icon from './Icon';
 import ModalController from './ModalController';
+import PendingExcuseItem from './PendingExcuseItem';
 import PopupModal from './PopupModal';
 import RadioList from './RadioList';
 import RoundButton from './RoundButton';
@@ -31,6 +32,7 @@ export {
   HorizontalSegmentBar,
   Icon,
   ModalController,
+  PendingExcuseItem,
   PopupModal,
   RadioList,
   RoundButton,
