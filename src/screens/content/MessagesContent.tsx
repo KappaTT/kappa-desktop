@@ -7,11 +7,11 @@ import moment from 'moment';
 import { ParamType } from '@navigation/NavigationTypes';
 import { TRedux } from '@reducers';
 import { _auth, _kappa, _nav } from '@reducers/actions';
-import { TExcuse } from '@backend/kappa';
+import { TExcuse, TPendingExcuse } from '@backend/kappa';
 import { getExcusedEvents, getEventById, sortEventsByDateReverse, shouldLoad } from '@services/kappaService';
 import { theme } from '@constants';
 import { HEADER_HEIGHT, isEmpty } from '@services/utils';
-import { Header, Icon } from '@components';
+import { Header, Icon, PendingExcuseItem } from '@components';
 
 const MessagesContent: React.FC<{
   navigation: ParamType;
@@ -26,6 +26,7 @@ const MessagesContent: React.FC<{
   const pendingExcusesArray = useSelector((state: TRedux) => state.kappa.pendingExcusesArray);
   const isGettingExcuses = useSelector((state: TRedux) => state.kappa.isGettingExcuses);
   const getExcusesError = useSelector((state: TRedux) => state.kappa.getExcusesError);
+  const getExcusesErrorMessage = useSelector((state: TRedux) => state.kappa.getExcusesErrorMessage);
 
   const [showing, setShowing] = React.useState<'Pending' | 'Approved'>('Pending');
 
@@ -83,6 +84,10 @@ const MessagesContent: React.FC<{
     }
   }, [user.sessionToken, isFocused, loadData]);
 
+  const keyExtractor = React.useCallback((item: TPendingExcuse) => `${item._id}:${item.eventId}`, []);
+
+  const renderItem = ({ item }: { item: TPendingExcuse }) => <PendingExcuseItem excuse={item} />;
+
   return (
     <View style={styles.container}>
       <Header title="Messages" subtitle={showingWithCount} subtitleIsPressable={true} onSubtitlePress={onPressShowing}>
@@ -105,7 +110,33 @@ const MessagesContent: React.FC<{
         </View>
       </Header>
 
-      <View style={styles.content}>{showing === 'Pending' ? <React.Fragment /> : <React.Fragment />}</View>
+      <View style={styles.content}>
+        {showing === 'Pending' ? (
+          <FlatList
+            data={pendingExcusesArray}
+            keyExtractor={keyExtractor}
+            renderItem={renderItem}
+            ListEmptyComponent={
+              <React.Fragment>
+                <Text style={styles.errorMessage}>{getExcusesErrorMessage || 'No pending excuses'}</Text>
+              </React.Fragment>
+            }
+          />
+        ) : (
+          <ScrollView>
+            {excusedArray.length === 0 ? (
+              <Text style={styles.description}>You have no approved excuses</Text>
+            ) : (
+              excusedArray.map((excuse) => (
+                <View key={`${excuse.eventId}:${excuse.email}`} style={styles.approvedWrapper}>
+                  <Text style={styles.approvedTitle}>{excuse.title}</Text>
+                  <Text style={styles.approvedStart}>{excuse.prettyStart}</Text>
+                </View>
+              ))
+            )}
+          </ScrollView>
+        )}
+      </View>
     </View>
   );
 };
@@ -140,6 +171,34 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     padding: 16
+  },
+  errorMessage: {
+    marginTop: '40vh',
+    textAlign: 'center',
+    fontFamily: 'OpenSans'
+  },
+  description: {
+    fontFamily: 'OpenSans',
+    fontSize: 12
+  },
+  approvedWrapper: {
+    width: '100%',
+    height: 48,
+    borderBottomColor: theme.COLORS.LIGHT_GRAY,
+    borderBottomWidth: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center'
+  },
+  approvedTitle: {
+    fontFamily: 'OpenSans',
+    fontSize: 15,
+    color: theme.COLORS.BLACK
+  },
+  approvedStart: {
+    fontFamily: 'OpenSans',
+    fontSize: 12,
+    color: theme.COLORS.DARK_GRAY
   }
 });
 

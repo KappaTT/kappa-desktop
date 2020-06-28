@@ -87,7 +87,7 @@ const DirectoryContent: React.FC<{
     }
   }, [isFocused, loadData, user.sessionToken]);
 
-  const keyExtractor = (item: TUser) => item._id;
+  const keyExtractor = React.useCallback((item: TUser) => item._id, []);
 
   const renderItem = ({ item }: { item: TUser }) => {
     return (

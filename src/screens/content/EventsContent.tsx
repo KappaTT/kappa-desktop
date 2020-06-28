@@ -103,9 +103,7 @@ const EventsContent: React.FC<{
     }
   }, [isFocused, loadData, user.sessionToken]);
 
-  const keyExtractor = (item: TEvent, index) => {
-    return `${item._id}-${index}`;
-  };
+  const keyExtractor = React.useCallback((item: TEvent) => item._id, []);
 
   const renderSectionHeader = ({ section: { title, data } }) => {
     return (
