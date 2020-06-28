@@ -20,7 +20,6 @@ const MessagesContent: React.FC<{
 
   const user = useSelector((state: TRedux) => state.auth.user);
   const loadHistory = useSelector((state: TRedux) => state.kappa.loadHistory);
-  const directory = useSelector((state: TRedux) => state.kappa.directory);
   const events = useSelector((state: TRedux) => state.kappa.events);
   const records = useSelector((state: TRedux) => state.kappa.records);
   const pendingExcusesArray = useSelector((state: TRedux) => state.kappa.pendingExcusesArray);
@@ -32,6 +31,7 @@ const MessagesContent: React.FC<{
 
   const dispatch = useDispatch();
   const dispatchGetExcuses = React.useCallback(() => dispatch(_kappa.getExcuses(user)), [dispatch, user]);
+  const dispatchOpenRequestExcuse = React.useCallback(() => dispatch(_kappa.setCheckInEvent('NONE', true)), [dispatch]);
 
   const refreshing = React.useMemo(() => isGettingExcuses, [isGettingExcuses]);
 
@@ -92,6 +92,12 @@ const MessagesContent: React.FC<{
     <View style={styles.container}>
       <Header title="Messages" subtitle={showingWithCount} subtitleIsPressable={true} onSubtitlePress={onPressShowing}>
         <View style={styles.headerChildren}>
+          <View style={styles.headerButtonContainer}>
+            <TouchableOpacity activeOpacity={0.6} onPress={dispatchOpenRequestExcuse}>
+              <Text style={styles.headerButtonText}>Request Excuse</Text>
+            </TouchableOpacity>
+          </View>
+
           <View style={styles.refreshContainer}>
             {refreshing ? (
               <ActivityIndicator style={styles.refreshIcon} color={theme.COLORS.PRIMARY} />
@@ -113,7 +119,7 @@ const MessagesContent: React.FC<{
       <View style={styles.content}>
         {showing === 'Pending' ? (
           <FlatList
-            data={pendingExcusesArray}
+            data={pendingExcusesArray.sort(sortEventsByDateReverse)}
             keyExtractor={keyExtractor}
             renderItem={renderItem}
             ListEmptyComponent={
@@ -169,8 +175,7 @@ const styles = StyleSheet.create({
     top: HEADER_HEIGHT,
     left: 0,
     right: 0,
-    bottom: 0,
-    padding: 16
+    bottom: 0
   },
   errorMessage: {
     marginTop: '40vh',
@@ -182,6 +187,7 @@ const styles = StyleSheet.create({
     fontSize: 12
   },
   approvedWrapper: {
+    marginHorizontal: 16,
     width: '100%',
     height: 48,
     borderBottomColor: theme.COLORS.LIGHT_GRAY,

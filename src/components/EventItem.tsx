@@ -186,7 +186,7 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
                   </Text>
                 </View>
 
-                <TouchableOpacity onPress={dispatchEditEvent}>
+                <TouchableOpacity disabled={isDeletingEvent} onPress={dispatchEditEvent}>
                   <Icon style={styles.zoneIcon} family="Feather" name="edit" size={32} color={theme.COLORS.PRIMARY} />
                 </TouchableOpacity>
               </View>

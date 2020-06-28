@@ -14,32 +14,126 @@ import Switch from '@components/Switch';
 const PendingExcuseItem: React.FC<{ excuse: TPendingExcuse }> = ({ excuse }) => {
   const user = useSelector((state: TRedux) => state.auth.user);
   const directory = useSelector((state: TRedux) => state.kappa.directory);
+  const isApprovingExcuse = useSelector((state: TRedux) => state.kappa.isApprovingExcuse);
+  const isRejectingExcuse = useSelector((state: TRedux) => state.kappa.isRejectingExcuse);
 
   const [expanded, setExpanded] = React.useState<boolean>(false);
+  const [readyToDelete, setReadyToDelete] = React.useState<boolean>(false);
 
   const dispatch = useDispatch();
+  const dispatchApproveExcuse = React.useCallback(() => dispatch(_kappa.approveExcuse(user, excuse)), [
+    dispatch,
+    user,
+    excuse
+  ]);
+  const dispatchRejectExcuse = React.useCallback(() => dispatch(_kappa.rejectExcuse(user, excuse)), [
+    dispatch,
+    user,
+    excuse
+  ]);
 
   const onPressExpand = React.useCallback(() => {
     setExpanded(!expanded);
+    setReadyToDelete(false);
   }, [expanded]);
 
-  const getExcuseRequester = (excuse: TPendingExcuse) => {
-    if (directory.hasOwnProperty(excuse.email)) {
-      return `${directory[excuse.email].givenName} ${directory[excuse.email].familyName}`;
-    }
+  const getExcuseRequester = React.useCallback(
+    (excuse: TPendingExcuse) => {
+      if (directory.hasOwnProperty(excuse.email)) {
+        return `${directory[excuse.email].givenName} ${directory[excuse.email].familyName}`;
+      }
 
-    return excuse.email;
-  };
+      return excuse.email;
+    },
+    [directory]
+  );
+
+  const excuseRequestor = React.useMemo(() => getExcuseRequester(excuse), [excuse, getExcuseRequester]);
+  const excuseStart = React.useMemo(() => moment(excuse.start).format('MM/DD'), [excuse.start]);
 
   const renderExpanded = () => {
-    return <View style={styles.expandedContent}></View>;
+    return (
+      <View style={styles.expandedContent}>
+        <View style={styles.dangerZone}>
+          <View style={styles.editZone}>
+            <View style={styles.warning}>
+              <Text style={styles.zoneLabel}>Approve</Text>
+              <Text style={styles.description}>
+                Approving an excuse will count as if they attended the event and will give any associated points
+              </Text>
+            </View>
+
+            {isApprovingExcuse ? (
+              <ActivityIndicator style={styles.zoneIcon} color={theme.COLORS.PRIMARY} />
+            ) : (
+              <TouchableOpacity disabled={isApprovingExcuse || isRejectingExcuse} onPress={dispatchApproveExcuse}>
+                <Icon
+                  style={styles.zoneIcon}
+                  family="Feather"
+                  name="thumbs-up"
+                  size={32}
+                  color={theme.COLORS.PRIMARY}
+                />
+              </TouchableOpacity>
+            )}
+          </View>
+          <View style={styles.deleteZone}>
+            <View style={styles.warning}>
+              <Text style={styles.zoneLabel}>Reject</Text>
+              <Text style={styles.description}>
+                Rejecting an excuse will delete the excuse permanently and is an action that cannot be undone. Please
+                double check and be certain you want to reject this excuse.
+              </Text>
+            </View>
+
+            {isRejectingExcuse ? (
+              <ActivityIndicator style={styles.zoneIcon} color={theme.COLORS.PRIMARY} />
+            ) : (
+              <TouchableOpacity
+                style={
+                  !readyToDelete && {
+                    opacity: 0.4
+                  }
+                }
+                disabled={!readyToDelete || isApprovingExcuse || isRejectingExcuse}
+                onPress={dispatchRejectExcuse}
+              >
+                <Icon
+                  style={styles.zoneIcon}
+                  family="Feather"
+                  name="thumbs-down"
+                  size={32}
+                  color={theme.COLORS.PRIMARY}
+                />
+              </TouchableOpacity>
+            )}
+          </View>
+          <View style={styles.enableDeleteContainer}>
+            <Switch value={readyToDelete} onValueChange={(newValue: boolean) => setReadyToDelete(newValue)} />
+            <Text style={styles.readyToDelete}>I am ready to reject this excuse</Text>
+          </View>
+        </View>
+      </View>
+    );
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.row}>
         <View style={styles.content}>
-          <TouchableOpacity activeOpacity={0.4} disabled={!user.privileged} onPress={onPressExpand}></TouchableOpacity>
+          <TouchableOpacity activeOpacity={0.4} disabled={!user.privileged} onPress={onPressExpand}>
+            <View style={styles.excuseContent}>
+              <Text style={styles.excuseRequester}>{excuseRequestor}</Text>
+
+              <View style={styles.excuseEvent}>
+                <Text style={styles.excuseEventTitle}>{excuse.title}</Text>
+                <Text style={styles.excuseEventStart}>{excuseStart}</Text>
+                {excuse.late && <Text style={styles.excuseLate}>LATE</Text>}
+              </View>
+
+              <Text style={styles.excuseReason}>{excuse.reason}</Text>
+            </View>
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -50,9 +144,9 @@ const PendingExcuseItem: React.FC<{ excuse: TPendingExcuse }> = ({ excuse }) => 
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 16
+    marginHorizontal: 16,
+    borderBottomColor: theme.COLORS.LIGHT_BORDER,
+    borderBottomWidth: 1
   },
   row: {
     width: '100%',
@@ -63,6 +157,39 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1
+  },
+  excuseContent: {
+    paddingTop: 8,
+    paddingBottom: 16
+  },
+  excuseRequester: {
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 16
+  },
+  excuseEvent: {
+    display: 'flex',
+    flexDirection: 'row',
+    flexWrap: 'wrap'
+  },
+  excuseEventTitle: {
+    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 13,
+    color: theme.COLORS.DARK_GRAY
+  },
+  excuseEventStart: {
+    marginLeft: 8,
+    fontFamily: 'OpenSans',
+    fontSize: 13,
+    color: theme.COLORS.DARK_GRAY
+  },
+  excuseLate: {
+    marginLeft: 8,
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 13,
+    color: theme.COLORS.PRIMARY
+  },
+  excuseReason: {
+    marginTop: 12
   },
   propertyWrapper: {
     display: 'flex',
@@ -77,15 +204,8 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans-SemiBold',
     fontSize: 13
   },
-  eventDescriptionWrapper: {
-    marginTop: 8
-  },
-  eventDescription: {
-    fontFamily: 'OpenSans',
-    fontSize: 15
-  },
   expandedContent: {
-    marginTop: 16
+    marginBottom: 16
   },
   splitPropertyRow: {
     flexDirection: 'row',
@@ -107,7 +227,6 @@ const styles = StyleSheet.create({
     fontSize: 15
   },
   dangerZone: {
-    marginTop: 16,
     padding: 16,
     borderRadius: 8,
     backgroundColor: theme.COLORS.INPUT_ERROR_LIGHT
