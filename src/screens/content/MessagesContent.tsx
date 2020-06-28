@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, ScrollView, FlatList, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useIsFocused } from 'react-navigation-hooks';
 import moment from 'moment';
@@ -27,6 +27,8 @@ const MessagesContent: React.FC<{
   const isGettingExcuses = useSelector((state: TRedux) => state.kappa.isGettingExcuses);
   const getExcusesError = useSelector((state: TRedux) => state.kappa.getExcusesError);
 
+  const [showing, setShowing] = React.useState<'Pending' | 'Approved'>('Pending');
+
   const dispatch = useDispatch();
   const dispatchGetExcuses = React.useCallback(() => dispatch(_kappa.getExcuses(user)), [dispatch, user]);
 
@@ -50,6 +52,11 @@ const MessagesContent: React.FC<{
     .filter((excuse) => excuse !== null)
     .sort(sortEventsByDateReverse);
 
+  const showingWithCount = React.useMemo(
+    () => `${showing} (${showing === 'Pending' ? pendingExcusesArray.length : excusedArray.length})`,
+    [excusedArray.length, pendingExcusesArray.length, showing]
+  );
+
   const loadData = React.useCallback(
     (force: boolean) => {
       if (!isGettingExcuses && (force || (!getExcusesError && shouldLoad(loadHistory, 'excuses'))))
@@ -62,6 +69,14 @@ const MessagesContent: React.FC<{
     loadData(true);
   }, [loadData]);
 
+  const onPressShowing = React.useCallback(() => {
+    if (showing === 'Approved') {
+      setShowing('Pending');
+    } else {
+      setShowing('Approved');
+    }
+  }, [showing]);
+
   React.useEffect(() => {
     if (isFocused && user.sessionToken) {
       loadData(false);
@@ -70,11 +85,27 @@ const MessagesContent: React.FC<{
 
   return (
     <View style={styles.container}>
-      <Header title="Messages">
-        <View style={styles.headerChildren}></View>
+      <Header title="Messages" subtitle={showingWithCount} subtitleIsPressable={true} onSubtitlePress={onPressShowing}>
+        <View style={styles.headerChildren}>
+          <View style={styles.refreshContainer}>
+            {refreshing ? (
+              <ActivityIndicator style={styles.refreshIcon} color={theme.COLORS.PRIMARY} />
+            ) : (
+              <TouchableOpacity onPress={onRefresh}>
+                <Icon
+                  style={styles.refreshIcon}
+                  family="Feather"
+                  name="refresh-cw"
+                  size={17}
+                  color={theme.COLORS.PRIMARY}
+                />
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
       </Header>
 
-      <View style={styles.content}></View>
+      <View style={styles.content}>{showing === 'Pending' ? <React.Fragment /> : <React.Fragment />}</View>
     </View>
   );
 };
