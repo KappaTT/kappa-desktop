@@ -30,11 +30,11 @@ const SidebarLayout: TSidebarElement[] = [
   Header(
     'Admin',
     [
-      Nav('Event Templates', 'EventTemplatesStack'),
-      Nav('Study Abroad', 'StudyAbroadStack'),
-      Nav('Brother Requirements', 'BrotherRequirementsStack'),
-      Nav('Voting Management', 'VotingManagementStack'),
-      Nav('Chapter Settings', 'ChapterSettingsStack')
+      // Nav('Event Templates', 'EventTemplatesStack'),
+      // Nav('Study Abroad', 'StudyAbroadStack'),
+      // Nav('Brother Requirements', 'BrotherRequirementsStack'),
+      Nav('Voting Management', 'VotingManagementStack')
+      // Nav('Chapter Settings', 'ChapterSettingsStack')
     ],
     true
   ),
