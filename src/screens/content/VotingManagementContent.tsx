@@ -16,6 +16,37 @@ const VotingManagementContent: React.FC<{
 }> = ({ navigation }) => {
   const isFocused = useIsFocused();
 
+  const user = useSelector((state: TRedux) => state.auth.user);
+  const loadHistory = useSelector((state: TRedux) => state.kappa.loadHistory);
+  const isGettingCandidates = false;
+  const getCandidatesError = false;
+
+  const [showing, setShowing] = React.useState<'Editing' | 'Voting'>('Editing');
+
+  const dispatch = useDispatch();
+
+  const refreshing = React.useMemo(() => isGettingCandidates, [isGettingCandidates]);
+
+  const loadData = React.useCallback((force: boolean) => {}, []);
+
+  const onRefresh = React.useCallback(() => {
+    loadData(true);
+  }, [loadData]);
+
+  const onPressShowing = React.useCallback(() => {
+    if (showing === 'Voting') {
+      setShowing('Editing');
+    } else {
+      setShowing('Voting');
+    }
+  }, [showing]);
+
+  React.useEffect(() => {
+    if (isFocused && user.sessionToken) {
+      loadData(false);
+    }
+  }, [isFocused, loadData, user.sessionToken]);
+
   return (
     <View style={styles.container}>
       <Header title="Voting Management">
@@ -55,8 +86,7 @@ const styles = StyleSheet.create({
     top: HEADER_HEIGHT,
     left: 0,
     right: 0,
-    bottom: 0,
-    padding: 16
+    bottom: 0
   }
 });
 
