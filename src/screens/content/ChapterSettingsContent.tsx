@@ -55,8 +55,7 @@ const styles = StyleSheet.create({
     top: HEADER_HEIGHT,
     left: 0,
     right: 0,
-    bottom: 0,
-    padding: 16
+    bottom: 0
   }
 });
 
