@@ -30,12 +30,9 @@ const EventsContent: React.FC<{
   const getAttendanceError = useSelector((state: TRedux) => state.kappa.getAttendanceError);
   const isGettingExcuses = useSelector((state: TRedux) => state.kappa.isGettingExcuses);
   const getExcusesError = useSelector((state: TRedux) => state.kappa.getExcusesError);
-  const events = useSelector((state: TRedux) => state.kappa.events);
   const eventSections = useSelector((state: TRedux) => state.kappa.eventSections);
   const upcomingSections = useSelector((state: TRedux) => state.kappa.upcomingSections);
-  const editingEventId = useSelector((state: TRedux) => state.kappa.editingEventId);
   const getEventsErrorMessage = useSelector((state: TRedux) => state.kappa.getEventsErrorMessage);
-  const selectedEventId = useSelector((state: TRedux) => state.kappa.selectedEventId);
 
   const [showing, setShowing] = React.useState<'Full Year' | 'Upcoming'>('Full Year');
 
