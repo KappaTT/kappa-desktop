@@ -11,7 +11,7 @@ import { theme } from '@constants';
 import { HEADER_HEIGHT } from '@services/utils';
 import { Header, Icon } from '@components';
 
-const VotingManagementContent: React.FC<{
+const EditCandidatesContent: React.FC<{
   navigation: ParamType;
 }> = ({ navigation }) => {
   const isFocused = useIsFocused();
@@ -40,7 +40,7 @@ const VotingManagementContent: React.FC<{
 
   return (
     <View style={styles.container}>
-      <Header title="Voting Management">
+      <Header title="Edit Candidates">
         <View style={styles.headerChildren}></View>
       </Header>
 
@@ -81,4 +81,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default VotingManagementContent;
+export default EditCandidatesContent;

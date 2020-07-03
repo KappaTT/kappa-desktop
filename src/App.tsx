@@ -43,7 +43,6 @@ const _loadResourcesAsync = async () => {
 const App = () => {
   const loadedUser = useSelector((state: TRedux) => state.auth.loadedUser);
   const authorized = useSelector((state: TRedux) => state.auth.authorized);
-  const user = useSelector((state: TRedux) => state.auth.user);
 
   const [isLoadingComplete, setIsLoadingComplete] = React.useState<boolean>(false);
   const [isNavigatorReady, setIsNavigatorReady] = React.useState<boolean>(false);

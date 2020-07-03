@@ -33,6 +33,7 @@ const SidebarLayout: TSidebarElement[] = [
       // Nav('Event Templates', 'EventTemplatesStack'),
       // Nav('Study Abroad', 'StudyAbroadStack'),
       // Nav('Brother Requirements', 'BrotherRequirementsStack'),
+      Nav('Edit Candidates', 'EditCandidatesStack'),
       Nav('Voting Management', 'VotingManagementStack')
       // Nav('Chapter Settings', 'ChapterSettingsStack')
     ],

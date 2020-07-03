@@ -5,6 +5,7 @@ import {
   BrotherRequirementsScreen,
   ChapterSettingsScreen,
   DirectoryScreen,
+  EditCandidatesScreen,
   EventsScreen,
   EventTemplatesScreen,
   LoginScreen,
@@ -167,6 +168,25 @@ const BrotherRequirementsStack = createStackNavigator(
   }
 );
 
+const EditCandidatesStack = createStackNavigator(
+  {
+    EditCandidates: {
+      screen: EditCandidatesScreen,
+      navigationOptions: ({ navigation }) => ({
+        header: null,
+        headerStyle: {
+          height: 0
+        }
+      })
+    }
+  },
+  {
+    navigationOptions: ({ navigation }) => ({
+      tabBarVisible: false
+    })
+  }
+);
+
 const VotingManagementStack = createStackNavigator(
   {
     VotingManagement: {
@@ -233,6 +253,7 @@ export default createBottomTabNavigator({
   EventTemplatesStack,
   StudyAbroadStack,
   BrotherRequirementsStack,
+  EditCandidatesStack,
   VotingManagementStack,
   ChapterSettingsStack,
   ProfileStack
