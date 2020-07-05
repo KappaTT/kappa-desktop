@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, ScrollView, FlatList, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useIsFocused } from 'react-navigation-hooks';
 import moment from 'moment';
@@ -9,7 +9,9 @@ import { TRedux } from '@reducers';
 import { _auth, _kappa, _nav, _ui, _voting } from '@reducers/actions';
 import { theme } from '@constants';
 import { HEADER_HEIGHT } from '@services/utils';
-import { Header, Icon } from '@components';
+import { shouldLoad, sortUserByName } from '@services/kappaService';
+import { TCandidate } from '@backend/voting';
+import { CandidateItem, Header, Icon } from '@components';
 
 const EditCandidatesContent: React.FC<{
   navigation: ParamType;
@@ -17,16 +19,25 @@ const EditCandidatesContent: React.FC<{
   const isFocused = useIsFocused();
 
   const user = useSelector((state: TRedux) => state.auth.user);
-  const loadHistory = useSelector((state: TRedux) => state.kappa.loadHistory);
+  const votingLoadHistory = useSelector((state: TRedux) => state.voting.loadHistory);
+  const candidateArray = useSelector((state: TRedux) => state.voting.candidateArray);
   const isGettingCandidates = useSelector((state: TRedux) => state.voting.isGettingCandidates);
   const getCandidatesError = useSelector((state: TRedux) => state.voting.getCandidatesError);
+  const getCandidatesErrorMessage = useSelector((state: TRedux) => state.voting.getCandidatesErrorMessage);
 
   const dispatch = useDispatch();
   const dispatchGetCandidates = React.useCallback(() => dispatch(_voting.getCandidates(user)), [dispatch, user]);
+  const dispatchEditNewCandidate = React.useCallback(() => console.log('todo'), []);
 
   const refreshing = React.useMemo(() => isGettingCandidates, [isGettingCandidates]);
 
-  const loadData = React.useCallback((force: boolean) => {}, []);
+  const loadData = React.useCallback(
+    (force: boolean) => {
+      if (!isGettingCandidates && (force || (!getCandidatesError && shouldLoad(votingLoadHistory, 'candidates'))))
+        dispatchGetCandidates();
+    },
+    [dispatchGetCandidates, getCandidatesError, isGettingCandidates, votingLoadHistory]
+  );
 
   const onRefresh = React.useCallback(() => {
     loadData(true);
@@ -38,13 +49,82 @@ const EditCandidatesContent: React.FC<{
     }
   }, [isFocused, loadData, user.sessionToken]);
 
+  const keyExtractor = React.useCallback((item: TCandidate) => item._id, []);
+
+  const renderItem = ({ item }: { item: TCandidate }) => {
+    return <CandidateItem candidate={item} />;
+  };
+
+  const renderCandidateList = () => {
+    return (
+      <View style={styles.sectionContent}>
+        <FlatList
+          data={candidateArray.sort(sortUserByName)}
+          keyExtractor={keyExtractor}
+          renderItem={renderItem}
+          ListEmptyComponent={
+            <React.Fragment>
+              <Text style={styles.errorMessage}>{getCandidatesErrorMessage || 'No candidates'}</Text>
+            </React.Fragment>
+          }
+        />
+      </View>
+    );
+  };
+
+  const renderCandidateDetails = () => {
+    return (
+      <View style={styles.sectionContent}>
+        <ScrollView></ScrollView>
+      </View>
+    );
+  };
+
+  const renderDivider = (readyStatus: boolean) => {
+    return (
+      <View style={styles.dividerWrapper}>
+        <View style={styles.divider} />
+      </View>
+    );
+  };
+
   return (
     <View style={styles.container}>
       <Header title="Edit Candidates">
-        <View style={styles.headerChildren}></View>
+        <View style={styles.headerChildren}>
+          <View style={styles.headerButtonContainer}>
+            <TouchableOpacity activeOpacity={0.6} onPress={dispatchEditNewCandidate}>
+              <Text style={styles.headerButtonText}>New Candidate</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.refreshContainer}>
+            {refreshing ? (
+              <ActivityIndicator style={styles.refreshIcon} color={theme.COLORS.PRIMARY} />
+            ) : (
+              <TouchableOpacity onPress={onRefresh}>
+                <Icon
+                  style={styles.refreshIcon}
+                  family="Feather"
+                  name="refresh-cw"
+                  size={17}
+                  color={theme.COLORS.PRIMARY}
+                />
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
       </Header>
 
-      <View style={styles.content}></View>
+      <View style={styles.content}>
+        <View style={styles.contentBody}>
+          <View style={styles.candidateListSection}>{renderCandidateList()}</View>
+
+          {renderDivider(false)}
+
+          <View style={styles.candidateDetailsSection}>{renderCandidateDetails()}</View>
+        </View>
+      </View>
     </View>
   );
 };
@@ -78,6 +158,42 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0
+  },
+  contentBody: {
+    flex: 1,
+    flexDirection: 'row'
+  },
+  candidateListSection: {
+    flexBasis: '33%'
+  },
+  candidateDetailsSection: {
+    flexBasis: '67%'
+  },
+  section: {
+    flex: 1
+  },
+  sectionContent: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0
+  },
+  dividerWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  divider: {
+    flexGrow: 1,
+    borderLeftColor: theme.COLORS.LIGHT_BORDER,
+    borderLeftWidth: 1
+  },
+  errorMessage: {
+    marginTop: '40vh',
+    textAlign: 'center',
+    fontFamily: 'OpenSans'
   }
 });
 

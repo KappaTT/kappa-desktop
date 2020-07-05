@@ -11,6 +11,7 @@ export interface TCandidate {
   major?: string;
   imageUrl?: string;
   approved: boolean;
+  events: string[];
 }
 
 export interface TCandidateDict {

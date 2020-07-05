@@ -10,7 +10,9 @@ import {
   SAVE_CANDIDATE_FAILURE,
   DELETE_CANDIDATE,
   DELETE_CANDIDATE_SUCCESS,
-  DELETE_CANDIDATE_FAILURE
+  DELETE_CANDIDATE_FAILURE,
+  SELECT_CANDIDATE,
+  UNSELECT_CANDIDATE
 } from '@reducers/voting';
 import { atan } from 'react-native-reanimated';
 
@@ -123,5 +125,18 @@ export const deleteCandidate = (user: TUser, email: string) => {
         dispatch(deleteCandidateFailure(res.error));
       }
     });
+  };
+};
+
+export const selectCandidate = (email: string) => {
+  return {
+    type: SELECT_CANDIDATE,
+    email
+  };
+};
+
+export const unselectCandidate = () => {
+  return {
+    type: UNSELECT_CANDIDATE
   };
 };

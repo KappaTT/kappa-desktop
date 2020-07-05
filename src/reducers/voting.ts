@@ -18,6 +18,9 @@ export const DELETE_CANDIDATE = 'DELETE_CANDIDATE';
 export const DELETE_CANDIDATE_SUCCESS = 'DELETE_CANDIDATE_SUCCESS';
 export const DELETE_CANDIDATE_FAILURE = 'DELETE_CANDIDATE_FAILURE';
 
+export const SELECT_CANDIDATE = 'SELECT_CANDIDATE';
+export const UNSELECT_CANDIDATE = 'UNSELECT_CANDIDATE';
+
 export interface TVotingState {
   globalErrorMessage: string;
   globalErrorCode: number;
@@ -35,8 +38,10 @@ export interface TVotingState {
   deleteCandidateError: boolean;
   deleteCandidateErrorMessage: string;
 
+  selectedCandidateEmail: string;
+
   loadHistory: TLoadHistory;
-  candidatesArray: TCandidate[];
+  candidateArray: TCandidate[];
   emailToCandidate: TCandidateDict;
 }
 
@@ -57,8 +62,10 @@ const initialState: TVotingState = {
   deleteCandidateError: false,
   deleteCandidateErrorMessage: '',
 
+  selectedCandidateEmail: '',
+
   loadHistory: {},
-  candidatesArray: [],
+  candidateArray: [],
   emailToCandidate: {}
 };
 
@@ -145,6 +152,16 @@ export default (state = initialState, action: any): TVotingState => {
         })
       };
     }
+    case SELECT_CANDIDATE:
+      return {
+        ...state,
+        selectedCandidateEmail: action.email
+      };
+    case UNSELECT_CANDIDATE:
+      return {
+        ...state,
+        selectedCandidateEmail: ''
+      };
     default:
       return state;
   }
