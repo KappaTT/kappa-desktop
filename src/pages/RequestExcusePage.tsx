@@ -8,7 +8,7 @@ import { TEvent } from '@backend/kappa';
 import { TToast } from '@reducers/ui';
 import { _kappa, _ui } from '@reducers/actions';
 import { theme } from '@constants';
-import { getEventById, hasValidCheckIn, sortEventByDate } from '@services/kappaService';
+import { getEventById, hasValidCheckIn, sortEventByDate, shouldLoad } from '@services/kappaService';
 import { Icon, RadioList, FormattedInput } from '@components';
 
 const RequestExcusePage: React.FC<{
@@ -16,9 +16,14 @@ const RequestExcusePage: React.FC<{
   onPressCancel(): void;
 }> = ({ initialEvent, onPressCancel }) => {
   const user = useSelector((state: TRedux) => state.auth.user);
+  const loadHistory = useSelector((state: TRedux) => state.kappa.loadHistory);
   const records = useSelector((state: TRedux) => state.kappa.records);
   const eventArray = useSelector((state: TRedux) => state.kappa.eventArray);
   const events = useSelector((state: TRedux) => state.kappa.events);
+  const isGettingEvents = useSelector((state: TRedux) => state.kappa.isGettingEvents);
+  const getEventsError = useSelector((state: TRedux) => state.kappa.getEventsError);
+  const isGettingAttendance = useSelector((state: TRedux) => state.kappa.isGettingAttendance);
+  const getAttendanceError = useSelector((state: TRedux) => state.kappa.getAttendanceError);
   const isCreatingExcuse = useSelector((state: TRedux) => state.kappa.isCreatingExcuse);
   const createExcuseRequestDate = useSelector((state: TRedux) => state.kappa.createExcuseRequestDate);
   const createExcuseSuccessDate = useSelector((state: TRedux) => state.kappa.createExcuseSuccessDate);
@@ -36,11 +41,34 @@ const RequestExcusePage: React.FC<{
   }, [openDate, selectedEvent]);
 
   const dispatch = useDispatch();
+  const dispatchGetEvents = React.useCallback(() => dispatch(_kappa.getEvents(user)), [dispatch, user]);
+  const dispatchGetMyAttendance = React.useCallback(
+    (overwrite: boolean = false) => dispatch(_kappa.getMyAttendance(user, overwrite)),
+    [dispatch, user]
+  );
   const dispatchCreateExcuse = React.useCallback(
     () => dispatch(_kappa.createExcuse(user, selectedEvent, { reason, late })),
     [dispatch, user, selectedEvent, reason, late]
   );
   const dispatchShowToast = React.useCallback((toast: Partial<TToast>) => dispatch(_ui.showToast(toast)), [dispatch]);
+
+  const loadData = React.useCallback(
+    (force: boolean) => {
+      if (!isGettingEvents && (force || (!getEventsError && shouldLoad(loadHistory, 'events')))) dispatchGetEvents();
+      if (!isGettingAttendance && (force || (!getAttendanceError && shouldLoad(loadHistory, `user-${user.email}`))))
+        dispatchGetMyAttendance(force);
+    },
+    [
+      dispatchGetEvents,
+      dispatchGetMyAttendance,
+      getAttendanceError,
+      getEventsError,
+      isGettingAttendance,
+      isGettingEvents,
+      loadHistory,
+      user.email
+    ]
+  );
 
   const readyStateEvent = React.useMemo(() => {
     return selectedEvent !== null;
@@ -94,6 +122,12 @@ const RequestExcusePage: React.FC<{
       onPressCancel();
     }
   }, [openDate, dispatchShowToast, onPressCancel, createExcuseRequestDate, createExcuseSuccessDate]);
+
+  React.useEffect(() => {
+    if (!initialEvent) {
+      loadData(false);
+    }
+  }, [initialEvent, loadData]);
 
   const renderHeader = () => {
     return (

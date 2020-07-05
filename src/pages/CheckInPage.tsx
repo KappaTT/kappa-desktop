@@ -8,7 +8,7 @@ import { TEvent } from '@backend/kappa';
 import { TToast } from '@reducers/ui';
 import { _kappa, _ui } from '@reducers/actions';
 import { theme } from '@constants';
-import { hasValidCheckIn, sortEventByDate } from '@services/kappaService';
+import { hasValidCheckIn, sortEventByDate, shouldLoad } from '@services/kappaService';
 import { Icon, RadioList, FormattedInput } from '@components';
 
 const numberFormatter = (text: string) => {
@@ -20,8 +20,13 @@ const CheckInPage: React.FC<{
   onPressCancel(): void;
 }> = ({ initialEvent, onPressCancel }) => {
   const user = useSelector((state: TRedux) => state.auth.user);
+  const loadHistory = useSelector((state: TRedux) => state.kappa.loadHistory);
   const records = useSelector((state: TRedux) => state.kappa.records);
   const futureEventArray = useSelector((state: TRedux) => state.kappa.futureEventArray);
+  const isGettingEvents = useSelector((state: TRedux) => state.kappa.isGettingEvents);
+  const getEventsError = useSelector((state: TRedux) => state.kappa.getEventsError);
+  const isGettingAttendance = useSelector((state: TRedux) => state.kappa.isGettingAttendance);
+  const getAttendanceError = useSelector((state: TRedux) => state.kappa.getAttendanceError);
   const isCheckingIn = useSelector((state: TRedux) => state.kappa.isCheckingIn);
   const checkInRequestDate = useSelector((state: TRedux) => state.kappa.checkInRequestDate);
   const checkInSuccessDate = useSelector((state: TRedux) => state.kappa.checkInSuccessDate);
@@ -31,6 +36,11 @@ const CheckInPage: React.FC<{
   const [eventCode, setEventCode] = React.useState<string>('');
 
   const dispatch = useDispatch();
+  const dispatchGetEvents = React.useCallback(() => dispatch(_kappa.getEvents(user)), [dispatch, user]);
+  const dispatchGetMyAttendance = React.useCallback(
+    (overwrite: boolean = false) => dispatch(_kappa.getMyAttendance(user, overwrite)),
+    [dispatch, user]
+  );
   const dispatchCheckIn = React.useCallback(() => dispatch(_kappa.checkIn(user, eventId, eventCode)), [
     dispatch,
     eventCode,
@@ -38,6 +48,24 @@ const CheckInPage: React.FC<{
     user
   ]);
   const dispatchShowToast = React.useCallback((toast: Partial<TToast>) => dispatch(_ui.showToast(toast)), [dispatch]);
+
+  const loadData = React.useCallback(
+    (force: boolean) => {
+      if (!isGettingEvents && (force || (!getEventsError && shouldLoad(loadHistory, 'events')))) dispatchGetEvents();
+      if (!isGettingAttendance && (force || (!getAttendanceError && shouldLoad(loadHistory, `user-${user.email}`))))
+        dispatchGetMyAttendance(force);
+    },
+    [
+      dispatchGetEvents,
+      dispatchGetMyAttendance,
+      getAttendanceError,
+      getEventsError,
+      isGettingAttendance,
+      isGettingEvents,
+      loadHistory,
+      user.email
+    ]
+  );
 
   const readyStateEvent = React.useMemo(() => {
     return eventId !== '';
@@ -90,6 +118,12 @@ const CheckInPage: React.FC<{
       onPressCancel();
     }
   }, [openDate, checkInRequestDate, checkInSuccessDate, dispatchShowToast, onPressCancel]);
+
+  React.useEffect(() => {
+    if (!initialEvent) {
+      loadData(false);
+    }
+  }, [initialEvent, loadData]);
 
   const renderHeader = () => {
     return (
