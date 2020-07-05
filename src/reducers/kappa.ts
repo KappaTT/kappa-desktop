@@ -562,8 +562,7 @@ export default (state = initialState, action: any): TKappaState => {
         isCheckingIn: false,
         checkInError: true,
         checkInErrorMessage: action.error.message,
-        globalErrorMessage: action.error.message,
-        globalErrorCode: action.error.code
+        ...setGlobalError(action.error.message, action.error.code)
       };
     case CREATE_EXCUSE:
       return {
