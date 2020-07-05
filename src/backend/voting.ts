@@ -13,6 +13,10 @@ export interface TCandidate {
   approved: boolean;
 }
 
+export interface TCandidateDict {
+  [email: string]: TCandidate;
+}
+
 export interface TGetCandidatesPayload {
   user: TUser;
 }
@@ -158,7 +162,7 @@ export const updateCandidate = async (payload: TUpdateCandidatePayload): Promise
 
 export interface TDeleteCandidatePayload {
   user: TUser;
-  candidate: TCandidate;
+  email: string;
 }
 
 interface TDeleteCandidateRequestResponse {
@@ -178,7 +182,7 @@ interface TDeleteCandidateResponse extends TResponse {
 export const deleteCandidate = async (payload: TDeleteCandidatePayload): Promise<TDeleteCandidateResponse> => {
   try {
     const response = await makeAuthorizedRequest<TDeleteCandidateRequestResponse>(
-      ENDPOINTS.DELETE_CANDIDATE({ email: payload.candidate.email }),
+      ENDPOINTS.DELETE_CANDIDATE({ email: payload.email }),
       METHODS.DELETE_CANDIDATE,
       {},
       payload.user.sessionToken
