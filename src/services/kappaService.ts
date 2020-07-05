@@ -362,7 +362,10 @@ export const sortEventByDate = (a: { start: string }, b: { start: string }) =>
 export const sortEventsByDateReverse = (a: { start: string }, b: { start: string }) =>
   moment(a.start).isBefore(moment(b.start)) ? 1 : -1;
 
-export const sortUserByName = (a: TUser, b: TUser) => {
+export const sortUserByName = (
+  a: { familyName: string; givenName: string },
+  b: { familyName: string; givenName: string }
+) => {
   const nameA = `${a.familyName}, ${b.givenName}`;
   const nameB = `${b.familyName}, ${b.givenName}`;
 
