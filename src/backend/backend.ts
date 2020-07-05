@@ -20,10 +20,10 @@ export const ENDPOINTS: {
   [key: string]: (config?: any) => string;
 } = {
   SIGN_IN: () => 'users/login',
-  UPDATE_USER: (config: { email: string }) => `users/${encodeURIComponent(config.email)}`,
+  UPDATE_USER: (config: { email: string }) => `users/${config.email}`,
   GET_EVENTS: () => 'events',
   GET_USERS: () => 'users',
-  GET_ATTENDANCE_BY_USER: (config: { email: string }) => `attendance/user/${encodeURIComponent(config.email)}`,
+  GET_ATTENDANCE_BY_USER: (config: { email: string }) => `attendance/user/${config.email}`,
   GET_ATTENDANCE_BY_EVENT: (config: { eventId: string }) => `attendance/event/${config.eventId}`,
   CREATE_EVENT: () => 'events',
   UPDATE_EVENT: (config: { eventId: string }) => `events/${config.eventId}`,
@@ -33,7 +33,11 @@ export const ENDPOINTS: {
   CREATE_EXCUSE: () => 'excuse',
   UPDATE_EXCUSE: () => 'excuse',
   GET_POINTS_BY_USER: (config: { email: string }) => `points/${config.email}`,
-  GET_EVENT_SEARCH_RESULTS: () => 'search/events'
+  GET_EVENT_SEARCH_RESULTS: () => 'search/events',
+  GET_CANDIDATES: () => 'candidates',
+  CREATE_CANDIDATE: () => 'candidates',
+  UPDATE_CANDIDATE: (config: { email: string }) => `candidates/${config.email}`,
+  DELETE_CANDIDATE: (config: { email: string }) => `candidates/${config.email}`
 };
 
 export const METHODS: {
@@ -53,7 +57,11 @@ export const METHODS: {
   CREATE_EXCUSE: M_POST,
   UPDATE_EXCUSE: M_PATCH,
   GET_POINTS_BY_USER: M_GET,
-  GET_EVENT_SEARCH_RESULTS: M_POST
+  GET_EVENT_SEARCH_RESULTS: M_POST,
+  GET_CANDIDATES: M_GET,
+  CREATE_CANDIDATE: M_POST,
+  UPDATE_CANDIDATE: M_PATCH,
+  DELETE_CANDIDATE: M_DELETE
 };
 
 export interface TResponse {
