@@ -12,9 +12,12 @@ import Ghost from '@components/Ghost';
 import Toast from '@components/Toast';
 
 const ToastController: React.FC = () => {
-  const globalErrorMessage = useSelector((state: TRedux) => state.kappa.globalErrorMessage);
-  const globalErrorCode = useSelector((state: TRedux) => state.kappa.globalErrorCode);
-  const globalErrorDate = useSelector((state: TRedux) => state.kappa.globalErrorDate);
+  const kappaGlobalErrorMessage = useSelector((state: TRedux) => state.kappa.globalErrorMessage);
+  const kappaGlobalErrorCode = useSelector((state: TRedux) => state.kappa.globalErrorCode);
+  const kappaGlobalErrorDate = useSelector((state: TRedux) => state.kappa.globalErrorDate);
+  const votingGlobalErrorMessage = useSelector((state: TRedux) => state.voting.globalErrorMessage);
+  const votingGlobalErrorCode = useSelector((state: TRedux) => state.voting.globalErrorCode);
+  const votingGlobalErrorDate = useSelector((state: TRedux) => state.voting.globalErrorDate);
   const isShowingToast = useSelector((state: TRedux) => state.ui.isShowingToast);
   const isHidingToast = useSelector((state: TRedux) => state.ui.isHidingToast);
   const toast = useSelector((state: TRedux) => state.ui.toast);
@@ -40,19 +43,34 @@ const ToastController: React.FC = () => {
   }, [dispatchHideToast, dispatchSignOut]);
 
   React.useEffect(() => {
-    if (globalErrorMessage !== '') {
+    if (kappaGlobalErrorMessage !== '') {
       dispatchShowToast({
         title: 'Error',
-        message: globalErrorMessage,
-        allowClose: globalErrorCode !== 401,
-        timer: globalErrorCode !== 401 ? 6000 : -1,
+        message: kappaGlobalErrorMessage,
+        allowClose: kappaGlobalErrorCode !== 401,
+        timer: kappaGlobalErrorCode !== 401 ? 6000 : -1,
         toastColor: theme.COLORS.PRIMARY,
         textColor: theme.COLORS.WHITE,
-        code: globalErrorCode,
-        showBackdrop: globalErrorCode === 401
+        code: kappaGlobalErrorCode,
+        showBackdrop: kappaGlobalErrorCode === 401
       });
     }
-  }, [globalErrorMessage, globalErrorCode, globalErrorDate, dispatchShowToast]);
+  }, [kappaGlobalErrorMessage, kappaGlobalErrorCode, kappaGlobalErrorDate, dispatchShowToast]);
+
+  React.useEffect(() => {
+    if (votingGlobalErrorMessage !== '') {
+      dispatchShowToast({
+        title: 'Error',
+        message: votingGlobalErrorMessage,
+        allowClose: votingGlobalErrorCode !== 401,
+        timer: votingGlobalErrorCode !== 401 ? 6000 : -1,
+        toastColor: theme.COLORS.PRIMARY,
+        textColor: theme.COLORS.WHITE,
+        code: votingGlobalErrorCode,
+        showBackdrop: votingGlobalErrorCode === 401
+      });
+    }
+  }, [votingGlobalErrorMessage, votingGlobalErrorCode, votingGlobalErrorDate, dispatchShowToast]);
 
   return (
     <Ghost style={styles.container}>
