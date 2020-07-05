@@ -1,4 +1,7 @@
+import moment from 'moment';
+
 import { setGlobalError } from '@services/kappaService';
+import { TLoadHistory } from '@backend/kappa';
 import { TCandidate, TCandidateDict } from '@backend/voting';
 import { recomputeVotingState, separateByCandidateEmail, mergeCandidates } from '@services/votingService';
 
@@ -32,6 +35,7 @@ export interface TVotingState {
   deleteCandidateError: boolean;
   deleteCandidateErrorMessage: string;
 
+  loadHistory: TLoadHistory;
   candidatesArray: TCandidate[];
   emailToCandidate: TCandidateDict;
 }
@@ -53,6 +57,7 @@ const initialState: TVotingState = {
   deleteCandidateError: false,
   deleteCandidateErrorMessage: '',
 
+  loadHistory: {},
   candidatesArray: [],
   emailToCandidate: {}
 };
@@ -82,6 +87,10 @@ export default (state = initialState, action: any): TVotingState => {
       return {
         ...state,
         isGettingCandidates: false,
+        loadHistory: {
+          ...state.loadHistory,
+          candidates: moment()
+        },
         ...recomputeVotingState({
           emailToCandidate: separateByCandidateEmail(action.candidates)
         })

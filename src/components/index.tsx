@@ -1,4 +1,5 @@
 import BrotherItem from './BrotherItem';
+import CandidateItem from './CandidateItem';
 import CheckListButton from './CheckListButton';
 import EventItem from './EventItem';
 import FormattedInput from './FormattedInput';
@@ -22,6 +23,7 @@ import ToastController from './ToastController';
 
 export {
   BrotherItem,
+  CandidateItem,
   CheckListButton,
   EventItem,
   FormattedInput,
