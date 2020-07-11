@@ -1,6 +1,8 @@
 import BrotherItem from './BrotherItem';
 import CandidateItem from './CandidateItem';
+import CandidateViewer from './CandidateViewer';
 import CheckListButton from './CheckListButton';
+import Chip from './Chip';
 import EventItem from './EventItem';
 import FormattedInput from './FormattedInput';
 import GeneralMeetingChart from './GeneralMeetingChart';
@@ -24,7 +26,9 @@ import ToastController from './ToastController';
 export {
   BrotherItem,
   CandidateItem,
+  CandidateViewer,
   CheckListButton,
+  Chip,
   EventItem,
   FormattedInput,
   GeneralMeetingChart,

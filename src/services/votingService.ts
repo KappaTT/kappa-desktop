@@ -1,4 +1,5 @@
 import { TCandidateDict, TCandidate } from '@backend/voting';
+import { sortUserByName } from './kappaService';
 
 export const separateByCandidateEmail = (candidates: TCandidate[]) => {
   const separated = {};
@@ -21,10 +22,14 @@ export const mergeCandidates = (emailToCandidate: TCandidateDict, newCandidates:
 };
 
 export const recomputeVotingState = ({ emailToCandidate }: { emailToCandidate: TCandidateDict }) => {
-  const candidateArray = Object.values(emailToCandidate);
+  const candidateArray = Object.values(emailToCandidate).sort(sortUserByName);
+  const approvedCandidateArray = candidateArray.filter((candidate) => candidate.approved);
+  const unapprovedCandidateArray = candidateArray.filter((candidate) => !candidate.approved);
 
   return {
     emailToCandidate,
-    candidateArray
+    candidateArray,
+    approvedCandidateArray,
+    unapprovedCandidateArray
   };
 };

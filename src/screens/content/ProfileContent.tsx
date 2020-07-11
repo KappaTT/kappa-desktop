@@ -149,7 +149,7 @@ const ProfileContent: React.FC<{
         <Text style={[styles.headingText, { marginTop: 0 }]}>Standing</Text>
 
         <View style={styles.splitPropertyRow}>
-          <View style={[styles.splitProperty, { marginLeft: 0 }]}>
+          <View style={styles.splitProperty}>
             <Text style={styles.propertyHeader}>Freshman Year</Text>
             <Text style={styles.propertyValue}>{user.firstYear}</Text>
           </View>
@@ -166,7 +166,7 @@ const ProfileContent: React.FC<{
         <Text style={styles.headingText}>Contact</Text>
 
         <View style={styles.splitPropertyRow}>
-          <View style={[styles.splitProperty, { marginLeft: 0 }]}>
+          <View style={styles.splitProperty}>
             <Text style={styles.propertyHeader}>Email</Text>
             <Text style={styles.propertyValue}>{user.email}</Text>
           </View>
@@ -179,7 +179,7 @@ const ProfileContent: React.FC<{
         <Text style={styles.headingText}>Points and GM Attendance</Text>
 
         <View style={styles.splitPropertyRow}>
-          <View style={[styles.splitProperty, { marginLeft: 0 }]}>
+          <View style={styles.splitProperty}>
             <Text style={styles.propertyHeader}>Prof</Text>
             {isGettingPoints ? (
               <ActivityIndicator style={styles.propertyLoader} color={theme.COLORS.PRIMARY} />
@@ -317,8 +317,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap'
   },
   splitProperty: {
-    marginLeft: 16,
-    marginRight: 16
+    marginRight: 24
   },
   propertyHeader: {
     fontFamily: 'OpenSans-SemiBold',

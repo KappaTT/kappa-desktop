@@ -31,14 +31,14 @@ const CandidateItem: React.FC<{ candidate: TCandidate }> = ({ candidate }) => {
       style={[
         styles.container,
         isSelected && {
-          backgroundColor: theme.COLORS.SUPER_LIGHT_BLUE_GRAY
+          backgroundColor: theme.COLORS.PRIMARY_LIGHT
         }
       ]}
     >
       <TouchableOpacity activeOpacity={0.4} disabled={isSelected} onPress={onPressSelect}>
         <View style={styles.contentWrapper}>
           <View style={styles.content}>
-            <Text style={styles.name}>
+            <Text style={[styles.name, candidate.approved && { color: theme.COLORS.PRIMARY_GREEN }]}>
               {candidate.familyName}, {candidate.givenName}
               <Text style={styles.email}>{candidate.email}</Text>
             </Text>

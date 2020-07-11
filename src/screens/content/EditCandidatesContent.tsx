@@ -9,9 +9,9 @@ import { TRedux } from '@reducers';
 import { _auth, _kappa, _nav, _ui, _voting } from '@reducers/actions';
 import { theme } from '@constants';
 import { HEADER_HEIGHT } from '@services/utils';
-import { shouldLoad, sortUserByName } from '@services/kappaService';
+import { shouldLoad } from '@services/kappaService';
 import { TCandidate } from '@backend/voting';
-import { CandidateItem, Header, Icon } from '@components';
+import { CandidateItem, Header, Icon, CandidateViewer } from '@components';
 
 const EditCandidatesContent: React.FC<{
   navigation: ParamType;
@@ -20,7 +20,8 @@ const EditCandidatesContent: React.FC<{
 
   const user = useSelector((state: TRedux) => state.auth.user);
   const votingLoadHistory = useSelector((state: TRedux) => state.voting.loadHistory);
-  const candidateArray = useSelector((state: TRedux) => state.voting.candidateArray);
+  const approvedCandidateArray = useSelector((state: TRedux) => state.voting.approvedCandidateArray);
+  const unapprovedCandidateArray = useSelector((state: TRedux) => state.voting.unapprovedCandidateArray);
   const isGettingCandidates = useSelector((state: TRedux) => state.voting.isGettingCandidates);
   const getCandidatesError = useSelector((state: TRedux) => state.voting.getCandidatesError);
   const getCandidatesErrorMessage = useSelector((state: TRedux) => state.voting.getCandidatesErrorMessage);
@@ -58,16 +59,10 @@ const EditCandidatesContent: React.FC<{
   const renderCandidateList = () => {
     return (
       <View style={styles.sectionContent}>
-        <FlatList
-          data={candidateArray.sort(sortUserByName)}
-          keyExtractor={keyExtractor}
-          renderItem={renderItem}
-          ListEmptyComponent={
-            <React.Fragment>
-              <Text style={styles.errorMessage}>{getCandidatesErrorMessage || 'No candidates'}</Text>
-            </React.Fragment>
-          }
-        />
+        <View style={styles.candidateList}>
+          <FlatList data={approvedCandidateArray} keyExtractor={keyExtractor} renderItem={renderItem} />
+          <FlatList data={unapprovedCandidateArray} keyExtractor={keyExtractor} renderItem={renderItem} />
+        </View>
       </View>
     );
   };
@@ -75,15 +70,9 @@ const EditCandidatesContent: React.FC<{
   const renderCandidateDetails = () => {
     return (
       <View style={styles.sectionContent}>
-        <ScrollView></ScrollView>
-      </View>
-    );
-  };
-
-  const renderDivider = (readyStatus: boolean) => {
-    return (
-      <View style={styles.dividerWrapper}>
-        <View style={styles.divider} />
+        <ScrollView>
+          <CandidateViewer />
+        </ScrollView>
       </View>
     );
   };
@@ -120,7 +109,9 @@ const EditCandidatesContent: React.FC<{
         <View style={styles.contentBody}>
           <View style={styles.candidateListSection}>{renderCandidateList()}</View>
 
-          {renderDivider(false)}
+          <View style={styles.dividerWrapper}>
+            <View style={styles.divider} />
+          </View>
 
           <View style={styles.candidateDetailsSection}>{renderCandidateDetails()}</View>
         </View>
@@ -164,10 +155,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row'
   },
   candidateListSection: {
-    flexBasis: '33%'
+    width: 400
   },
   candidateDetailsSection: {
-    flexBasis: '67%'
+    flex: 1
   },
   section: {
     flex: 1
@@ -179,6 +170,7 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0
   },
+
   dividerWrapper: {
     display: 'flex',
     flexDirection: 'column',
@@ -194,6 +186,9 @@ const styles = StyleSheet.create({
     marginTop: '40vh',
     textAlign: 'center',
     fontFamily: 'OpenSans'
+  },
+  candidateList: {
+    justifyContent: 'flex-start'
   }
 });
 

@@ -42,6 +42,8 @@ export interface TVotingState {
 
   loadHistory: TLoadHistory;
   candidateArray: TCandidate[];
+  approvedCandidateArray: TCandidate[];
+  unapprovedCandidateArray: TCandidate[];
   emailToCandidate: TCandidateDict;
 }
 
@@ -66,6 +68,8 @@ const initialState: TVotingState = {
 
   loadHistory: {},
   candidateArray: [],
+  approvedCandidateArray: [],
+  unapprovedCandidateArray: [],
   emailToCandidate: {}
 };
 

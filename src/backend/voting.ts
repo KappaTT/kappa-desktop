@@ -5,6 +5,7 @@ import { log } from '@services/logService';
 export interface TCandidate {
   _id: string;
   email: string;
+  phone?: string;
   familyName: string;
   givenName: string;
   classYear?: '' | 'FR' | 'SO' | 'JR' | 'SR';
