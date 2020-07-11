@@ -37,6 +37,10 @@ const PendingExcuseItem: React.FC<{ excuse: TPendingExcuse }> = ({ excuse }) => 
     setReadyToDelete(false);
   }, [expanded]);
 
+  const onChangeReadyToDelete = React.useCallback((newValue: boolean) => {
+    setReadyToDelete(newValue);
+  }, []);
+
   const getExcuseRequester = React.useCallback(
     (excuse: TPendingExcuse) => {
       if (directory.hasOwnProperty(excuse.email)) {
@@ -109,7 +113,7 @@ const PendingExcuseItem: React.FC<{ excuse: TPendingExcuse }> = ({ excuse }) => 
             )}
           </View>
           <View style={styles.enableDeleteContainer}>
-            <Switch value={readyToDelete} onValueChange={(newValue: boolean) => setReadyToDelete(newValue)} />
+            <Switch value={readyToDelete} onValueChange={onChangeReadyToDelete} />
             <Text style={styles.readyToDelete}>I am ready to reject this excuse</Text>
           </View>
         </View>
@@ -212,8 +216,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap'
   },
   splitProperty: {
-    marginLeft: 16,
-    marginRight: 16
+    marginRight: 24
   },
   propertyHeader: {
     fontFamily: 'OpenSans-SemiBold',

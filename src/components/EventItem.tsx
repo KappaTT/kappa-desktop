@@ -98,6 +98,10 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
     dispatchSetCheckInEvent(event._id, true);
   }, [dispatchSetCheckInEvent, event._id]);
 
+  const onChangeReadyToDelete = React.useCallback((newValue: boolean) => {
+    setReadyToDelete(newValue);
+  }, []);
+
   const attended = getAttendance(records, user.email, event._id);
   const excused = getExcuse(records, user.email, event._id);
   const recordCounts = getEventRecordCounts(records, event._id);
@@ -141,7 +145,7 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
     return (
       <View style={styles.expandedContent}>
         <View style={styles.splitPropertyRow}>
-          <View style={[styles.splitProperty, { marginLeft: 0 }]}>
+          <View style={styles.splitProperty}>
             <Text style={styles.propertyHeader}>Location</Text>
             <Text style={styles.propertyValue}>{event.location}</Text>
           </View>
@@ -218,7 +222,7 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
                 )}
               </View>
               <View style={styles.enableDeleteContainer}>
-                <Switch value={readyToDelete} onValueChange={(newValue: boolean) => setReadyToDelete(newValue)} />
+                <Switch value={readyToDelete} onValueChange={onChangeReadyToDelete} />
                 <Text style={styles.readyToDelete}>I am ready to delete this event</Text>
               </View>
             </View>
@@ -413,8 +417,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap'
   },
   splitProperty: {
-    marginLeft: 16,
-    marginRight: 16
+    marginRight: 24
   },
   propertyHeader: {
     fontFamily: 'OpenSans-SemiBold',

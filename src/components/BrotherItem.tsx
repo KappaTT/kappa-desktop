@@ -142,7 +142,7 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
     return (
       <View style={styles.expandedContent}>
         <View style={styles.splitPropertyRow}>
-          <View style={[styles.splitProperty, { marginLeft: 0 }]}>
+          <View style={styles.splitProperty}>
             <Text style={styles.propertyHeader}>Grad Year</Text>
             <Text style={styles.propertyValue}>{brother.gradYear}</Text>
           </View>
@@ -167,7 +167,7 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
         {user.privileged && (
           <React.Fragment>
             <View style={[styles.splitPropertyRow, { marginTop: 12 }]}>
-              <View style={[styles.splitProperty, { marginLeft: 0 }]}>
+              <View style={styles.splitProperty}>
                 <Text style={styles.propertyHeader}>Prof</Text>
                 {isGettingPoints ? (
                   <ActivityIndicator style={styles.propertyLoader} color={theme.COLORS.PRIMARY} />
@@ -331,8 +331,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap'
   },
   splitProperty: {
-    marginLeft: 16,
-    marginRight: 16
+    marginRight: 24
   },
   propertyHeader: {
     fontFamily: 'OpenSans-SemiBold',
