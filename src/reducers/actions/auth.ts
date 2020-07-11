@@ -133,15 +133,7 @@ export const authenticate = (email: string, idToken: string) => {
 
 export const signInWithGoogle = (data: { email: string; idToken: string }) => {
   return (dispatch) => {
-    if (data.email.endsWith('@illinois.edu')) {
-      dispatch(authenticate(data.email, data.idToken));
-    } else {
-      dispatch(
-        signInFailure({
-          message: 'must use a valid illinois.edu email'
-        })
-      );
-    }
+    dispatch(authenticate(data.email, data.idToken));
   };
 };
 
