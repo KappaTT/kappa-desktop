@@ -19,7 +19,10 @@ const EditCandidatesContent: React.FC<{
   const isFocused = useIsFocused();
 
   const user = useSelector((state: TRedux) => state.auth.user);
+  const kappaLoadHistory = useSelector((state: TRedux) => state.kappa.loadHistory);
   const votingLoadHistory = useSelector((state: TRedux) => state.voting.loadHistory);
+  const isGettingEvents = useSelector((state: TRedux) => state.kappa.isGettingEvents);
+  const getEventsError = useSelector((state: TRedux) => state.kappa.getEventsError);
   const approvedCandidateArray = useSelector((state: TRedux) => state.voting.approvedCandidateArray);
   const unapprovedCandidateArray = useSelector((state: TRedux) => state.voting.unapprovedCandidateArray);
   const isGettingCandidates = useSelector((state: TRedux) => state.voting.isGettingCandidates);
@@ -27,6 +30,7 @@ const EditCandidatesContent: React.FC<{
   const getCandidatesErrorMessage = useSelector((state: TRedux) => state.voting.getCandidatesErrorMessage);
 
   const dispatch = useDispatch();
+  const dispatchGetEvents = React.useCallback(() => dispatch(_kappa.getEvents(user)), [dispatch, user]);
   const dispatchGetCandidates = React.useCallback(() => dispatch(_voting.getCandidates(user)), [dispatch, user]);
   const dispatchEditNewCandidate = React.useCallback(() => dispatch(_voting.editCandidate()), [dispatch]);
 
@@ -34,10 +38,21 @@ const EditCandidatesContent: React.FC<{
 
   const loadData = React.useCallback(
     (force: boolean) => {
+      if (!isGettingEvents && (force || (!getEventsError && shouldLoad(kappaLoadHistory, 'events'))))
+        dispatchGetEvents();
       if (!isGettingCandidates && (force || (!getCandidatesError && shouldLoad(votingLoadHistory, 'candidates'))))
         dispatchGetCandidates();
     },
-    [dispatchGetCandidates, getCandidatesError, isGettingCandidates, votingLoadHistory]
+    [
+      dispatchGetCandidates,
+      dispatchGetEvents,
+      getCandidatesError,
+      getEventsError,
+      isGettingCandidates,
+      isGettingEvents,
+      kappaLoadHistory,
+      votingLoadHistory
+    ]
   );
 
   const onRefresh = React.useCallback(() => {
