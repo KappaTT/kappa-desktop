@@ -1,6 +1,7 @@
 import BrotherItem from './BrotherItem';
 import CandidateItem from './CandidateItem';
 import CandidateViewer from './CandidateViewer';
+import CheckList from './CheckList';
 import CheckListButton from './CheckListButton';
 import Chip from './Chip';
 import EventItem from './EventItem';
@@ -27,6 +28,7 @@ export {
   BrotherItem,
   CandidateItem,
   CandidateViewer,
+  CheckList,
   CheckListButton,
   Chip,
   EventItem,
