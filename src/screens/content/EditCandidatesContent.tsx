@@ -11,7 +11,7 @@ import { theme } from '@constants';
 import { HEADER_HEIGHT } from '@services/utils';
 import { shouldLoad } from '@services/kappaService';
 import { TCandidate } from '@backend/voting';
-import { CandidateItem, Header, Icon, CandidateViewer } from '@components';
+import { CandidateItem, Header, Icon, CandidateViewer, SubHeader } from '@components';
 
 const EditCandidatesContent: React.FC<{
   navigation: ParamType;
@@ -27,7 +27,6 @@ const EditCandidatesContent: React.FC<{
   const unapprovedCandidateArray = useSelector((state: TRedux) => state.voting.unapprovedCandidateArray);
   const isGettingCandidates = useSelector((state: TRedux) => state.voting.isGettingCandidates);
   const getCandidatesError = useSelector((state: TRedux) => state.voting.getCandidatesError);
-  const getCandidatesErrorMessage = useSelector((state: TRedux) => state.voting.getCandidatesErrorMessage);
 
   const dispatch = useDispatch();
   const dispatchGetEvents = React.useCallback(() => dispatch(_kappa.getEvents(user)), [dispatch, user]);
@@ -74,6 +73,7 @@ const EditCandidatesContent: React.FC<{
   const renderCandidateList = () => {
     return (
       <View style={styles.sectionContent}>
+        <SubHeader title="Candidates" />
         <View style={styles.candidateList}>
           <FlatList data={approvedCandidateArray} keyExtractor={keyExtractor} renderItem={renderItem} />
           <FlatList data={unapprovedCandidateArray} keyExtractor={keyExtractor} renderItem={renderItem} />
@@ -85,6 +85,7 @@ const EditCandidatesContent: React.FC<{
   const renderCandidateDetails = () => {
     return (
       <View style={styles.sectionContent}>
+        <SubHeader title="Candidate Details" />
         <ScrollView>
           <CandidateViewer />
         </ScrollView>
@@ -185,7 +186,6 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0
   },
-
   dividerWrapper: {
     display: 'flex',
     flexDirection: 'column',

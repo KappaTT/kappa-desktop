@@ -20,6 +20,7 @@ import RoundButton from './RoundButton';
 import Sidebar from './Sidebar';
 import SidebarDropdown from './SidebarDropdown';
 import SidebarNavButton from './SidebarNavButton';
+import SubHeader from './SubHeader';
 import Switch from './Switch';
 import Toast from './Toast';
 import ToastController from './ToastController';
@@ -47,6 +48,7 @@ export {
   Sidebar,
   SidebarDropdown,
   SidebarNavButton,
+  SubHeader,
   Switch,
   Toast,
   ToastController
