@@ -54,7 +54,10 @@ const CandidateViewer: React.FC = () => {
     () => dispatch(_voting.deleteCandidate(user, selectedCandidateEmail)),
     [dispatch, selectedCandidateEmail, user]
   );
-  const dispatchEditCandidate = React.useCallback(() => console.log('todo'), []);
+  const dispatchEditCandidate = React.useCallback(() => dispatch(_voting.editCandidate(selectedCandidateEmail)), [
+    dispatch,
+    selectedCandidateEmail
+  ]);
 
   const onChangeReadyToDelete = React.useCallback((newValue: boolean) => {
     setReadyToDelete(newValue);

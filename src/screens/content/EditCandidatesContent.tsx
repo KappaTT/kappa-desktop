@@ -28,7 +28,7 @@ const EditCandidatesContent: React.FC<{
 
   const dispatch = useDispatch();
   const dispatchGetCandidates = React.useCallback(() => dispatch(_voting.getCandidates(user)), [dispatch, user]);
-  const dispatchEditNewCandidate = React.useCallback(() => console.log('todo'), []);
+  const dispatchEditNewCandidate = React.useCallback(() => dispatch(_voting.editCandidate()), [dispatch]);
 
   const refreshing = React.useMemo(() => isGettingCandidates, [isGettingCandidates]);
 

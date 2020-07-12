@@ -1,6 +1,13 @@
 import { TCandidateDict, TCandidate } from '@backend/voting';
 import { sortUserByName } from './kappaService';
 
+export const CLASS_YEAR_OPTIONS = [
+  { id: 'FR', title: 'Freshman' },
+  { id: 'SO', title: 'Sophomore' },
+  { id: 'JR', title: 'Junior' },
+  { id: 'SR', title: 'Senior' }
+];
+
 export const separateByCandidateEmail = (candidates: TCandidate[]) => {
   const separated = {};
 

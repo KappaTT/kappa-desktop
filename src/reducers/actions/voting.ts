@@ -12,7 +12,9 @@ import {
   DELETE_CANDIDATE_SUCCESS,
   DELETE_CANDIDATE_FAILURE,
   SELECT_CANDIDATE,
-  UNSELECT_CANDIDATE
+  UNSELECT_CANDIDATE,
+  EDIT_CANDIDATE,
+  CANCEL_EDIT_CANDIDATE
 } from '@reducers/voting';
 import { atan } from 'react-native-reanimated';
 
@@ -138,5 +140,18 @@ export const selectCandidate = (email: string) => {
 export const unselectCandidate = () => {
   return {
     type: UNSELECT_CANDIDATE
+  };
+};
+
+export const editCandidate = (email: string = 'NEW') => {
+  return {
+    type: EDIT_CANDIDATE,
+    email
+  };
+};
+
+export const cancelEditCandidate = () => {
+  return {
+    type: CANCEL_EDIT_CANDIDATE
   };
 };
