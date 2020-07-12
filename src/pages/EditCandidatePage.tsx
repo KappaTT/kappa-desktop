@@ -5,6 +5,7 @@ import moment from 'moment';
 
 import { TRedux } from '@reducers';
 import { _auth, _voting } from '@reducers/actions';
+import { TCandidate } from '@backend/voting';
 import { theme } from '@constants';
 import { prettyPhone, sortEventByDate } from '@services/kappaService';
 import { CLASS_YEAR_OPTIONS } from '@services/votingService';
@@ -39,12 +40,24 @@ const EditCandidatePage: React.FC<{
 
   const [email, setEmail] = React.useState<string>(selectedCandidate?.email || '');
   const [phone, setPhone] = React.useState<string>(selectedCandidate?.phone || '');
-  const [classYear, setClassYear] = React.useState<string>(selectedCandidate?.classYear || '');
+  const [classYear, setClassYear] = React.useState<TCandidate['classYear']>(selectedCandidate?.classYear || '');
   const [major, setMajor] = React.useState<string>(selectedCandidate?.major || '');
   const [attendedEvents, setAttendedEvents] = React.useState<string[]>(selectedCandidate?.events || []);
 
   const dispatch = useDispatch();
-  const dispatchSaveCandidate = React.useCallback(() => dispatch(_voting.saveCandidate(user, {})), [dispatch, user]);
+  const dispatchSaveCandidate = React.useCallback(
+    () =>
+      dispatch(
+        _voting.saveCandidate(user, {
+          email,
+          phone,
+          classYear,
+          major,
+          events: attendedEvents
+        })
+      ),
+    [attendedEvents, classYear, dispatch, email, major, phone, user]
+  );
 
   const prettyPhoneValue = React.useMemo(() => prettyPhone(phone), [phone]);
   const selectedEvents = React.useMemo(() => {
@@ -67,8 +80,15 @@ const EditCandidatePage: React.FC<{
   );
 
   const readyToSave = React.useMemo(
-    () => !(prettyPhoneValue === '' || prettyPhoneValue === 'Invalid' || classYear === ''),
-    [classYear, prettyPhoneValue]
+    () =>
+      !(
+        email === '' ||
+        email.indexOf('@') === -1 ||
+        email.indexOf('.') === -1 ||
+        prettyPhoneValue === 'Invalid' ||
+        classYear === ''
+      ),
+    [classYear, email, prettyPhoneValue]
   );
 
   const onChangeEmail = React.useCallback((text: string) => {
@@ -83,7 +103,7 @@ const EditCandidatePage: React.FC<{
     setMajor(text);
   }, []);
 
-  const onChangeClassYear = React.useCallback((chosen: string) => {
+  const onChangeClassYear = React.useCallback((chosen: TCandidate['classYear']) => {
     setClassYear(chosen);
   }, []);
 
@@ -219,7 +239,6 @@ const EditCandidatePage: React.FC<{
         <ScrollView>
           <View style={styles.propertyHeaderContainer}>
             <Text style={styles.propertyHeader}>Attended Events</Text>
-            <Text style={styles.propertyHeaderRequired}>*</Text>
           </View>
 
           <CheckList options={eventOptions} selected={selectedEvents} onChange={onChangeEvents} />

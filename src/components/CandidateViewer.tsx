@@ -111,7 +111,7 @@ const CandidateViewer: React.FC = () => {
           {attendedEvents.map((event: TEvent) => (
             <View key={event._id} style={styles.eventContainer}>
               <Text style={styles.eventTitle}>{event.title}</Text>
-              <Text style={styles.eventDate}>{moment(event.start).format('M/D/Y')}</Text>
+              <Text style={styles.eventDate}>{moment(event.start).format('ddd LLL')}</Text>
             </View>
           ))}
           {attendedEvents.length === 0 && <Text style={styles.noEvents}>No events</Text>}
