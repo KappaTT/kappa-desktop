@@ -128,7 +128,7 @@ export const getEvents = async (payload: TGetEventsPayload): Promise<TGetEventsR
     log('Get events response', response.code);
 
     if (!response.success || response.code === 500) {
-      return fail({}, 'issue connecting to the server', 500);
+      return fail({}, response.error?.message || 'issue connecting to the server', 500);
     } else if (response.code !== 200) {
       if (response.code === 401) {
         return fail({}, 'your credentials were invalid', response.code);
@@ -177,7 +177,7 @@ export const createEvent = async (payload: TCreateEventPayload): Promise<TCreate
     log('Create event response', response.code);
 
     if (!response.success || response.code === 500) {
-      return fail({}, 'issue connecting to the server', 500);
+      return fail({}, response.error?.message || 'issue connecting to the server', 500);
     } else if (response.code !== 200) {
       if (response.code === 401) {
         return fail({}, 'your credentials were invalid', response.code);
@@ -227,7 +227,7 @@ export const updateEvent = async (payload: TUpdateEventPayload): Promise<TUpdate
     log('Update event response', response.code);
 
     if (!response.success || response.code === 500) {
-      return fail({}, 'issue connecting to the server', 500);
+      return fail({}, response.error?.message || 'issue connecting to the server', 500);
     } else if (response.code !== 200) {
       if (response.code === 401) {
         return fail({}, 'your credentials were invalid', response.code);
@@ -276,7 +276,7 @@ export const deleteEvent = async (payload: TDeleteEventPayload): Promise<TDelete
     log('Delete event response', response.code);
 
     if (!response.success || response.code === 500) {
-      return fail({}, 'issue connecting to the server', 500);
+      return fail({}, response.error?.message || 'issue connecting to the server', 500);
     } else if (response.code !== 200) {
       if (response.code === 401) {
         return fail({}, 'your credentials were invalid', response.code);
@@ -322,7 +322,7 @@ export const getUsers = async (payload: TGetUsersPayload): Promise<TGetUsersResp
     log('Get users response', response.code);
 
     if (!response.success || response.code === 500) {
-      return fail({}, 'issue connecting to the server', 500);
+      return fail({}, response.error?.message || 'issue connecting to the server', 500);
     } else if (response.code !== 200) {
       if (response.code === 401) {
         return fail({}, 'your credentials were invalid', response.code);
@@ -369,7 +369,7 @@ export const getAttendanceByUser = async (payload: TGetAttendancePayload): Promi
     log('Get attendance response', response.code);
 
     if (!response.success || response.code === 500) {
-      return fail({}, 'issue connecting to the server', 500);
+      return fail({}, response.error?.message || 'issue connecting to the server', 500);
     } else if (response.code !== 200) {
       if (response.code === 401) {
         return fail({}, 'your credentials were invalid', response.code);
@@ -400,7 +400,7 @@ export const getAttendanceByEvent = async (payload: TGetAttendancePayload): Prom
     log('Get attendance response', response.code);
 
     if (!response.success || response.code === 500) {
-      return fail({}, 'issue connecting to the server', 500);
+      return fail({}, response.error?.message || 'issue connecting to the server', 500);
     } else if (response.code !== 200) {
       if (response.code === 401) {
         return fail({}, 'your credentials were invalid', response.code);
@@ -452,7 +452,7 @@ export const createAttendance = async (payload: TCreateAttendancePayload): Promi
     log('Get attendance response', response.code);
 
     if (!response.success || response.code === 500) {
-      return fail({}, 'issue connecting to the server', 500);
+      return fail({}, response.error?.message || 'issue connecting to the server', 500);
     } else if (response.code !== 200) {
       if (response.code === 401) {
         return fail({}, 'your credentials were invalid', response.code);
@@ -496,7 +496,7 @@ export const getPendingExcuses = async (payload: TGetPendingExcusesPayload): Pro
     log('Get excuses response', response.code);
 
     if (!response.success || response.code === 500) {
-      return fail({}, 'issue connecting to the server', 500);
+      return fail({}, response.error?.message || 'issue connecting to the server', 500);
     } else if (response.code !== 200) {
       if (response.code === 401) {
         return fail({}, 'your credentials were invalid', response.code);
@@ -553,7 +553,7 @@ export const createExcuse = async (payload: TCreateExcusePayload): Promise<TCrea
     log('Create excuse response', response.code);
 
     if (!response.success || response.code === 500) {
-      return fail({}, 'issue connecting to the server', 500);
+      return fail({}, response.error?.message || 'issue connecting to the server', 500);
     } else if (response.code !== 200) {
       if (response.code === 401) {
         return fail({}, 'your credentials were invalid', response.code);
@@ -614,7 +614,7 @@ export const updateExcuse = async (payload: TUpdateExcusePayload): Promise<TUpda
     log('Modify excuse response', response.code);
 
     if (!response.success || response.code === 500) {
-      return fail({}, 'issue connecting to the server', 500);
+      return fail({}, response.error?.message || 'issue connecting to the server', 500);
     } else if (response.code !== 200) {
       if (response.code === 401) {
         return fail({}, 'your credentials were invalid', response.code);
@@ -659,7 +659,7 @@ export const getPointsByUser = async (payload: TGetPointsByUserPayload): Promise
     log('Get points response', response.code);
 
     if (!response.success || response.code === 500) {
-      return fail({}, 'issue connecting to the server', 500);
+      return fail({}, response.error?.message || 'issue connecting to the server', 500);
     } else if (response.code !== 200) {
       if (response.code === 401) {
         return fail({}, 'your credentials were invalid', response.code);
@@ -710,7 +710,7 @@ export const getEventSearchResults = async (
     log('Get event search response', response.code);
 
     if (!response.success || response.code === 500) {
-      return fail({}, 'issue connecting to the server', 500);
+      return fail({}, response.error?.message || 'issue connecting to the server', 500);
     } else if (response.code !== 200) {
       if (response.code === 401) {
         return fail({}, 'your credentials were invalid', response.code);
