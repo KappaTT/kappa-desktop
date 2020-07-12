@@ -74,7 +74,13 @@ const VotingManagementContent: React.FC<{
     return (
       <View style={styles.sectionContent}>
         <View style={styles.candidateList}>
-          <SubHeader title="Candidates" />
+          <SubHeader title="Candidates">
+            <View style={styles.headerChildren}>
+              <TouchableOpacity activeOpacity={0.6} onPress={() => {}}>
+                <Text style={styles.headerButtonText}>Add Candidate</Text>
+              </TouchableOpacity>
+            </View>
+          </SubHeader>
         </View>
       </View>
     );
