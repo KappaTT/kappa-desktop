@@ -132,6 +132,8 @@ export default (state = initialState, action: any): TVotingState => {
       return {
         ...state,
         isSavingCandidate: false,
+        isEditingCandidate: false,
+        editingCandidateEmail: '',
         ...recomputeVotingState({
           emailToCandidate: mergeCandidates(state.emailToCandidate, [action.candidate])
         })

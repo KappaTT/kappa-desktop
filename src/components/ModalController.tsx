@@ -3,10 +3,10 @@ import { StyleSheet } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { TRedux } from '@reducers';
-import { _auth, _kappa } from '@reducers/actions';
+import { _auth, _kappa, _voting } from '@reducers/actions';
 import { TEvent } from '@backend/kappa';
 import { getEventById } from '@services/kappaService';
-import { CheckInPage, EditEventPage, EditProfilePage, RequestExcusePage } from '@pages';
+import { CheckInPage, EditEventPage, EditProfilePage, RequestExcusePage, EditCandidatePage } from '@pages';
 import Ghost from '@components/Ghost';
 import PopupModal from '@components/PopupModal';
 import { incompleteUser } from '@backend/auth';
@@ -22,6 +22,8 @@ const ModalController: React.FC = () => {
   const isCheckingIn = useSelector((state: TRedux) => state.kappa.isCheckingIn);
   const onboardingVisible = useSelector((state: TRedux) => state.auth.onboardingVisible);
   const isEditingUser = useSelector((state: TRedux) => state.auth.isEditingUser);
+  const isEditingCandidate = useSelector((state: TRedux) => state.voting.isEditingCandidate);
+  const isSavingCandidate = useSelector((state: TRedux) => state.voting.isSavingCandidate);
 
   const dispatch = useDispatch();
   const dispatchCancelEditEvent = React.useCallback(() => dispatch(_kappa.cancelEditEvent()), [dispatch]);
@@ -32,6 +34,7 @@ const ModalController: React.FC = () => {
   const dispatchCancelCheckInEvent = React.useCallback(() => dispatch(_kappa.setCheckInEvent('', false)), [dispatch]);
   const dispatchShowOnboarding = React.useCallback(() => dispatch(_auth.showOnboarding()), [dispatch]);
   const dispatchHideOnboarding = React.useCallback(() => dispatch(_auth.hideOnboarding()), [dispatch]);
+  const dispatchCancelEditCandidate = React.useCallback(() => dispatch(_voting.cancelEditCandidate()), [dispatch]);
 
   React.useEffect(() => {
     if (!authorized || !user) {
@@ -60,7 +63,7 @@ const ModalController: React.FC = () => {
     } else if (!incomplete && onboardingVisible) {
       dispatchHideOnboarding();
     }
-  }, [user, onboardingVisible, isEditingUser, dispatchHideOnboarding, dispatchShowOnboarding]);
+  }, [authorized, user, onboardingVisible, isEditingUser, dispatchHideOnboarding, dispatchShowOnboarding]);
 
   return (
     <Ghost style={styles.container}>
@@ -100,6 +103,14 @@ const ModalController: React.FC = () => {
         onDoneClosing={dispatchHideOnboarding}
       >
         <EditProfilePage onPressCancel={dispatchHideOnboarding} />
+      </PopupModal>
+
+      <PopupModal
+        visible={isEditingCandidate}
+        allowClose={!isSavingCandidate}
+        onDoneClosing={dispatchCancelEditCandidate}
+      >
+        <EditCandidatePage onPressCancel={dispatchCancelEditCandidate} />
       </PopupModal>
     </Ghost>
   );
