@@ -169,14 +169,14 @@ export interface TDeleteCandidatePayload {
 
 interface TDeleteCandidateRequestResponse {
   candidate: {
-    _id: string;
+    email: string;
   };
 }
 
 interface TDeleteCandidateResponse extends TResponse {
   data?: {
     candidate: {
-      _id: string;
+      email: string;
     };
   };
 }
@@ -204,7 +204,7 @@ export const deleteCandidate = async (payload: TDeleteCandidatePayload): Promise
 
     return pass({
       candidate: {
-        _id: response.data.candidate._id
+        email: response.data.candidate.email
       }
     });
   } catch (error) {

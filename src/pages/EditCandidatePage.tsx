@@ -40,6 +40,8 @@ const EditCandidatePage: React.FC<{
 
   const [email, setEmail] = React.useState<string>(selectedCandidate?.email || '');
   const [phone, setPhone] = React.useState<string>(selectedCandidate?.phone || '');
+  const [givenName, setGivenName] = React.useState<string>(selectedCandidate?.givenName || '');
+  const [familyName, setFamilyName] = React.useState<string>(selectedCandidate?.familyName || '');
   const [classYear, setClassYear] = React.useState<TCandidate['classYear']>(selectedCandidate?.classYear || '');
   const [major, setMajor] = React.useState<string>(selectedCandidate?.major || '');
   const [attendedEvents, setAttendedEvents] = React.useState<string[]>(selectedCandidate?.events || []);
@@ -48,15 +50,21 @@ const EditCandidatePage: React.FC<{
   const dispatchSaveCandidate = React.useCallback(
     () =>
       dispatch(
-        _voting.saveCandidate(user, {
-          email,
-          phone,
-          classYear,
-          major,
-          events: attendedEvents
-        })
+        _voting.saveCandidate(
+          user,
+          {
+            email,
+            phone,
+            givenName,
+            familyName,
+            classYear,
+            major,
+            events: attendedEvents
+          },
+          editingCandidateEmail !== 'NEW' ? editingCandidateEmail : undefined
+        )
       ),
-    [attendedEvents, classYear, dispatch, email, major, phone, user]
+    [attendedEvents, classYear, dispatch, editingCandidateEmail, email, familyName, givenName, major, phone, user]
   );
 
   const prettyPhoneValue = React.useMemo(() => prettyPhone(phone), [phone]);
@@ -85,10 +93,12 @@ const EditCandidatePage: React.FC<{
         email === '' ||
         email.indexOf('@') === -1 ||
         email.indexOf('.') === -1 ||
+        givenName === '' ||
+        familyName === '' ||
         prettyPhoneValue === 'Invalid' ||
         classYear === ''
       ),
-    [classYear, email, prettyPhoneValue]
+    [classYear, email, familyName, givenName, prettyPhoneValue]
   );
 
   const onChangeEmail = React.useCallback((text: string) => {
@@ -97,6 +107,14 @@ const EditCandidatePage: React.FC<{
 
   const onChangePhone = React.useCallback((text: string) => {
     setPhone(text);
+  }, []);
+
+  const onChangeGivenName = React.useCallback((text: string) => {
+    setGivenName(text);
+  }, []);
+
+  const onChangeFamilyName = React.useCallback((text: string) => {
+    setFamilyName(text);
   }, []);
 
   const onChangeMajor = React.useCallback((text: string) => {
@@ -168,6 +186,32 @@ const EditCandidatePage: React.FC<{
       <View style={styles.sectionContent}>
         <ScrollView>
           <View style={styles.propertyHeaderContainer}>
+            <Text style={styles.propertyHeader}>First Name</Text>
+            <Text style={styles.propertyHeaderRequired}>*</Text>
+          </View>
+
+          <FormattedInput
+            placeholderText="ex: Jeff"
+            maxLength={32}
+            value={givenName}
+            formatter={emailFormatter}
+            onChangeText={onChangeGivenName}
+          />
+
+          <View style={styles.propertyHeaderContainer}>
+            <Text style={styles.propertyHeader}>Last Name</Text>
+            <Text style={styles.propertyHeaderRequired}>*</Text>
+          </View>
+
+          <FormattedInput
+            placeholderText="ex: Taylor-Chang"
+            maxLength={32}
+            value={familyName}
+            formatter={emailFormatter}
+            onChangeText={onChangeFamilyName}
+          />
+
+          <View style={styles.propertyHeaderContainer}>
             <Text style={styles.propertyHeader}>Email</Text>
             <Text style={styles.propertyHeaderRequired}>*</Text>
           </View>
@@ -197,18 +241,6 @@ const EditCandidatePage: React.FC<{
           <Text style={styles.description}>
             The phone number is solely for rush contact purposes, it will not be shared beyond exec.
           </Text>
-
-          <View style={styles.propertyHeaderContainer}>
-            <Text style={styles.propertyHeader}>Major</Text>
-            <Text style={styles.propertyHeaderRequired}>*</Text>
-          </View>
-
-          <FormattedInput
-            placeholderText="ex: Computer Science"
-            maxLength={64}
-            value={major}
-            onChangeText={onChangeMajor}
-          />
         </ScrollView>
       </View>
     );
@@ -228,6 +260,18 @@ const EditCandidatePage: React.FC<{
           <Text style={styles.description}>
             Choose their actual class year based on when they enrolled at the university, not by credit hours.
           </Text>
+
+          <View style={styles.propertyHeaderContainer}>
+            <Text style={styles.propertyHeader}>Major</Text>
+            <Text style={styles.propertyHeaderRequired}>*</Text>
+          </View>
+
+          <FormattedInput
+            placeholderText="ex: Computer Science"
+            maxLength={64}
+            value={major}
+            onChangeText={onChangeMajor}
+          />
         </ScrollView>
       </View>
     );

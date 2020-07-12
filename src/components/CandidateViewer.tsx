@@ -63,6 +63,12 @@ const CandidateViewer: React.FC = () => {
     setReadyToDelete(newValue);
   }, []);
 
+  React.useEffect(() => {
+    if (selectedCandidateEmail) {
+      setReadyToDelete(false);
+    }
+  }, [selectedCandidateEmail]);
+
   return (
     <View style={styles.container}>
       {selectedCandidate !== null && (

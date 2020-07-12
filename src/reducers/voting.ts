@@ -160,6 +160,7 @@ export default (state = initialState, action: any): TVotingState => {
       return {
         ...state,
         isDeletingCandidate: false,
+        selectedCandidateEmail: '',
         ...recomputeVotingState({
           emailToCandidate: remainingCandidates
         })
