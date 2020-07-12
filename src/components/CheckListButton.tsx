@@ -26,6 +26,7 @@ const CheckListButton: React.FC<{
             opacity: computedOpacity
           }
         ]}
+        activeOpacity={0.4}
         disabled={disabled}
         onPress={onPress}
       >
