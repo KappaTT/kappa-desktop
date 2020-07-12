@@ -44,8 +44,8 @@ export const getCandidates = async (payload: TGetCandidatesPayload): Promise<TGe
 
     log('Get candidates response', response.code);
 
-    if (!response.success || response.code === 500) {
-      return fail({}, response.error?.message || 'issue connecting to the server', 500);
+    if (!response.success) {
+      return fail({}, 'issue connecting to the server', 500);
     } else if (response.code !== 200) {
       if (response.code === 401) {
         return fail({}, 'your credentials were invalid', response.code);
@@ -93,7 +93,7 @@ export const createCandidate = async (payload: TCreateCandidatePayload): Promise
 
     log('Create candidate response', response.code);
 
-    if (!response.success || response.code === 500) {
+    if (!response.success) {
       return fail({}, response.error?.message || 'issue connecting to the server', 500);
     } else if (response.code !== 200) {
       if (response.code === 401) {
@@ -143,7 +143,7 @@ export const updateCandidate = async (payload: TUpdateCandidatePayload): Promise
 
     log('Update candidate response', response.code);
 
-    if (!response.success || response.code === 500) {
+    if (!response.success) {
       return fail({}, response.error?.message || 'issue connecting to the server', 500);
     } else if (response.code !== 200) {
       if (response.code === 401) {
@@ -192,7 +192,7 @@ export const deleteCandidate = async (payload: TDeleteCandidatePayload): Promise
 
     log('Delete candidate response', response.code);
 
-    if (!response.success || response.code === 500) {
+    if (!response.success) {
       return fail({}, response.error?.message || 'issue connecting to the server', 500);
     } else if (response.code !== 200) {
       if (response.code === 401) {

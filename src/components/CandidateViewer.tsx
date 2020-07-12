@@ -64,9 +64,8 @@ const CandidateViewer: React.FC = () => {
   }, []);
 
   React.useEffect(() => {
-    if (selectedCandidateEmail) {
-      setReadyToDelete(false);
-    }
+    // Force a dependency to reset readyToDelete on any change
+    setReadyToDelete(selectedCandidateEmail === null);
   }, [selectedCandidateEmail]);
 
   return (

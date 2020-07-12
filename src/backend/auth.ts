@@ -116,7 +116,7 @@ export const signIn = async (payload: TSignInPayload): Promise<TSignInResponse> 
 
     log('Sign in response', response);
 
-    if (!response.success || response.code === 500) {
+    if (!response.success) {
       return fail({}, response.error?.message || 'issue connecting to the server');
     } else if (response.code !== 200) {
       if (response.code === 401) {
@@ -170,7 +170,7 @@ export const updateUser = async (payload: TUpdateUserPayload): Promise<TUpdateUs
 
     log('Update user response', response);
 
-    if (!response.success || response.code === 500) {
+    if (!response.success) {
       return fail({}, response.error?.message || 'issue connecting to the server');
     } else if (response.code !== 200) {
       if (response.code === 401) {
