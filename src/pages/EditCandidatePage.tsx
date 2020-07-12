@@ -67,6 +67,16 @@ const EditCandidatePage: React.FC<{
     [attendedEvents, classYear, dispatch, editingCandidateEmail, email, familyName, givenName, major, phone, user]
   );
 
+  const emailIsDuplicate = React.useMemo(() => {
+    if (email !== editingCandidateEmail) {
+      if (candidateArray.find((candidate) => candidate.email === email)) {
+        return true;
+      }
+    }
+
+    return false;
+  }, [candidateArray, editingCandidateEmail, email]);
+
   const prettyPhoneValue = React.useMemo(() => prettyPhone(phone), [phone]);
   const selectedEvents = React.useMemo(() => {
     const events = {};
@@ -91,6 +101,7 @@ const EditCandidatePage: React.FC<{
     () =>
       !(
         email === '' ||
+        emailIsDuplicate ||
         email.indexOf('@') === -1 ||
         email.indexOf('.') === -1 ||
         givenName === '' ||
@@ -98,7 +109,7 @@ const EditCandidatePage: React.FC<{
         prettyPhoneValue === 'Invalid' ||
         classYear === ''
       ),
-    [classYear, email, familyName, givenName, prettyPhoneValue]
+    [classYear, email, emailIsDuplicate, familyName, givenName, prettyPhoneValue]
   );
 
   const onChangeEmail = React.useCallback((text: string) => {
@@ -220,6 +231,7 @@ const EditCandidatePage: React.FC<{
             placeholderText="ex: jjt4@illinois.edu"
             maxLength={64}
             value={email}
+            error={emailIsDuplicate}
             formatter={emailFormatter}
             onChangeText={onChangeEmail}
           />
