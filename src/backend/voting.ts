@@ -19,6 +19,19 @@ export interface TCandidateDict {
   [email: string]: TCandidate;
 }
 
+export interface TSession {
+  _id: string;
+  name: string;
+  startDate: string;
+  operatorEmail: string;
+  candidateOrder: string[];
+  currentCandidateId: string;
+  active: boolean;
+  verdict: {
+    [_id: string]: boolean;
+  };
+}
+
 export interface TGetCandidatesPayload {
   user: TUser;
 }
@@ -205,6 +218,200 @@ export const deleteCandidate = async (payload: TDeleteCandidatePayload): Promise
     return pass({
       candidate: {
         email: response.data.candidate.email
+      }
+    });
+  } catch (error) {
+    log(error);
+    return fail({}, "that wasn't supposed to happen", -1);
+  }
+};
+
+export interface TGetSessionsPayload {
+  user: TUser;
+}
+
+interface TGetSessionsRequestResponse {
+  sessions: TSession[];
+}
+
+interface TGetSessionsResponse extends TResponse {
+  data?: {
+    sessions: TSession[];
+  };
+}
+
+export const getSessions = async (payload: TGetSessionsPayload): Promise<TGetSessionsResponse> => {
+  try {
+    const response = await makeAuthorizedRequest<TGetSessionsRequestResponse>(
+      ENDPOINTS.GET_SESSIONS(),
+      METHODS.GET_SESSIONS,
+      {},
+      payload.user.sessionToken
+    );
+
+    log('Get sessions response', response.code);
+
+    if (!response.success) {
+      return fail({}, 'issue connecting to the server', 500);
+    } else if (response.code !== 200) {
+      if (response.code === 401) {
+        return fail({}, 'your credentials were invalid', response.code);
+      }
+
+      return fail({}, response.error?.message, response.code);
+    }
+
+    return pass({
+      sessions: response.data.sessions
+    });
+  } catch (error) {
+    log(error);
+    return fail({}, "that wasn't supposed to happen", -1);
+  }
+};
+
+export interface TCreateSessionPayload {
+  user: TUser;
+  session: Partial<TSession>;
+}
+
+interface TCreateSessionRequestResponse {
+  session: TSession;
+}
+
+interface TCreateSessionResponse extends TResponse {
+  data?: {
+    session: TSession;
+  };
+}
+
+export const createSession = async (payload: TCreateSessionPayload): Promise<TCreateSessionResponse> => {
+  try {
+    const response = await makeAuthorizedRequest<TCreateSessionRequestResponse>(
+      ENDPOINTS.CREATE_SESSION(),
+      METHODS.CREATE_SESSION,
+      {
+        body: {
+          session: payload.session
+        }
+      },
+      payload.user.sessionToken
+    );
+
+    log('Create session response', response.code);
+
+    if (!response.success) {
+      return fail({}, response.error?.message || 'issue connecting to the server', 500);
+    } else if (response.code !== 200) {
+      if (response.code === 401) {
+        return fail({}, 'your credentials were invalid', response.code);
+      }
+
+      return fail({}, response.error?.message, response.code);
+    }
+
+    return pass({
+      session: response.data.session
+    });
+  } catch (error) {
+    log(error);
+    return fail({}, "that wasn't supposed to happen", -1);
+  }
+};
+
+export interface TUpdateSessionPayload {
+  user: TUser;
+  _id: string;
+  changes: Partial<TSession>;
+}
+
+interface TUpdateSessionRequestResponse {
+  session: TSession;
+}
+
+interface TUpdateSessionResponse extends TResponse {
+  data?: {
+    session: TSession;
+  };
+}
+
+export const updateSession = async (payload: TUpdateSessionPayload): Promise<TUpdateSessionResponse> => {
+  try {
+    const response = await makeAuthorizedRequest<TUpdateSessionRequestResponse>(
+      ENDPOINTS.UPDATE_SESSION({ _id: payload._id }),
+      METHODS.UPDATE_SESSION,
+      {
+        body: {
+          changes: payload.changes
+        }
+      },
+      payload.user.sessionToken
+    );
+
+    log('Update session response', response.code);
+
+    if (!response.success) {
+      return fail({}, response.error?.message || 'issue connecting to the server', 500);
+    } else if (response.code !== 200) {
+      if (response.code === 401) {
+        return fail({}, 'your credentials were invalid', response.code);
+      }
+
+      return fail({}, response.error?.message, response.code);
+    }
+
+    return pass({
+      session: response.data.session
+    });
+  } catch (error) {
+    log(error);
+    return fail({}, "that wasn't supposed to happen", -1);
+  }
+};
+
+export interface TDeleteSessionPayload {
+  user: TUser;
+  _id: string;
+}
+
+interface TDeleteSessionRequestResponse {
+  session: {
+    _id: string;
+  };
+}
+
+interface TDeleteSessionResponse extends TResponse {
+  data?: {
+    session: {
+      _id: string;
+    };
+  };
+}
+
+export const deleteSession = async (payload: TDeleteSessionPayload): Promise<TDeleteSessionResponse> => {
+  try {
+    const response = await makeAuthorizedRequest<TDeleteSessionRequestResponse>(
+      ENDPOINTS.DELETE_CANDIDATE({ _id: payload._id }),
+      METHODS.DELETE_CANDIDATE,
+      {},
+      payload.user.sessionToken
+    );
+
+    log('Delete session response', response.code);
+
+    if (!response.success) {
+      return fail({}, response.error?.message || 'issue connecting to the server', 500);
+    } else if (response.code !== 200) {
+      if (response.code === 401) {
+        return fail({}, 'your credentials were invalid', response.code);
+      }
+
+      return fail({}, response.error?.message, response.code);
+    }
+
+    return pass({
+      session: {
+        _id: response.data.session._id
       }
     });
   } catch (error) {

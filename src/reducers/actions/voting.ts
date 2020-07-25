@@ -1,6 +1,6 @@
 import { Voting } from '@backend';
 import { TUser } from '@backend/auth';
-import { TCandidate } from '@backend/voting';
+import { TCandidate, TSession } from '@backend/voting';
 import {
   GET_CANDIDATES,
   GET_CANDIDATES_SUCCESS,
@@ -14,7 +14,13 @@ import {
   SELECT_CANDIDATE,
   UNSELECT_CANDIDATE,
   EDIT_CANDIDATE,
-  CANCEL_EDIT_CANDIDATE
+  CANCEL_EDIT_CANDIDATE,
+  GET_SESSIONS,
+  GET_SESSIONS_SUCCESS,
+  GET_SESSIONS_FAILURE,
+  SELECT_SESSION_CANDIDATE,
+  SELECT_SESSION,
+  UNSELECT_SESSION
 } from '@reducers/voting';
 import { atan } from 'react-native-reanimated';
 
@@ -153,5 +159,59 @@ export const editCandidate = (email: string = 'NEW') => {
 export const cancelEditCandidate = () => {
   return {
     type: CANCEL_EDIT_CANDIDATE
+  };
+};
+
+export const gettingSessions = () => {
+  return {
+    type: GET_SESSIONS
+  };
+};
+
+export const getSessionsSuccess = (data) => {
+  return {
+    type: GET_SESSIONS_SUCCESS,
+    sessions: data.sessions
+  };
+};
+
+export const getSessionsFailure = (error) => {
+  return {
+    type: GET_SESSIONS_FAILURE,
+    error
+  };
+};
+
+export const getSessions = (user: TUser) => {
+  return (dispatch) => {
+    dispatch(gettingSessions());
+
+    Voting.getSessions({ user }).then((res) => {
+      if (res.success) {
+        dispatch(getSessionsSuccess(res.data));
+      } else {
+        dispatch(getSessionsFailure(res.error));
+      }
+    });
+  };
+};
+
+export const selectSession = (session: TSession) => {
+  return {
+    type: SELECT_SESSION,
+    _id: session._id
+  };
+};
+
+export const unselectSession = () => {
+  return {
+    type: UNSELECT_SESSION
+  };
+};
+
+export const selectSessionCandidate = (candidate: TCandidate) => {
+  return {
+    type: SELECT_SESSION_CANDIDATE,
+    _id: candidate._id
   };
 };

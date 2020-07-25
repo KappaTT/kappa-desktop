@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, ScrollView, FlatList, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useIsFocused } from 'react-navigation-hooks';
 import moment from 'moment';
@@ -8,9 +8,11 @@ import { ParamType } from '@navigation/NavigationTypes';
 import { TRedux } from '@reducers';
 import { _auth, _kappa, _nav, _ui, _voting } from '@reducers/actions';
 import { shouldLoad } from '@services/kappaService';
+import { sortSessionByDate } from '@services/votingService';
+import { TCandidate, TSession } from '@backend/voting';
 import { theme } from '@constants';
 import { HEADER_HEIGHT } from '@services/utils';
-import { Header, SubHeader, Icon } from '@components';
+import { Header, SubHeader, Icon, SessionItem, SessionCandidateItem } from '@components';
 
 const VotingManagementContent: React.FC<{
   navigation: ParamType;
@@ -20,16 +22,58 @@ const VotingManagementContent: React.FC<{
   const user = useSelector((state: TRedux) => state.auth.user);
   const kappaLoadHistory = useSelector((state: TRedux) => state.kappa.loadHistory);
   const votingLoadHistory = useSelector((state: TRedux) => state.voting.loadHistory);
+  const candidateArray = useSelector((state: TRedux) => state.voting.candidateArray);
+  const sessionArray = useSelector((state: TRedux) => state.voting.sessionArray);
+  const selectedSessionId = useSelector((state: TRedux) => state.voting.selectedSessionId);
   const isGettingEvents = useSelector((state: TRedux) => state.kappa.isGettingEvents);
   const getEventsError = useSelector((state: TRedux) => state.kappa.getEventsError);
   const isGettingCandidates = useSelector((state: TRedux) => state.voting.isGettingCandidates);
   const getCandidatesError = useSelector((state: TRedux) => state.voting.getCandidatesError);
+  const isGettingSessions = useSelector((state: TRedux) => state.voting.isGettingSessions);
+  const getSessionsError = useSelector((state: TRedux) => state.voting.getSessionsError);
 
   const dispatch = useDispatch();
   const dispatchGetEvents = React.useCallback(() => dispatch(_kappa.getEvents(user)), [dispatch, user]);
   const dispatchGetCandidates = React.useCallback(() => dispatch(_voting.getCandidates(user)), [dispatch, user]);
+  const dispatchGetSessions = React.useCallback(() => dispatch(_voting.getSessions(user)), [dispatch, user]);
+  const dispatchSelectSession = React.useCallback((session: TSession) => dispatch(_voting.selectSession(session)), [
+    dispatch
+  ]);
+  const dispatchUnselectSession = React.useCallback(() => dispatch(_voting.unselectSession()), [dispatch]);
 
   const refreshing = React.useMemo(() => isGettingCandidates, [isGettingCandidates]);
+
+  const sortedSessionArray = React.useMemo(() => {
+    return sessionArray.slice().sort(sortSessionByDate);
+  }, [sessionArray]);
+
+  const selectedSession = React.useMemo(() => {
+    const index = sortedSessionArray.findIndex((session) => session._id === selectedSessionId);
+
+    if (index >= 0) {
+      return sortedSessionArray[index];
+    }
+
+    return null;
+  }, [selectedSessionId, sortedSessionArray]);
+
+  const candidatesInSession = React.useMemo(() => {
+    if (selectedSession === null) {
+      return [];
+    }
+
+    const candidates: TCandidate[] = [];
+
+    for (const candidateId of selectedSession.candidateOrder) {
+      const index = candidateArray.findIndex((candidate) => candidate._id === candidateId);
+
+      if (index >= 0) {
+        candidates.push(candidateArray[index]);
+      }
+    }
+
+    return candidates;
+  }, [candidateArray, selectedSession]);
 
   const loadData = React.useCallback(
     (force: boolean) => {
@@ -37,14 +81,19 @@ const VotingManagementContent: React.FC<{
         dispatchGetEvents();
       if (!isGettingCandidates && (force || (!getCandidatesError && shouldLoad(votingLoadHistory, 'candidates'))))
         dispatchGetCandidates();
+      if (!isGettingSessions && (force || (!getSessionsError && shouldLoad(votingLoadHistory, 'sessions'))))
+        dispatchGetSessions();
     },
     [
       dispatchGetCandidates,
       dispatchGetEvents,
+      dispatchGetSessions,
       getCandidatesError,
       getEventsError,
+      getSessionsError,
       isGettingCandidates,
       isGettingEvents,
+      isGettingSessions,
       kappaLoadHistory,
       votingLoadHistory
     ]
@@ -55,16 +104,41 @@ const VotingManagementContent: React.FC<{
   }, [loadData]);
 
   React.useEffect(() => {
+    if (sortedSessionArray.length > 0) {
+      if (selectedSessionId === '') {
+        dispatchSelectSession(sortedSessionArray[0]);
+      }
+    } else {
+      if (selectedSessionId !== '') {
+        dispatchUnselectSession();
+      }
+    }
+  }, [dispatchSelectSession, dispatchUnselectSession, selectedSessionId, sortedSessionArray]);
+
+  React.useEffect(() => {
     if (isFocused && user.sessionToken) {
       loadData(false);
     }
   }, [isFocused, loadData, user.sessionToken]);
 
+  const sessionKeyExtractor = React.useCallback((item: TSession) => item._id, []);
+  const candidateKeyExtractor = React.useCallback((item: TCandidate) => item._id, []);
+
+  const renderSessionItem = ({ item }: { item: TSession }) => {
+    return <SessionItem session={item} />;
+  };
+
+  const renderCandidateItem = ({ item }: { item: TCandidate }) => {
+    return <SessionCandidateItem candidate={item} />;
+  };
+
   const renderSessionList = () => {
     return (
       <View style={styles.sectionContent}>
+        <SubHeader title="Sessions" />
+
         <View style={styles.sessionList}>
-          <SubHeader title="Sessions" />
+          <FlatList data={sortedSessionArray} keyExtractor={sessionKeyExtractor} renderItem={renderSessionItem} />
         </View>
       </View>
     );
@@ -73,14 +147,16 @@ const VotingManagementContent: React.FC<{
   const renderCandidateList = () => {
     return (
       <View style={styles.sectionContent}>
+        <SubHeader title="Candidates">
+          <View style={styles.headerChildren}>
+            <TouchableOpacity activeOpacity={0.6} onPress={() => {}}>
+              <Text style={styles.headerButtonText}>Edit List</Text>
+            </TouchableOpacity>
+          </View>
+        </SubHeader>
+
         <View style={styles.candidateList}>
-          <SubHeader title="Candidates">
-            <View style={styles.headerChildren}>
-              <TouchableOpacity activeOpacity={0.6} onPress={() => {}}>
-                <Text style={styles.headerButtonText}>Add Candidate</Text>
-              </TouchableOpacity>
-            </View>
-          </SubHeader>
+          <FlatList data={candidatesInSession} keyExtractor={candidateKeyExtractor} renderItem={renderCandidateItem} />
         </View>
       </View>
     );
@@ -89,7 +165,13 @@ const VotingManagementContent: React.FC<{
   const renderCandidateDetails = () => {
     return (
       <View style={styles.sectionContent}>
-        <SubHeader title="Session Controls" />
+        <SubHeader title="Session Controls">
+          <View style={styles.headerChildren}>
+            <TouchableOpacity activeOpacity={0.6} onPress={() => {}}>
+              <Text style={styles.headerButtonText}>Start</Text>
+            </TouchableOpacity>
+          </View>
+        </SubHeader>
         <ScrollView></ScrollView>
       </View>
     );

@@ -2,7 +2,7 @@ import moment from 'moment';
 
 import { setGlobalError } from '@services/kappaService';
 import { TLoadHistory } from '@backend/kappa';
-import { TCandidate, TCandidateDict } from '@backend/voting';
+import { TCandidate, TCandidateDict, TSession } from '@backend/voting';
 import { recomputeVotingState, separateByCandidateEmail, mergeCandidates } from '@services/votingService';
 
 export const SET_GLOBAL_ERROR_MESSAGE = 'SET_GLOBAL_ERROR_MESSAGE';
@@ -23,6 +23,14 @@ export const UNSELECT_CANDIDATE = 'UNSELECT_CANDIDATE';
 
 export const EDIT_CANDIDATE = 'EDIT_CANDIDATE';
 export const CANCEL_EDIT_CANDIDATE = 'CANCEL_EDIT_CANDIDATE';
+
+export const GET_SESSIONS = 'GET_SESSIONS';
+export const GET_SESSIONS_SUCCESS = 'GET_SESSIONS_SUCCESS';
+export const GET_SESSIONS_FAILURE = 'GET_SESSIONS_FAILURE';
+
+export const SELECT_SESSION = 'SELECT_SESSION';
+export const UNSELECT_SESSION = 'UNSELECT_SESSION';
+export const SELECT_SESSION_CANDIDATE = 'SELECT_SESSION_CANDIDATE';
 
 export interface TVotingState {
   globalErrorMessage: string;
@@ -45,11 +53,19 @@ export interface TVotingState {
   isEditingCandidate: boolean;
   editingCandidateEmail: string;
 
+  isGettingSessions: boolean;
+  getSessionsError: boolean;
+  getSessionsErrorMessage: string;
+
+  selectedSessionId: string;
+  selectedSessionCandidateId: string;
+
   loadHistory: TLoadHistory;
   candidateArray: TCandidate[];
   approvedCandidateArray: TCandidate[];
   unapprovedCandidateArray: TCandidate[];
   emailToCandidate: TCandidateDict;
+  sessionArray: TSession[];
 }
 
 const initialState: TVotingState = {
@@ -73,11 +89,19 @@ const initialState: TVotingState = {
   isEditingCandidate: false,
   editingCandidateEmail: '',
 
+  isGettingSessions: false,
+  getSessionsError: false,
+  getSessionsErrorMessage: '',
+
+  selectedSessionId: '',
+  selectedSessionCandidateId: '',
+
   loadHistory: {},
   candidateArray: [],
   approvedCandidateArray: [],
   unapprovedCandidateArray: [],
-  emailToCandidate: {}
+  emailToCandidate: {},
+  sessionArray: []
 };
 
 export default (state = initialState, action: any): TVotingState => {
@@ -187,6 +211,46 @@ export default (state = initialState, action: any): TVotingState => {
         ...state,
         isEditingCandidate: false,
         editingCandidateEmail: ''
+      };
+    case GET_SESSIONS:
+      return {
+        ...state,
+        isGettingSessions: true,
+        getSessionsError: false,
+        getSessionsErrorMessage: ''
+      };
+    case GET_SESSIONS_SUCCESS:
+      return {
+        ...state,
+        isGettingSessions: false,
+        loadHistory: {
+          ...state.loadHistory,
+          sessions: moment()
+        },
+        sessionArray: action.sessions
+      };
+    case GET_SESSIONS_FAILURE:
+      return {
+        ...state,
+        isGettingSessions: false,
+        getSessionsError: true,
+        getSessionsErrorMessage: action.error.message,
+        ...setGlobalError(action.error.message, action.error.code)
+      };
+    case SELECT_SESSION:
+      return {
+        ...state,
+        selectedSessionId: action._id
+      };
+    case UNSELECT_SESSION:
+      return {
+        ...state,
+        selectedSessionId: ''
+      };
+    case SELECT_SESSION_CANDIDATE:
+      return {
+        ...state,
+        selectedSessionCandidateId: action._id
       };
     default:
       return state;

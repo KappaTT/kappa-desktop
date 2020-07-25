@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 import { TCandidateDict, TCandidate } from '@backend/voting';
 import { sortUserByName } from './kappaService';
 
@@ -27,6 +29,9 @@ export const mergeCandidates = (emailToCandidate: TCandidateDict, newCandidates:
 
   return merged;
 };
+
+export const sortSessionByDate = (a: { startDate: string }, b: { startDate: string }) =>
+  moment(a.startDate).isBefore(moment(b.startDate)) ? -1 : 1;
 
 export const recomputeVotingState = ({ emailToCandidate }: { emailToCandidate: TCandidateDict }) => {
   const candidateArray = Object.values(emailToCandidate).sort(sortUserByName);

@@ -37,7 +37,11 @@ export const ENDPOINTS: {
   GET_CANDIDATES: () => 'candidates',
   CREATE_CANDIDATE: () => 'candidates',
   UPDATE_CANDIDATE: (config: { email: string }) => `candidates/${config.email}`,
-  DELETE_CANDIDATE: (config: { email: string }) => `candidates/${config.email}`
+  DELETE_CANDIDATE: (config: { email: string }) => `candidates/${config.email}`,
+  GET_SESSIONS: () => 'sessions',
+  CREATE_SESSION: () => 'sessions',
+  UPDATE_SESSION: (config: { _id: string }) => `sessions/${config._id}`,
+  DELETE_SESSION: (config: { _id: string }) => `sessions/${config._id}`
 };
 
 export const METHODS: {
@@ -61,7 +65,11 @@ export const METHODS: {
   GET_CANDIDATES: M_GET,
   CREATE_CANDIDATE: M_POST,
   UPDATE_CANDIDATE: M_PATCH,
-  DELETE_CANDIDATE: M_DELETE
+  DELETE_CANDIDATE: M_DELETE,
+  GET_SESSIONS: M_GET,
+  CREATE_SESSION: M_POST,
+  UPDATE_SESSION: M_PATCH,
+  DELETE_SESSION: M_DELETE
 };
 
 export interface TResponse {

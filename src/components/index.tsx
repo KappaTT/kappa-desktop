@@ -17,6 +17,8 @@ import PendingExcuseItem from './PendingExcuseItem';
 import PopupModal from './PopupModal';
 import RadioList from './RadioList';
 import RoundButton from './RoundButton';
+import SessionItem from './SessionItem';
+import SessionCandidateItem from './SessionCandidateItem';
 import Sidebar from './Sidebar';
 import SidebarDropdown from './SidebarDropdown';
 import SidebarNavButton from './SidebarNavButton';
@@ -45,6 +47,8 @@ export {
   PopupModal,
   RadioList,
   RoundButton,
+  SessionItem,
+  SessionCandidateItem,
   Sidebar,
   SidebarDropdown,
   SidebarNavButton,
