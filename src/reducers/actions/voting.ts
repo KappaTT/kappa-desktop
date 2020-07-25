@@ -20,7 +20,8 @@ import {
   GET_SESSIONS_FAILURE,
   SELECT_SESSION_CANDIDATE,
   SELECT_SESSION,
-  UNSELECT_SESSION
+  UNSELECT_SESSION,
+  UNSELECT_SESSION_CANDIDATE
 } from '@reducers/voting';
 import { atan } from 'react-native-reanimated';
 
@@ -199,7 +200,7 @@ export const getSessions = (user: TUser) => {
 export const selectSession = (session: TSession) => {
   return {
     type: SELECT_SESSION,
-    _id: session._id
+    session
   };
 };
 
@@ -213,5 +214,11 @@ export const selectSessionCandidate = (candidate: TCandidate) => {
   return {
     type: SELECT_SESSION_CANDIDATE,
     _id: candidate._id
+  };
+};
+
+export const unselectSessionCandidate = () => {
+  return {
+    type: UNSELECT_SESSION_CANDIDATE
   };
 };

@@ -9,7 +9,7 @@ import { TCandidate } from '@backend/voting';
 import Icon from '@components/Icon';
 
 const SessionCandidateItem: React.FC<{ candidate: TCandidate }> = ({ candidate }) => {
-  const selectedSessionCandidateId = useSelector((state: TRedux) => state.voting.selectedSessionCandidateId);
+  const currentCandidateId = useSelector((state: TRedux) => state.voting.currentCandidateId);
 
   const dispatch = useDispatch();
   const dispatchSelectSessionCandidate = React.useCallback(() => dispatch(_voting.selectSessionCandidate(candidate)), [
@@ -17,10 +17,7 @@ const SessionCandidateItem: React.FC<{ candidate: TCandidate }> = ({ candidate }
     dispatch
   ]);
 
-  const isSelected = React.useMemo(() => selectedSessionCandidateId === candidate._id, [
-    candidate._id,
-    selectedSessionCandidateId
-  ]);
+  const isSelected = React.useMemo(() => currentCandidateId === candidate._id, [candidate._id, currentCandidateId]);
 
   const onPressSelect = React.useCallback(() => {
     dispatchSelectSessionCandidate();
@@ -49,9 +46,11 @@ const SessionCandidateItem: React.FC<{ candidate: TCandidate }> = ({ candidate }
             </Text>
           </View>
 
-          <View style={styles.selectIconContainer}>
-            <Icon family="MaterialIcons" name="keyboard-arrow-right" size={36} color={theme.COLORS.PRIMARY} />
-          </View>
+          {isSelected && (
+            <View style={styles.selectIconContainer}>
+              <Icon family="MaterialIcons" name="keyboard-arrow-right" size={36} color={theme.COLORS.PRIMARY} />
+            </View>
+          )}
         </View>
       </TouchableOpacity>
     </View>
@@ -60,7 +59,7 @@ const SessionCandidateItem: React.FC<{ candidate: TCandidate }> = ({ candidate }
 
 const styles = StyleSheet.create({
   container: {
-    paddingLeft: 8,
+    paddingLeft: 16,
     borderBottomColor: theme.COLORS.LIGHT_BORDER,
     borderBottomWidth: 1
   },

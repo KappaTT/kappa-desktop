@@ -49,9 +49,11 @@ const CandidateItem: React.FC<{ candidate: TCandidate }> = ({ candidate }) => {
             </Text>
           </View>
 
-          <View style={styles.selectIconContainer}>
-            <Icon family="MaterialIcons" name="keyboard-arrow-right" size={36} color={theme.COLORS.PRIMARY} />
-          </View>
+          {isSelected && (
+            <View style={styles.selectIconContainer}>
+              <Icon family="MaterialIcons" name="keyboard-arrow-right" size={36} color={theme.COLORS.PRIMARY} />
+            </View>
+          )}
         </View>
       </TouchableOpacity>
     </View>
@@ -60,7 +62,7 @@ const CandidateItem: React.FC<{ candidate: TCandidate }> = ({ candidate }) => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingLeft: 8,
+    paddingLeft: 16,
     borderBottomColor: theme.COLORS.LIGHT_BORDER,
     borderBottomWidth: 1
   },

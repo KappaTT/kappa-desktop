@@ -31,6 +31,7 @@ export const GET_SESSIONS_FAILURE = 'GET_SESSIONS_FAILURE';
 export const SELECT_SESSION = 'SELECT_SESSION';
 export const UNSELECT_SESSION = 'UNSELECT_SESSION';
 export const SELECT_SESSION_CANDIDATE = 'SELECT_SESSION_CANDIDATE';
+export const UNSELECT_SESSION_CANDIDATE = 'UNSELECT_SESSION_CANDIDATE';
 
 export interface TVotingState {
   globalErrorMessage: string;
@@ -58,6 +59,7 @@ export interface TVotingState {
   getSessionsErrorMessage: string;
 
   selectedSessionId: string;
+  currentCandidateId: string;
   selectedSessionCandidateId: string;
 
   loadHistory: TLoadHistory;
@@ -94,6 +96,7 @@ const initialState: TVotingState = {
   getSessionsErrorMessage: '',
 
   selectedSessionId: '',
+  currentCandidateId: '',
   selectedSessionCandidateId: '',
 
   loadHistory: {},
@@ -240,17 +243,24 @@ export default (state = initialState, action: any): TVotingState => {
     case SELECT_SESSION:
       return {
         ...state,
-        selectedSessionId: action._id
+        selectedSessionId: action.session._id,
+        currentCandidateId: action.session.currentCandidateId
       };
     case UNSELECT_SESSION:
       return {
         ...state,
-        selectedSessionId: ''
+        selectedSessionId: '',
+        currentCandidateId: ''
       };
     case SELECT_SESSION_CANDIDATE:
       return {
         ...state,
         selectedSessionCandidateId: action._id
+      };
+    case UNSELECT_SESSION_CANDIDATE:
+      return {
+        ...state,
+        selectedSessionCandidateId: ''
       };
     default:
       return state;

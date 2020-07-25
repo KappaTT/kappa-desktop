@@ -24,6 +24,7 @@ const ModalController: React.FC = () => {
   const isEditingUser = useSelector((state: TRedux) => state.auth.isEditingUser);
   const isEditingCandidate = useSelector((state: TRedux) => state.voting.isEditingCandidate);
   const isSavingCandidate = useSelector((state: TRedux) => state.voting.isSavingCandidate);
+  const selectedSessionCandidateId = useSelector((state: TRedux) => state.voting.selectedSessionCandidateId);
 
   const dispatch = useDispatch();
   const dispatchCancelEditEvent = React.useCallback(() => dispatch(_kappa.cancelEditEvent()), [dispatch]);
@@ -35,6 +36,9 @@ const ModalController: React.FC = () => {
   const dispatchShowOnboarding = React.useCallback(() => dispatch(_auth.showOnboarding()), [dispatch]);
   const dispatchHideOnboarding = React.useCallback(() => dispatch(_auth.hideOnboarding()), [dispatch]);
   const dispatchCancelEditCandidate = React.useCallback(() => dispatch(_voting.cancelEditCandidate()), [dispatch]);
+  const dispatchUnselectSessionCandidate = React.useCallback(() => dispatch(_voting.unselectSessionCandidate()), [
+    dispatch
+  ]);
 
   React.useEffect(() => {
     if (!authorized || !user) {
@@ -112,6 +116,12 @@ const ModalController: React.FC = () => {
       >
         <EditCandidatePage onPressCancel={dispatchCancelEditCandidate} />
       </PopupModal>
+
+      <PopupModal
+        visible={selectedSessionCandidateId !== ''}
+        allowClose={true}
+        onDoneClosing={dispatchUnselectSessionCandidate}
+      ></PopupModal>
     </Ghost>
   );
 };

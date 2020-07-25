@@ -12,7 +12,7 @@ import { sortSessionByDate } from '@services/votingService';
 import { TCandidate, TSession } from '@backend/voting';
 import { theme } from '@constants';
 import { HEADER_HEIGHT } from '@services/utils';
-import { Header, SubHeader, Icon, SessionItem, SessionCandidateItem } from '@components';
+import { Header, SubHeader, Icon, SessionItem, SessionCandidateItem, SessionControls } from '@components';
 
 const VotingManagementContent: React.FC<{
   navigation: ParamType;
@@ -107,6 +107,14 @@ const VotingManagementContent: React.FC<{
     if (sortedSessionArray.length > 0) {
       if (selectedSessionId === '') {
         dispatchSelectSession(sortedSessionArray[0]);
+      } else {
+        const index = sortedSessionArray.findIndex((session) => session._id === selectedSessionId);
+
+        if (index >= 0) {
+          dispatchSelectSession(sortedSessionArray[index]);
+        } else {
+          dispatchUnselectSession();
+        }
       }
     } else {
       if (selectedSessionId !== '') {
@@ -172,7 +180,10 @@ const VotingManagementContent: React.FC<{
             </TouchableOpacity>
           </View>
         </SubHeader>
-        <ScrollView></ScrollView>
+
+        <ScrollView>
+          <SessionControls session={selectedSession} />
+        </ScrollView>
       </View>
     );
   };
