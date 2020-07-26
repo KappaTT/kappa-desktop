@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-import { TCandidateDict, TCandidate } from '@backend/voting';
+import { TCandidateDict, TCandidate, TSession } from '@backend/voting';
 import { sortUserByName } from './kappaService';
 
 export const CLASS_YEAR_OPTIONS = [
@@ -28,6 +28,30 @@ export const mergeCandidates = (emailToCandidate: TCandidateDict, newCandidates:
   }
 
   return merged;
+};
+
+export const separateBySessionId = (
+  sessions: TSession[]
+): {
+  [_id: string]: TSession;
+} => {
+  const separated = {};
+
+  for (const session of sessions) {
+    separated[session._id] = session;
+  }
+
+  return separated;
+};
+
+export const mergeSessions = (sessions: TSession[], newSessions: TSession[]): TSession[] => {
+  const idToSession = separateBySessionId(sessions);
+
+  for (const session of newSessions) {
+    idToSession[session._id] = session;
+  }
+
+  return Object.values(idToSession).sort(sortSessionByDate);
 };
 
 export const sortSessionByDate = (a: { startDate: string }, b: { startDate: string }) =>

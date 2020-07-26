@@ -21,7 +21,13 @@ import {
   SELECT_SESSION_CANDIDATE,
   SELECT_SESSION,
   UNSELECT_SESSION,
-  UNSELECT_SESSION_CANDIDATE
+  UNSELECT_SESSION_CANDIDATE,
+  START_SESSION,
+  START_SESSION_SUCCESS,
+  START_SESSION_FAILURE,
+  STOP_SESSION,
+  STOP_SESSION_SUCCESS,
+  STOP_SESSION_FAILURE
 } from '@reducers/voting';
 import { atan } from 'react-native-reanimated';
 
@@ -163,20 +169,20 @@ export const cancelEditCandidate = () => {
   };
 };
 
-export const gettingSessions = () => {
+const gettingSessions = () => {
   return {
     type: GET_SESSIONS
   };
 };
 
-export const getSessionsSuccess = (data) => {
+const getSessionsSuccess = (data) => {
   return {
     type: GET_SESSIONS_SUCCESS,
     sessions: data.sessions
   };
 };
 
-export const getSessionsFailure = (error) => {
+const getSessionsFailure = (error) => {
   return {
     type: GET_SESSIONS_FAILURE,
     error
@@ -192,6 +198,74 @@ export const getSessions = (user: TUser) => {
         dispatch(getSessionsSuccess(res.data));
       } else {
         dispatch(getSessionsFailure(res.error));
+      }
+    });
+  };
+};
+
+const startingSession = () => {
+  return {
+    type: START_SESSION
+  };
+};
+
+const startSessionSuccess = (data) => {
+  return {
+    type: START_SESSION_SUCCESS,
+    session: data.session
+  };
+};
+
+const startSessionFailure = (error) => {
+  return {
+    type: START_SESSION_FAILURE,
+    error
+  };
+};
+
+export const startSession = (user: TUser, session: TSession) => {
+  return (dispatch) => {
+    dispatch(startingSession());
+
+    Voting.startSession({ user, _id: session._id }).then((res) => {
+      if (res.success) {
+        dispatch(startSessionSuccess(res.data));
+      } else {
+        dispatch(startSessionFailure(res.error));
+      }
+    });
+  };
+};
+
+const stoppingSession = () => {
+  return {
+    type: STOP_SESSION
+  };
+};
+
+const stopSessionSuccess = (data) => {
+  return {
+    type: STOP_SESSION_SUCCESS,
+    session: data.session
+  };
+};
+
+const stopSessionFailure = (error) => {
+  return {
+    type: STOP_SESSION_FAILURE,
+    error
+  };
+};
+
+export const stopSession = (user: TUser, session: TSession) => {
+  return (dispatch) => {
+    dispatch(stoppingSession());
+
+    Voting.stopSession({ user, _id: session._id }).then((res) => {
+      if (res.success) {
+        dispatch(stopSessionSuccess(res.data));
+      } else {
+        dispatch(stopSessionFailure(res.error));
       }
     });
   };

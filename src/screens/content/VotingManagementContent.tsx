@@ -8,7 +8,6 @@ import { ParamType } from '@navigation/NavigationTypes';
 import { TRedux } from '@reducers';
 import { _auth, _kappa, _nav, _ui, _voting } from '@reducers/actions';
 import { shouldLoad } from '@services/kappaService';
-import { sortSessionByDate } from '@services/votingService';
 import { TCandidate, TSession } from '@backend/voting';
 import { theme } from '@constants';
 import { HEADER_HEIGHT } from '@services/utils';
@@ -41,24 +40,28 @@ const VotingManagementContent: React.FC<{
     dispatch
   ]);
   const dispatchUnselectSession = React.useCallback(() => dispatch(_voting.unselectSession()), [dispatch]);
+  const dispatchStartSession = React.useCallback((session: TSession) => dispatch(_voting.startSession(user, session)), [
+    dispatch,
+    user
+  ]);
+  const dispatchStopSession = React.useCallback((session: TSession) => dispatch(_voting.stopSession(user, session)), [
+    dispatch,
+    user
+  ]);
 
   const refreshing = React.useMemo(() => isGettingCandidates, [isGettingCandidates]);
 
   const [showingSessions, setShowingSessions] = React.useState<boolean>(false);
 
-  const sortedSessionArray = React.useMemo(() => {
-    return sessionArray.slice().sort(sortSessionByDate);
-  }, [sessionArray]);
-
   const selectedSession = React.useMemo(() => {
-    const index = sortedSessionArray.findIndex((session) => session._id === selectedSessionId);
+    const index = sessionArray.findIndex((session) => session._id === selectedSessionId);
 
     if (index >= 0) {
-      return sortedSessionArray[index];
+      return sessionArray[index];
     }
 
     return null;
-  }, [selectedSessionId, sortedSessionArray]);
+  }, [selectedSessionId, sessionArray]);
 
   const candidatesInSession = React.useMemo(() => {
     if (selectedSession === null) {
@@ -109,8 +112,14 @@ const VotingManagementContent: React.FC<{
   }, [selectedSession, showingSessions]);
 
   const onPressStartTopSession = React.useCallback(() => {
-    console.log(selectedSession?.active, 'TODO');
-  }, [selectedSession]);
+    if (selectedSession) {
+      if (selectedSession.active && selectedSession.operatorEmail === user.email) {
+        dispatchStopSession(selectedSession);
+      } else if (!selectedSession.active) {
+        dispatchStartSession(selectedSession);
+      }
+    }
+  }, [dispatchStartSession, dispatchStopSession, selectedSession, user.email]);
 
   const onRefresh = React.useCallback(() => {
     loadData(true);
@@ -125,21 +134,21 @@ const VotingManagementContent: React.FC<{
   }, [selectedSessionId]);
 
   React.useEffect(() => {
-    if (sortedSessionArray.length > 0) {
+    if (sessionArray.length > 0) {
       if (selectedSessionId === '') {
         const now = moment();
 
-        for (const session of sortedSessionArray) {
+        for (const session of sessionArray) {
           if (moment(session.startDate).isSameOrAfter(now)) {
             dispatchSelectSession(session);
             break;
           }
         }
       } else {
-        const index = sortedSessionArray.findIndex((session) => session._id === selectedSessionId);
+        const index = sessionArray.findIndex((session) => session._id === selectedSessionId);
 
         if (index >= 0) {
-          dispatchSelectSession(sortedSessionArray[index]);
+          dispatchSelectSession(sessionArray[index]);
         } else {
           dispatchUnselectSession();
         }
@@ -149,7 +158,7 @@ const VotingManagementContent: React.FC<{
         dispatchUnselectSession();
       }
     }
-  }, [dispatchSelectSession, dispatchUnselectSession, selectedSessionId, sortedSessionArray]);
+  }, [dispatchSelectSession, dispatchUnselectSession, selectedSessionId, sessionArray]);
 
   React.useEffect(() => {
     if (isFocused && user.sessionToken) {
@@ -174,7 +183,7 @@ const VotingManagementContent: React.FC<{
         <SubHeader title="Sessions" />
 
         <View style={styles.sessionList}>
-          <FlatList data={sortedSessionArray} keyExtractor={sessionKeyExtractor} renderItem={renderSessionItem} />
+          <FlatList data={sessionArray} keyExtractor={sessionKeyExtractor} renderItem={renderSessionItem} />
         </View>
       </View>
     );
@@ -202,17 +211,19 @@ const VotingManagementContent: React.FC<{
     return (
       <View style={styles.sectionContent}>
         <SubHeader title="Session Controls">
-          <View style={styles.headerChildren}>
-            {selectedSession?.operatorEmail === user.email || selectedSession?.operatorEmail === '' ? (
-              <TouchableOpacity activeOpacity={0.6} onPress={onPressStartTopSession}>
-                <Text style={styles.headerButtonText}>{selectedSession?.active ? 'Stop' : 'Start'}</Text>
-              </TouchableOpacity>
-            ) : (
-              <Text style={[styles.headerButtonText, { color: theme.COLORS.BLACK }]}>
-                You are not the operator. Operator: {selectedSession?.operatorEmail}
-              </Text>
-            )}
-          </View>
+          {selectedSession !== null && (
+            <View style={styles.headerChildren}>
+              {selectedSession.operatorEmail === user.email || selectedSession.operatorEmail === '' ? (
+                <TouchableOpacity activeOpacity={0.6} onPress={onPressStartTopSession}>
+                  <Text style={styles.headerButtonText}>{selectedSession.active ? 'Stop' : 'Start'}</Text>
+                </TouchableOpacity>
+              ) : (
+                <Text style={[styles.headerButtonText, { color: theme.COLORS.BLACK }]}>
+                  You are not the operator. Operator: {selectedSession.operatorEmail}
+                </Text>
+              )}
+            </View>
+          )}
         </SubHeader>
 
         <SessionControls session={selectedSession} />

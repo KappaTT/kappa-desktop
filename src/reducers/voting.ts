@@ -3,7 +3,14 @@ import moment from 'moment';
 import { setGlobalError } from '@services/kappaService';
 import { TLoadHistory } from '@backend/kappa';
 import { TCandidate, TCandidateDict, TSession } from '@backend/voting';
-import { recomputeVotingState, separateByCandidateEmail, mergeCandidates } from '@services/votingService';
+import {
+  recomputeVotingState,
+  separateByCandidateEmail,
+  mergeCandidates,
+  mergeSessions,
+  sortSessionByDate
+} from '@services/votingService';
+import { start } from 'repl';
 
 export const SET_GLOBAL_ERROR_MESSAGE = 'SET_GLOBAL_ERROR_MESSAGE';
 export const CLEAR_GLOBAL_ERROR_MESSAGE = 'CLEAR_GLOBAL_ERROR_MESSAGE';
@@ -27,6 +34,12 @@ export const CANCEL_EDIT_CANDIDATE = 'CANCEL_EDIT_CANDIDATE';
 export const GET_SESSIONS = 'GET_SESSIONS';
 export const GET_SESSIONS_SUCCESS = 'GET_SESSIONS_SUCCESS';
 export const GET_SESSIONS_FAILURE = 'GET_SESSIONS_FAILURE';
+export const START_SESSION = 'START_SESSION';
+export const START_SESSION_SUCCESS = 'START_SESSION_SUCCESS';
+export const START_SESSION_FAILURE = 'START_SESSION_FAILURE';
+export const STOP_SESSION = 'STOP_SESSION';
+export const STOP_SESSION_SUCCESS = 'STOP_SESSION_SUCCESS';
+export const STOP_SESSION_FAILURE = 'STOP_SESSION_FAILURE';
 
 export const SELECT_SESSION = 'SELECT_SESSION';
 export const UNSELECT_SESSION = 'UNSELECT_SESSION';
@@ -57,6 +70,14 @@ export interface TVotingState {
   isGettingSessions: boolean;
   getSessionsError: boolean;
   getSessionsErrorMessage: string;
+
+  isStartingSession: boolean;
+  startSessionError: boolean;
+  startSessionErrorMessage: string;
+
+  isStoppingSession: boolean;
+  stopSessionError: boolean;
+  stopSessionErrorMessage: string;
 
   selectedSessionId: string;
   currentCandidateId: string;
@@ -94,6 +115,14 @@ const initialState: TVotingState = {
   isGettingSessions: false,
   getSessionsError: false,
   getSessionsErrorMessage: '',
+
+  isStartingSession: false,
+  startSessionError: false,
+  startSessionErrorMessage: '',
+
+  isStoppingSession: false,
+  stopSessionError: false,
+  stopSessionErrorMessage: '',
 
   selectedSessionId: '',
   currentCandidateId: '',
@@ -230,7 +259,7 @@ export default (state = initialState, action: any): TVotingState => {
           ...state.loadHistory,
           sessions: moment()
         },
-        sessionArray: action.sessions
+        sessionArray: action.sessions.sort(sortSessionByDate)
       };
     case GET_SESSIONS_FAILURE:
       return {
@@ -238,6 +267,48 @@ export default (state = initialState, action: any): TVotingState => {
         isGettingSessions: false,
         getSessionsError: true,
         getSessionsErrorMessage: action.error.message,
+        ...setGlobalError(action.error.message, action.error.code)
+      };
+    case START_SESSION:
+      return {
+        ...state,
+        isStartingSession: true,
+        startSessionError: false,
+        startSessionErrorMessage: ''
+      };
+    case START_SESSION_SUCCESS:
+      return {
+        ...state,
+        isStartingSession: false,
+        sessionArray: mergeSessions(state.sessionArray, [action.session])
+      };
+    case START_SESSION_FAILURE:
+      return {
+        ...state,
+        isStartingSession: false,
+        startSessionError: true,
+        startSessionErrorMessage: action.error.message,
+        ...setGlobalError(action.error.message, action.error.code)
+      };
+    case STOP_SESSION:
+      return {
+        ...state,
+        isStoppingSession: true,
+        stopSessionError: false,
+        stopSessionErrorMessage: ''
+      };
+    case STOP_SESSION_SUCCESS:
+      return {
+        ...state,
+        isStoppingSession: false,
+        sessionArray: mergeSessions(state.sessionArray, [action.session])
+      };
+    case STOP_SESSION_FAILURE:
+      return {
+        ...state,
+        isStoppingSession: false,
+        stopSessionError: true,
+        stopSessionErrorMessage: action.error.message,
         ...setGlobalError(action.error.message, action.error.code)
       };
     case SELECT_SESSION:

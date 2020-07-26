@@ -420,3 +420,93 @@ export const deleteSession = async (payload: TDeleteSessionPayload): Promise<TDe
     return fail({}, "that wasn't supposed to happen", -1);
   }
 };
+
+export interface TStartSessionPayload {
+  user: TUser;
+  _id: string;
+}
+
+interface TStartSessionRequestResponse {
+  session: TSession;
+}
+
+interface TStartSessionResponse extends TResponse {
+  data?: {
+    session: TSession;
+  };
+}
+
+export const startSession = async (payload: TStartSessionPayload): Promise<TStartSessionResponse> => {
+  try {
+    const response = await makeAuthorizedRequest<TStartSessionRequestResponse>(
+      ENDPOINTS.START_SESSION({ _id: payload._id }),
+      METHODS.START_SESSION,
+      {},
+      payload.user.sessionToken
+    );
+
+    log('Start session response', response.code);
+
+    if (!response.success) {
+      return fail({}, response.error?.message || 'issue connecting to the server', 500);
+    } else if (response.code !== 200) {
+      if (response.code === 401) {
+        return fail({}, 'your credentials were invalid', response.code);
+      }
+
+      return fail({}, response.error?.message, response.code);
+    }
+
+    return pass({
+      session: response.data.session
+    });
+  } catch (error) {
+    log(error);
+    return fail({}, "that wasn't supposed to happen", -1);
+  }
+};
+
+export interface TStopSessionPayload {
+  user: TUser;
+  _id: string;
+}
+
+interface TStopSessionRequestResponse {
+  session: TSession;
+}
+
+interface TStopSessionResponse extends TResponse {
+  data?: {
+    session: TSession;
+  };
+}
+
+export const stopSession = async (payload: TStopSessionPayload): Promise<TStopSessionResponse> => {
+  try {
+    const response = await makeAuthorizedRequest<TStopSessionRequestResponse>(
+      ENDPOINTS.STOP_SESSION({ _id: payload._id }),
+      METHODS.STOP_SESSION,
+      {},
+      payload.user.sessionToken
+    );
+
+    log('Stop session response', response.code);
+
+    if (!response.success) {
+      return fail({}, response.error?.message || 'issue connecting to the server', 500);
+    } else if (response.code !== 200) {
+      if (response.code === 401) {
+        return fail({}, 'your credentials were invalid', response.code);
+      }
+
+      return fail({}, response.error?.message, response.code);
+    }
+
+    return pass({
+      session: response.data.session
+    });
+  } catch (error) {
+    log(error);
+    return fail({}, "that wasn't supposed to happen", -1);
+  }
+};
