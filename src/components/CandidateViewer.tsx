@@ -98,6 +98,10 @@ const CandidateViewer: React.FC = () => {
               <Text style={styles.propertyHeader}>Major</Text>
               <Text style={styles.propertyValue}>{selectedCandidate.major}</Text>
             </View>
+            <View style={styles.splitProperty}>
+              <Text style={styles.propertyHeader}>2nd Time Rush</Text>
+              <Text style={styles.propertyValue}>{selectedCandidate.secondTimeRush ? 'Yes' : 'No'}</Text>
+            </View>
           </View>
 
           <Text style={styles.sectionLabel}>Contact</Text>

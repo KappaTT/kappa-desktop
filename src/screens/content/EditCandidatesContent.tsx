@@ -21,6 +21,7 @@ const EditCandidatesContent: React.FC<{
   const user = useSelector((state: TRedux) => state.auth.user);
   const kappaLoadHistory = useSelector((state: TRedux) => state.kappa.loadHistory);
   const votingLoadHistory = useSelector((state: TRedux) => state.voting.loadHistory);
+  const selectedCandidateEmail = useSelector((state: TRedux) => state.voting.selectedCandidateEmail);
   const isGettingEvents = useSelector((state: TRedux) => state.kappa.isGettingEvents);
   const getEventsError = useSelector((state: TRedux) => state.kappa.getEventsError);
   const approvedCandidateArray = useSelector((state: TRedux) => state.voting.approvedCandidateArray);
@@ -32,6 +33,11 @@ const EditCandidatesContent: React.FC<{
   const dispatchGetEvents = React.useCallback(() => dispatch(_kappa.getEvents(user)), [dispatch, user]);
   const dispatchGetCandidates = React.useCallback(() => dispatch(_voting.getCandidates(user)), [dispatch, user]);
   const dispatchEditNewCandidate = React.useCallback(() => dispatch(_voting.editCandidate()), [dispatch]);
+  const dispatchSelectCandidate = React.useCallback(
+    (candidate: TCandidate) => dispatch(_voting.selectCandidate(candidate.email)),
+    [dispatch]
+  );
+  const dispatchUnselectCandidate = React.useCallback(() => dispatch(_voting.unselectCandidate()), [dispatch]);
 
   const refreshing = React.useMemo(() => isGettingCandidates, [isGettingCandidates]);
 
@@ -57,6 +63,28 @@ const EditCandidatesContent: React.FC<{
   const onRefresh = React.useCallback(() => {
     loadData(true);
   }, [loadData]);
+
+  React.useEffect(() => {
+    if (approvedCandidateArray.length > 0) {
+      if (selectedCandidateEmail === '') {
+        dispatchSelectCandidate(approvedCandidateArray[0]);
+      }
+    } else if (unapprovedCandidateArray.length > 0) {
+      if (selectedCandidateEmail === '') {
+        dispatchSelectCandidate(unapprovedCandidateArray[0]);
+      }
+    } else {
+      if (selectedCandidateEmail !== '') {
+        dispatchUnselectCandidate();
+      }
+    }
+  }, [
+    approvedCandidateArray,
+    dispatchSelectCandidate,
+    dispatchUnselectCandidate,
+    selectedCandidateEmail,
+    unapprovedCandidateArray
+  ]);
 
   React.useEffect(() => {
     if (isFocused && user.sessionToken) {

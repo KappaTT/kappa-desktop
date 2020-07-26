@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, ScrollView, Text, TouchableOpacity } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment';
 
@@ -63,101 +63,122 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
       style={[styles.container, !isSessionActive && { opacity: 0.5 }]}
       pointerEvents={isSessionActive ? 'auto' : 'none'}
     >
-      {currentCandidate !== null && (
-        <View style={styles.candidateArea}>
-          <View style={styles.candidateHeader}>
-            <Text style={styles.name}>
-              {currentCandidate.familyName}, {currentCandidate.givenName}
-            </Text>
+      <View style={styles.content}>
+        <ScrollView>
+          <View style={styles.scrollContent}>
+            {currentCandidate !== null && (
+              <View style={styles.candidateArea}>
+                <View style={styles.candidateHeader}>
+                  <Text style={styles.name}>
+                    {currentCandidate.familyName}, {currentCandidate.givenName}
+                  </Text>
 
-            {currentCandidate.approved ? (
-              <RoundButton
-                label="Unapprove"
-                alt={true}
-                color={theme.COLORS.PRIMARY}
-                onPress={dispatchUnapproveCandidate}
-              />
-            ) : (
-              <RoundButton label="Approve" color={theme.COLORS.PRIMARY} onPress={dispatchApproveCandidate} />
+                  {currentCandidate.approved ? (
+                    <RoundButton
+                      label="Unapprove"
+                      alt={true}
+                      color={theme.COLORS.PRIMARY}
+                      onPress={dispatchUnapproveCandidate}
+                    />
+                  ) : (
+                    <RoundButton label="Approve" color={theme.COLORS.PRIMARY} onPress={dispatchApproveCandidate} />
+                  )}
+                </View>
+
+                <View style={styles.splitPropertyRow}>
+                  <View style={styles.splitProperty}>
+                    <Text style={styles.propertyHeader}>Year</Text>
+                    <Text style={styles.propertyValue}>{currentCandidate.classYear}</Text>
+                  </View>
+                  <View style={styles.splitProperty}>
+                    <Text style={styles.propertyHeader}>Major</Text>
+                    <Text style={styles.propertyValue}>{currentCandidate.major}</Text>
+                  </View>
+                  <View style={styles.splitProperty}>
+                    <Text style={styles.propertyHeader}>2nd Time Rush</Text>
+                    <Text style={styles.propertyValue}>{currentCandidate.secondTimeRush ? 'Yes' : 'No'}</Text>
+                  </View>
+                </View>
+
+                <Text style={styles.propertyHeader}>Attended Events</Text>
+                {attendedEvents.map((event: TEvent) => (
+                  <View key={event._id} style={styles.eventContainer}>
+                    <Text style={styles.eventTitle}>{event.title}</Text>
+                    <Text style={styles.eventDate}>{moment(event.start).format('ddd LLL')}</Text>
+                  </View>
+                ))}
+                {attendedEvents.length === 0 && <Text style={styles.noEvents}>No events</Text>}
+              </View>
+            )}
+
+            {session !== null && (
+              <React.Fragment>
+                <View style={styles.statsArea}>
+                  <View style={styles.voteListArea}>
+                    <View style={styles.goodVotes}>
+                      <Text style={styles.voteCategoryTitle}>Voted to Approve</Text>
+                      <Text style={styles.noVotes}>No votes</Text>
+                    </View>
+                    <View style={styles.dividerWrapper}>
+                      <View style={styles.divider} />
+                    </View>
+                    <View style={styles.badVotes}>
+                      <Text style={styles.voteCategoryTitle}>Voted to Reject</Text>
+                      <Text style={styles.noVotes}>No votes</Text>
+                    </View>
+                  </View>
+                </View>
+
+                <View style={styles.dangerZone}></View>
+              </React.Fragment>
             )}
           </View>
-
-          <View style={styles.splitPropertyRow}>
-            <View style={styles.splitProperty}>
-              <Text style={styles.propertyHeader}>Year</Text>
-              <Text style={styles.propertyValue}>{currentCandidate.classYear}</Text>
-            </View>
-            <View style={styles.splitProperty}>
-              <Text style={styles.propertyHeader}>Major</Text>
-              <Text style={styles.propertyValue}>{currentCandidate.major}</Text>
-            </View>
-          </View>
-
-          <Text style={styles.propertyHeader}>Attended Events</Text>
-          {attendedEvents.map((event: TEvent) => (
-            <View key={event._id} style={styles.eventContainer}>
-              <Text style={styles.eventTitle}>{event.title}</Text>
-              <Text style={styles.eventDate}>{moment(event.start).format('ddd LLL')}</Text>
-            </View>
-          ))}
-          {attendedEvents.length === 0 && <Text style={styles.noEvents}>No events</Text>}
-        </View>
-      )}
+        </ScrollView>
+      </View>
 
       {session !== null && (
-        <React.Fragment>
-          <View style={styles.controlsArea}>
-            <TouchableOpacity
-              style={{ opacity: canGoBackward ? 1 : 0.4 }}
-              activeOpacity={0.6}
-              disabled={!canGoBackward}
-              onPress={onPressBackward}
-            >
-              <View style={[styles.skipControl, { paddingRight: 16 }]}>
-                <Icon family="Feather" name="arrow-left-circle" size={24} color={theme.COLORS.PRIMARY} />
-              </View>
-            </TouchableOpacity>
-
-            <View style={styles.progressBar}>
-              <HorizontalSegmentBar
-                showAllLabels={true}
-                borderColor={theme.COLORS.SUPER_LIGHT_BLUE_GRAY}
-                data={[
-                  {
-                    count: 0,
-                    label: 'Complete',
-                    color: theme.COLORS.PRIMARY
-                  },
-                  {
-                    count: session.candidateOrder.length,
-                    label: 'Remaining',
-                    color: theme.COLORS.BORDER
-                  }
-                ]}
-              />
+        <View style={styles.controlsArea}>
+          <TouchableOpacity
+            style={{ opacity: canGoBackward ? 1 : 0.4 }}
+            activeOpacity={0.6}
+            disabled={!canGoBackward}
+            onPress={onPressBackward}
+          >
+            <View style={[styles.skipControl, { paddingRight: 16 }]}>
+              <Icon family="Feather" name="arrow-left-circle" size={24} color={theme.COLORS.PRIMARY} />
             </View>
+          </TouchableOpacity>
 
-            <TouchableOpacity
-              style={{ opacity: canGoForward ? 1 : 0.4 }}
-              activeOpacity={0.6}
-              disabled={!canGoForward}
-              onPress={onPressForward}
-            >
-              <View style={[styles.skipControl, { paddingLeft: 16 }]}>
-                <Icon family="Feather" name="arrow-right-circle" size={24} color={theme.COLORS.PRIMARY} />
-              </View>
-            </TouchableOpacity>
+          <View style={styles.progressBar}>
+            <HorizontalSegmentBar
+              showAllLabels={true}
+              borderColor={theme.COLORS.SUPER_LIGHT_BLUE_GRAY}
+              data={[
+                {
+                  count: 0,
+                  label: 'Complete',
+                  color: theme.COLORS.PRIMARY
+                },
+                {
+                  count: session.candidateOrder.length,
+                  label: 'Remaining',
+                  color: theme.COLORS.BORDER
+                }
+              ]}
+            />
           </View>
 
-          <View style={styles.statsArea}>
-            <View style={styles.voteListArea}>
-              <View style={styles.goodVotes}></View>
-              <View style={styles.badVotes}></View>
+          <TouchableOpacity
+            style={{ opacity: canGoForward ? 1 : 0.4 }}
+            activeOpacity={0.6}
+            disabled={!canGoForward}
+            onPress={onPressForward}
+          >
+            <View style={[styles.skipControl, { paddingLeft: 16 }]}>
+              <Icon family="Feather" name="arrow-right-circle" size={24} color={theme.COLORS.PRIMARY} />
             </View>
-          </View>
-
-          <View style={styles.dangerZone}></View>
-        </React.Fragment>
+          </TouchableOpacity>
+        </View>
       )}
     </View>
   );
@@ -165,7 +186,13 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%'
+    flex: 1
+  },
+  content: {
+    flex: 1
+  },
+  scrollContent: {
+    paddingBottom: 16
   },
   candidateArea: {
     marginTop: 16,
@@ -229,10 +256,7 @@ const styles = StyleSheet.create({
     fontSize: 15
   },
   controlsArea: {
-    marginTop: 16,
-    marginHorizontal: 16,
     padding: 16,
-    borderRadius: 8,
     backgroundColor: theme.COLORS.SUPER_LIGHT_BLUE_GRAY,
     flexDirection: 'row',
     justifyContent: 'center',
@@ -245,7 +269,42 @@ const styles = StyleSheet.create({
     flex: 1
   },
   statsArea: {
-    marginTop: 16
+    marginTop: 16,
+    marginHorizontal: 16,
+    paddingHorizontal: 16
+  },
+  voteListArea: {
+    flexDirection: 'row',
+    justifyContent: 'center'
+  },
+  voteCategoryTitle: {
+    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 13,
+    textTransform: 'uppercase',
+    color: theme.COLORS.GRAY
+  },
+  noVotes: {
+    fontFamily: 'OpenSans',
+    fontSize: 15
+  },
+  goodVotes: {
+    flex: 1,
+    paddingRight: 16
+  },
+  badVotes: {
+    flex: 1,
+    paddingLeft: 16
+  },
+  dividerWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  divider: {
+    flexGrow: 1,
+    borderLeftColor: theme.COLORS.LIGHT_BORDER,
+    borderLeftWidth: 1
   },
   dangerZone: {}
 });

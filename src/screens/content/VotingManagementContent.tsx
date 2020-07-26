@@ -215,9 +215,7 @@ const VotingManagementContent: React.FC<{
           </View>
         </SubHeader>
 
-        <ScrollView>
-          <SessionControls session={selectedSession} />
-        </ScrollView>
+        <SessionControls session={selectedSession} />
       </View>
     );
   };

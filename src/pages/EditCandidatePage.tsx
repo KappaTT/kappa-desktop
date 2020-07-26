@@ -9,7 +9,7 @@ import { TCandidate } from '@backend/voting';
 import { theme } from '@constants';
 import { prettyPhone, sortEventByDate } from '@services/kappaService';
 import { CLASS_YEAR_OPTIONS } from '@services/votingService';
-import { Icon, RadioList, FormattedInput, CheckList } from '@components';
+import { Icon, RadioList, FormattedInput, CheckList, Switch } from '@components';
 
 const numberFormatter = (text: string) => {
   return text !== undefined ? text.replace(/\D/g, '') : '';
@@ -44,6 +44,7 @@ const EditCandidatePage: React.FC<{
   const [familyName, setFamilyName] = React.useState<string>(selectedCandidate?.familyName || '');
   const [classYear, setClassYear] = React.useState<TCandidate['classYear']>(selectedCandidate?.classYear || '');
   const [major, setMajor] = React.useState<string>(selectedCandidate?.major || '');
+  const [secondTimeRush, setSecondTimeRush] = React.useState<boolean>(selectedCandidate?.secondTimeRush || false);
   const [attendedEvents, setAttendedEvents] = React.useState<string[]>(selectedCandidate?.events || []);
 
   const dispatch = useDispatch();
@@ -59,12 +60,25 @@ const EditCandidatePage: React.FC<{
             familyName,
             classYear,
             major,
+            secondTimeRush,
             events: attendedEvents
           },
           editingCandidateEmail !== 'NEW' ? editingCandidateEmail : undefined
         )
       ),
-    [attendedEvents, classYear, dispatch, editingCandidateEmail, email, familyName, givenName, major, phone, user]
+    [
+      attendedEvents,
+      classYear,
+      dispatch,
+      editingCandidateEmail,
+      email,
+      familyName,
+      givenName,
+      major,
+      phone,
+      secondTimeRush,
+      user
+    ]
   );
 
   const emailIsDuplicate = React.useMemo(() => {
@@ -134,6 +148,10 @@ const EditCandidatePage: React.FC<{
 
   const onChangeClassYear = React.useCallback((chosen: TCandidate['classYear']) => {
     setClassYear(chosen);
+  }, []);
+
+  const onChangeSecondTimeRush = React.useCallback((newValue: boolean) => {
+    setSecondTimeRush(newValue);
   }, []);
 
   const onChangeEvents = React.useCallback(
@@ -284,6 +302,14 @@ const EditCandidatePage: React.FC<{
             value={major}
             onChangeText={onChangeMajor}
           />
+
+          <View style={styles.propertyHeaderContainer}>
+            <Text style={styles.propertyHeader}>Second Time Rush</Text>
+          </View>
+
+          <Switch value={secondTimeRush} onValueChange={onChangeSecondTimeRush} />
+
+          <Text style={styles.description}>Turn this on only if the candidate has rushed before.</Text>
         </ScrollView>
       </View>
     );
