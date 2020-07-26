@@ -48,6 +48,11 @@ const VotingManagementContent: React.FC<{
     dispatch,
     user
   ]);
+  const dispatchEditSession = React.useCallback(() => dispatch(_voting.editSession(selectedSessionId)), [
+    dispatch,
+    selectedSessionId
+  ]);
+  const dispatchNewSession = React.useCallback(() => dispatch(_voting.editSession()), [dispatch]);
   const dispatchOpenPresentationMode = React.useCallback(() => console.log('TODO'), []);
 
   const refreshing = React.useMemo(() => isGettingCandidates, [isGettingCandidates]);
@@ -243,13 +248,18 @@ const VotingManagementContent: React.FC<{
       >
         <View style={styles.headerChildren}>
           <View style={styles.headerButtonContainer}>
-            <TouchableOpacity activeOpacity={0.6} onPress={() => console.log('TODO')}>
+            <TouchableOpacity
+              style={{ opacity: selectedSession === null ? 0.4 : 1 }}
+              activeOpacity={0.6}
+              disabled={selectedSessionId === null}
+              onPress={dispatchEditSession}
+            >
               <Text style={styles.headerButtonText}>Edit Session</Text>
             </TouchableOpacity>
           </View>
 
           <View style={styles.headerButtonContainer}>
-            <TouchableOpacity activeOpacity={0.6} onPress={() => console.log('TODO')}>
+            <TouchableOpacity activeOpacity={0.6} onPress={dispatchNewSession}>
               <Text style={styles.headerButtonText}>New Session</Text>
             </TouchableOpacity>
           </View>

@@ -27,7 +27,6 @@ export const DELETE_CANDIDATE_FAILURE = 'DELETE_CANDIDATE_FAILURE';
 
 export const SELECT_CANDIDATE = 'SELECT_CANDIDATE';
 export const UNSELECT_CANDIDATE = 'UNSELECT_CANDIDATE';
-
 export const EDIT_CANDIDATE = 'EDIT_CANDIDATE';
 export const CANCEL_EDIT_CANDIDATE = 'CANCEL_EDIT_CANDIDATE';
 
@@ -45,6 +44,8 @@ export const SELECT_SESSION = 'SELECT_SESSION';
 export const UNSELECT_SESSION = 'UNSELECT_SESSION';
 export const SELECT_SESSION_CANDIDATE = 'SELECT_SESSION_CANDIDATE';
 export const UNSELECT_SESSION_CANDIDATE = 'UNSELECT_SESSION_CANDIDATE';
+export const EDIT_SESSION = 'EDIT_SESSION';
+export const CANCEL_EDIT_SESSION = 'CANCEL_EDIT_SESSION';
 
 export interface TVotingState {
   globalErrorMessage: string;
@@ -64,7 +65,6 @@ export interface TVotingState {
   deleteCandidateErrorMessage: string;
 
   selectedCandidateEmail: string;
-  isEditingCandidate: boolean;
   editingCandidateEmail: string;
 
   isGettingSessions: boolean;
@@ -80,6 +80,7 @@ export interface TVotingState {
   stopSessionErrorMessage: string;
 
   selectedSessionId: string;
+  editingSessionId: string;
   currentCandidateId: string;
   selectedSessionCandidateId: string;
 
@@ -109,7 +110,6 @@ const initialState: TVotingState = {
   deleteCandidateErrorMessage: '',
 
   selectedCandidateEmail: '',
-  isEditingCandidate: false,
   editingCandidateEmail: '',
 
   isGettingSessions: false,
@@ -125,6 +125,7 @@ const initialState: TVotingState = {
   stopSessionErrorMessage: '',
 
   selectedSessionId: '',
+  editingSessionId: '',
   currentCandidateId: '',
   selectedSessionCandidateId: '',
 
@@ -188,7 +189,6 @@ export default (state = initialState, action: any): TVotingState => {
       return {
         ...state,
         isSavingCandidate: false,
-        isEditingCandidate: false,
         editingCandidateEmail: '',
         ...recomputeVotingState({
           emailToCandidate: mergeCandidates(state.emailToCandidate, [action.candidate])
@@ -235,13 +235,11 @@ export default (state = initialState, action: any): TVotingState => {
     case EDIT_CANDIDATE:
       return {
         ...state,
-        isEditingCandidate: true,
         editingCandidateEmail: action.email
       };
     case CANCEL_EDIT_CANDIDATE:
       return {
         ...state,
-        isEditingCandidate: false,
         editingCandidateEmail: ''
       };
     case GET_SESSIONS:
@@ -332,6 +330,16 @@ export default (state = initialState, action: any): TVotingState => {
       return {
         ...state,
         selectedSessionCandidateId: ''
+      };
+    case EDIT_SESSION:
+      return {
+        ...state,
+        editingSessionId: action._id
+      };
+    case CANCEL_EDIT_SESSION:
+      return {
+        ...state,
+        editingSessionId: ''
       };
     default:
       return state;

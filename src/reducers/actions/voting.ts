@@ -27,7 +27,9 @@ import {
   START_SESSION_FAILURE,
   STOP_SESSION,
   STOP_SESSION_SUCCESS,
-  STOP_SESSION_FAILURE
+  STOP_SESSION_FAILURE,
+  EDIT_SESSION,
+  CANCEL_EDIT_SESSION
 } from '@reducers/voting';
 import { atan } from 'react-native-reanimated';
 
@@ -294,5 +296,18 @@ export const selectSessionCandidate = (candidate: TCandidate) => {
 export const unselectSessionCandidate = () => {
   return {
     type: UNSELECT_SESSION_CANDIDATE
+  };
+};
+
+export const editSession = (_id: string = 'NEW') => {
+  return {
+    type: EDIT_SESSION,
+    _id
+  };
+};
+
+export const cancelEditSession = () => {
+  return {
+    type: CANCEL_EDIT_SESSION
   };
 };

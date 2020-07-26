@@ -6,7 +6,14 @@ import { TRedux } from '@reducers';
 import { _auth, _kappa, _voting } from '@reducers/actions';
 import { TEvent } from '@backend/kappa';
 import { getEventById } from '@services/kappaService';
-import { CheckInPage, EditEventPage, EditProfilePage, RequestExcusePage, EditCandidatePage } from '@pages';
+import {
+  CheckInPage,
+  EditEventPage,
+  EditProfilePage,
+  RequestExcusePage,
+  EditCandidatePage,
+  EditSessionPage
+} from '@pages';
 import Ghost from '@components/Ghost';
 import PopupModal from '@components/PopupModal';
 import { incompleteUser } from '@backend/auth';
@@ -22,9 +29,10 @@ const ModalController: React.FC = () => {
   const isCheckingIn = useSelector((state: TRedux) => state.kappa.isCheckingIn);
   const onboardingVisible = useSelector((state: TRedux) => state.auth.onboardingVisible);
   const isEditingUser = useSelector((state: TRedux) => state.auth.isEditingUser);
-  const isEditingCandidate = useSelector((state: TRedux) => state.voting.isEditingCandidate);
+  const editingCandidateEmail = useSelector((state: TRedux) => state.voting.editingCandidateEmail);
   const isSavingCandidate = useSelector((state: TRedux) => state.voting.isSavingCandidate);
-  const selectedSessionCandidateId = useSelector((state: TRedux) => state.voting.selectedSessionCandidateId);
+  const editingSessionId = useSelector((state: TRedux) => state.voting.editingSessionId);
+  const isSavingSession = false;
 
   const dispatch = useDispatch();
   const dispatchCancelEditEvent = React.useCallback(() => dispatch(_kappa.cancelEditEvent()), [dispatch]);
@@ -36,9 +44,7 @@ const ModalController: React.FC = () => {
   const dispatchShowOnboarding = React.useCallback(() => dispatch(_auth.showOnboarding()), [dispatch]);
   const dispatchHideOnboarding = React.useCallback(() => dispatch(_auth.hideOnboarding()), [dispatch]);
   const dispatchCancelEditCandidate = React.useCallback(() => dispatch(_voting.cancelEditCandidate()), [dispatch]);
-  const dispatchUnselectSessionCandidate = React.useCallback(() => dispatch(_voting.unselectSessionCandidate()), [
-    dispatch
-  ]);
+  const dispatchCancelEditSession = React.useCallback(() => console.log('TODO'), []);
 
   React.useEffect(() => {
     if (!authorized || !user) {
@@ -110,7 +116,7 @@ const ModalController: React.FC = () => {
       </PopupModal>
 
       <PopupModal
-        visible={isEditingCandidate}
+        visible={editingCandidateEmail !== ''}
         allowClose={!isSavingCandidate}
         onDoneClosing={dispatchCancelEditCandidate}
       >
@@ -118,10 +124,12 @@ const ModalController: React.FC = () => {
       </PopupModal>
 
       <PopupModal
-        visible={selectedSessionCandidateId !== ''}
-        allowClose={true}
-        onDoneClosing={dispatchUnselectSessionCandidate}
-      ></PopupModal>
+        visible={editingSessionId !== ''}
+        allowClose={!isSavingSession}
+        onDoneClosing={dispatchCancelEditSession}
+      >
+        <EditSessionPage onPressCancel={dispatchCancelEditSession} />
+      </PopupModal>
     </Ghost>
   );
 };
