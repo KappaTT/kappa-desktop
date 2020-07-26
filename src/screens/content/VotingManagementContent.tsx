@@ -139,9 +139,16 @@ const VotingManagementContent: React.FC<{
         const now = moment();
 
         for (const session of sessionArray) {
+          if (session.active) {
+            dispatchSelectSession(session);
+            return;
+          }
+        }
+
+        for (const session of sessionArray) {
           if (moment(session.startDate).isSameOrAfter(now)) {
             dispatchSelectSession(session);
-            break;
+            return;
           }
         }
       } else {
@@ -192,13 +199,7 @@ const VotingManagementContent: React.FC<{
   const renderCandidateList = () => {
     return (
       <View style={styles.sectionContent}>
-        <SubHeader title="Candidates">
-          <View style={styles.headerChildren}>
-            <TouchableOpacity activeOpacity={0.6} onPress={() => {}}>
-              <Text style={styles.headerButtonText}>Edit List</Text>
-            </TouchableOpacity>
-          </View>
-        </SubHeader>
+        <SubHeader title="Candidates" />
 
         <View style={styles.candidateList}>
           <FlatList data={candidatesInSession} keyExtractor={candidateKeyExtractor} renderItem={renderCandidateItem} />
@@ -219,7 +220,7 @@ const VotingManagementContent: React.FC<{
                 </TouchableOpacity>
               ) : (
                 <Text style={[styles.headerButtonText, { color: theme.COLORS.BLACK }]}>
-                  You are not the operator. Operator: {selectedSession.operatorEmail}
+                  Operator: {selectedSession.operatorEmail}
                 </Text>
               )}
             </View>
@@ -240,6 +241,12 @@ const VotingManagementContent: React.FC<{
         onSubtitlePress={onSubtitlePress}
       >
         <View style={styles.headerChildren}>
+          <View style={styles.headerButtonContainer}>
+            <TouchableOpacity activeOpacity={0.6} onPress={() => console.log('TODO')}>
+              <Text style={styles.headerButtonText}>Edit Session</Text>
+            </TouchableOpacity>
+          </View>
+
           <View style={styles.headerButtonContainer}>
             <TouchableOpacity activeOpacity={0.6} onPress={() => console.log('TODO')}>
               <Text style={styles.headerButtonText}>New Session</Text>
@@ -305,6 +312,7 @@ const styles = StyleSheet.create({
     width: 17
   },
   headerButtonContainer: {
+    marginLeft: 8,
     marginRight: 8
   },
   headerButtonText: {
