@@ -43,6 +43,8 @@ const VotingManagementContent: React.FC<{
 
   const refreshing = React.useMemo(() => isGettingCandidates, [isGettingCandidates]);
 
+  const [showingSessions, setShowingSessions] = React.useState<boolean>(false);
+
   const sortedSessionArray = React.useMemo(() => {
     return sessionArray.slice().sort(sortSessionByDate);
   }, [sessionArray]);
@@ -99,9 +101,23 @@ const VotingManagementContent: React.FC<{
     ]
   );
 
+  const onSubtitlePress = React.useCallback(() => {
+    if (selectedSession) {
+      setShowingSessions(!showingSessions);
+    }
+  }, [selectedSession, showingSessions]);
+
   const onRefresh = React.useCallback(() => {
     loadData(true);
   }, [loadData]);
+
+  React.useEffect(() => {
+    if (selectedSessionId === '') {
+      setShowingSessions(true);
+    } else {
+      setShowingSessions(false);
+    }
+  }, [selectedSessionId]);
 
   React.useEffect(() => {
     if (sortedSessionArray.length > 0) {
@@ -190,7 +206,12 @@ const VotingManagementContent: React.FC<{
 
   return (
     <View style={styles.container}>
-      <Header title="Voting Management">
+      <Header
+        title="Voting Management"
+        subtitle={selectedSession ? selectedSession.name : 'No Session'}
+        subtitleIsPressable={true}
+        onSubtitlePress={onSubtitlePress}
+      >
         <View style={styles.headerChildren}>
           <View style={styles.headerButtonContainer}>
             <TouchableOpacity activeOpacity={0.6} onPress={() => {}}>
@@ -218,11 +239,15 @@ const VotingManagementContent: React.FC<{
 
       <View style={styles.content}>
         <View style={styles.contentBody}>
-          <View style={styles.sessionListSection}>{renderSessionList()}</View>
+          {showingSessions && (
+            <React.Fragment>
+              <View style={styles.sessionListSection}>{renderSessionList()}</View>
 
-          <View style={styles.dividerWrapper}>
-            <View style={styles.divider} />
-          </View>
+              <View style={styles.dividerWrapper}>
+                <View style={styles.divider} />
+              </View>
+            </React.Fragment>
+          )}
 
           <View style={styles.candidateListSection}>{renderCandidateList()}</View>
 

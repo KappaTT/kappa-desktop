@@ -5,6 +5,7 @@ import { theme } from '@constants';
 
 const RoundButton: React.FC<{
   color?: string;
+  textColor?: string;
   label: string;
   icon?: React.ReactNode;
   loading?: boolean;
@@ -16,6 +17,7 @@ const RoundButton: React.FC<{
   onPress?(): void;
 }> = ({
   color = theme.COLORS.PRIMARY,
+  textColor = theme.COLORS.WHITE,
   label,
   icon = null,
   loading = false,
@@ -68,7 +70,7 @@ const RoundButton: React.FC<{
                   color
                 }
               : {
-                  color: theme.COLORS.WHITE
+                  color: textColor
                 }
           ]}
         >
@@ -80,7 +82,7 @@ const RoundButton: React.FC<{
 
       {loading && (
         <View style={[styles.loadingContainer, size === 'medium' && styles.loadingContainerMedium, buttonColorStyle]}>
-          <ActivityIndicator color={alt ? color : theme.COLORS.WHITE} />
+          <ActivityIndicator color={alt ? color : textColor} />
         </View>
       )}
     </TouchableOpacity>

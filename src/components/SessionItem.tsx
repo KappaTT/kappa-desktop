@@ -38,7 +38,9 @@ const SessionItem: React.FC<{ session: TSession }> = ({ session }) => {
             </Text>
 
             <Text style={styles.classification}>
-              <Text style={styles.subText}>{session.startDate && moment(session.startDate).format('ddd LL')}</Text>
+              <Text style={styles.subText}>
+                {session.startDate && moment(session.startDate).format('ddd LL h:mm A')}
+              </Text>
             </Text>
           </View>
 
