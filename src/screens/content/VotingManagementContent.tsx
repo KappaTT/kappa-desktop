@@ -13,6 +13,7 @@ import { TCandidate, TSession } from '@backend/voting';
 import { theme } from '@constants';
 import { HEADER_HEIGHT } from '@services/utils';
 import { Header, SubHeader, Icon, SessionItem, SessionCandidateItem, SessionControls } from '@components';
+import { selectSessionCandidate } from '@reducers/actions/voting';
 
 const VotingManagementContent: React.FC<{
   navigation: ParamType;
@@ -107,6 +108,10 @@ const VotingManagementContent: React.FC<{
     }
   }, [selectedSession, showingSessions]);
 
+  const onPressStartTopSession = React.useCallback(() => {
+    console.log(selectedSession?.active, 'TODO');
+  }, [selectedSession]);
+
   const onRefresh = React.useCallback(() => {
     loadData(true);
   }, [loadData]);
@@ -122,7 +127,14 @@ const VotingManagementContent: React.FC<{
   React.useEffect(() => {
     if (sortedSessionArray.length > 0) {
       if (selectedSessionId === '') {
-        dispatchSelectSession(sortedSessionArray[0]);
+        const now = moment();
+
+        for (const session of sortedSessionArray) {
+          if (moment(session.startDate).isSameOrAfter(now)) {
+            dispatchSelectSession(session);
+            break;
+          }
+        }
       } else {
         const index = sortedSessionArray.findIndex((session) => session._id === selectedSessionId);
 
@@ -191,9 +203,15 @@ const VotingManagementContent: React.FC<{
       <View style={styles.sectionContent}>
         <SubHeader title="Session Controls">
           <View style={styles.headerChildren}>
-            <TouchableOpacity activeOpacity={0.6} onPress={() => {}}>
-              <Text style={styles.headerButtonText}>Start</Text>
-            </TouchableOpacity>
+            {selectedSession?.operatorEmail === user.email || selectedSession?.operatorEmail === '' ? (
+              <TouchableOpacity activeOpacity={0.6} onPress={onPressStartTopSession}>
+                <Text style={styles.headerButtonText}>{selectedSession?.active ? 'Stop' : 'Start'}</Text>
+              </TouchableOpacity>
+            ) : (
+              <Text style={[styles.headerButtonText, { color: theme.COLORS.BLACK }]}>
+                You are not the operator. Operator: {selectedSession?.operatorEmail}
+              </Text>
+            )}
           </View>
         </SubHeader>
 
@@ -214,7 +232,7 @@ const VotingManagementContent: React.FC<{
       >
         <View style={styles.headerChildren}>
           <View style={styles.headerButtonContainer}>
-            <TouchableOpacity activeOpacity={0.6} onPress={() => {}}>
+            <TouchableOpacity activeOpacity={0.6} onPress={() => console.log('TODO')}>
               <Text style={styles.headerButtonText}>New Session</Text>
             </TouchableOpacity>
           </View>

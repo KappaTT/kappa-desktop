@@ -26,10 +26,11 @@ const HorizontalLabel: React.FC<{
 const HorizontalBar: React.FC<{
   percent: number;
   color: string;
+  borderColor: string;
   wrapperStyle: StyleProp<ViewStyle>;
-}> = ({ percent, color, wrapperStyle }) => {
+}> = ({ percent, color, borderColor, wrapperStyle }) => {
   return (
-    <View style={{ width: `${percent}%`, borderColor: theme.COLORS.WHITE, borderWidth: 1.5 }}>
+    <View style={{ width: `${percent}%`, borderColor, borderWidth: 1.5 }}>
       <View style={wrapperStyle}>
         <View
           style={[
@@ -50,7 +51,9 @@ const HorizontalSegmentBar: React.FC<{
     label: string;
     color: string;
   }[];
-}> = ({ data }) => {
+  borderColor?: string;
+  showAllLabels?: boolean;
+}> = ({ data, borderColor = theme.COLORS.WHITE, showAllLabels = false }) => {
   let totalCount = 0;
   data.map((section: { count: number; label: string; color: string }) => {
     totalCount += section.count;
@@ -66,7 +69,7 @@ const HorizontalSegmentBar: React.FC<{
         },
         sectionIndex: number
       ) => {
-        if (section.count === 0) {
+        if (section.count === 0 && !showAllLabels) {
           return <React.Fragment key={section.label} />;
         }
 
@@ -107,6 +110,7 @@ const HorizontalSegmentBar: React.FC<{
         return (
           <HorizontalBar
             key={section.label}
+            borderColor={borderColor}
             percent={(section.count / totalCount) * 100}
             color={section.color}
             wrapperStyle={[styles.barWrapper, leftSide && styles.leftBarWrapper, rightSide && styles.rightBarWrapper]}

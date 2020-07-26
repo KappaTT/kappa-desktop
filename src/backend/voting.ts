@@ -10,6 +10,7 @@ export interface TCandidate {
   givenName: string;
   classYear?: '' | 'FR' | 'SO' | 'JR' | 'SR';
   major?: string;
+  secondTimeRush?: boolean;
   imageUrl?: string;
   approved: boolean;
   events: string[];

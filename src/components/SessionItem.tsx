@@ -33,9 +33,10 @@ const SessionItem: React.FC<{ session: TSession }> = ({ session }) => {
       <TouchableOpacity activeOpacity={0.4} disabled={isSelected} onPress={onPressSelect}>
         <View style={styles.contentWrapper}>
           <View style={styles.content}>
-            <Text style={[styles.name, session.active && { color: theme.COLORS.PRIMARY_GREEN }]}>
-              {session.name || 'Untitled'}
-            </Text>
+            <View style={styles.contentHeader}>
+              <Text style={styles.name}>{session.name || 'Untitled'}</Text>
+              {session.active && <Text style={styles.activeText}>ACTIVE</Text>}
+            </View>
 
             <Text style={styles.classification}>
               <Text style={styles.subText}>
@@ -69,9 +70,19 @@ const styles = StyleSheet.create({
   content: {
     flex: 1
   },
+  contentHeader: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
   name: {
     fontFamily: 'OpenSans-SemiBold',
     fontSize: 16
+  },
+  activeText: {
+    marginLeft: 8,
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 13,
+    color: theme.COLORS.PRIMARY
   },
   classification: {
     marginTop: 4,

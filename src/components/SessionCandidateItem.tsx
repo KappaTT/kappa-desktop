@@ -35,9 +35,20 @@ const SessionCandidateItem: React.FC<{ candidate: TCandidate }> = ({ candidate }
       <TouchableOpacity activeOpacity={0.4} disabled={isSelected} onPress={onPressSelect}>
         <View style={styles.contentWrapper}>
           <View style={styles.content}>
-            <Text style={[styles.name, candidate.approved && { color: theme.COLORS.PRIMARY_GREEN }]}>
-              {candidate.familyName}, {candidate.givenName}
-            </Text>
+            <View style={styles.contentHeader}>
+              <Text style={styles.name}>
+                {candidate.familyName}, {candidate.givenName}
+              </Text>
+              {candidate.approved && (
+                <Icon
+                  style={styles.approvedIcon}
+                  family="Feather"
+                  name="check"
+                  size={18}
+                  color={theme.COLORS.PRIMARY_GREEN}
+                />
+              )}
+            </View>
 
             <Text style={styles.classification}>
               <Text style={styles.subText}>
@@ -70,6 +81,13 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1
+  },
+  contentHeader: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  approvedIcon: {
+    marginLeft: 8
   },
   name: {
     fontFamily: 'OpenSans-SemiBold',
