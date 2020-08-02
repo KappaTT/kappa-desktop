@@ -33,6 +33,12 @@ export const CANCEL_EDIT_CANDIDATE = 'CANCEL_EDIT_CANDIDATE';
 export const GET_SESSIONS = 'GET_SESSIONS';
 export const GET_SESSIONS_SUCCESS = 'GET_SESSIONS_SUCCESS';
 export const GET_SESSIONS_FAILURE = 'GET_SESSIONS_FAILURE';
+export const SAVE_SESSION = 'SAVE_SESSION';
+export const SAVE_SESSION_SUCCESS = 'SAVE_SESSION_SUCCESS';
+export const SAVE_SESSION_FAILURE = 'SAVE_SESSION_FAILURE';
+export const DELETE_SESSION = 'DELETE_SESSION';
+export const DELETE_SESSION_SUCCESS = 'DELETE_SESSION_SUCCESS';
+export const DELETE_SESSION_FAILURE = 'DELETE_SESSION_FAILURE';
 export const START_SESSION = 'START_SESSION';
 export const START_SESSION_SUCCESS = 'START_SESSION_SUCCESS';
 export const START_SESSION_FAILURE = 'START_SESSION_FAILURE';
@@ -70,6 +76,14 @@ export interface TVotingState {
   isGettingSessions: boolean;
   getSessionsError: boolean;
   getSessionsErrorMessage: string;
+
+  isSavingSession: boolean;
+  saveSessionError: boolean;
+  saveSessionErrorMessage: string;
+
+  isDeletingSession: boolean;
+  deleteSessionError: boolean;
+  deleteSessionErrorMessage: string;
 
   isStartingSession: boolean;
   startSessionError: boolean;
@@ -115,6 +129,14 @@ const initialState: TVotingState = {
   isGettingSessions: false,
   getSessionsError: false,
   getSessionsErrorMessage: '',
+
+  isSavingSession: false,
+  saveSessionError: false,
+  saveSessionErrorMessage: '',
+
+  isDeletingSession: false,
+  deleteSessionError: false,
+  deleteSessionErrorMessage: '',
 
   isStartingSession: false,
   startSessionError: false,
@@ -265,6 +287,50 @@ export default (state = initialState, action: any): TVotingState => {
         isGettingSessions: false,
         getSessionsError: true,
         getSessionsErrorMessage: action.error.message,
+        ...setGlobalError(action.error.message, action.error.code)
+      };
+    case SAVE_SESSION:
+      return {
+        ...state,
+        isSavingSession: true,
+        saveSessionError: false,
+        saveSessionErrorMessage: ''
+      };
+    case SAVE_SESSION_SUCCESS:
+      return {
+        ...state,
+        isSavingSession: false,
+        editingSessionId: '',
+        sessionArray: mergeSessions(state.sessionArray, [action.session])
+      };
+    case SAVE_SESSION_FAILURE:
+      return {
+        ...state,
+        isSavingSession: false,
+        saveSessionError: true,
+        saveSessionErrorMessage: action.error.message,
+        ...setGlobalError(action.error.message, action.error.code)
+      };
+    case DELETE_SESSION:
+      return {
+        ...state,
+        isDeletingSession: true,
+        deleteSessionError: false,
+        deleteSessionErrorMessage: ''
+      };
+    case DELETE_SESSION_SUCCESS:
+      return {
+        ...state,
+        isDeletingSession: false,
+        editingSessionId: '',
+        sessionArray: state.sessionArray.slice().filter((session) => session._id !== action.session._id)
+      };
+    case DELETE_SESSION_FAILURE:
+      return {
+        ...state,
+        isDeletingSession: false,
+        deleteSessionError: true,
+        deleteSessionErrorMessage: action.error.message,
         ...setGlobalError(action.error.message, action.error.code)
       };
     case START_SESSION:

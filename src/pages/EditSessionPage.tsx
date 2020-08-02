@@ -21,12 +21,12 @@ const EditSessionPage: React.FC<{
   const user = useSelector((state: TRedux) => state.auth.user);
   const candidateArray = useSelector((state: TRedux) => state.voting.candidateArray);
   const sessionArray = useSelector((state: TRedux) => state.voting.sessionArray);
-  const selectedSessionId = useSelector((state: TRedux) => state.voting.selectedSessionId);
-  const isSavingSession = false;
+  const editingSessionId = useSelector((state: TRedux) => state.voting.editingSessionId);
+  const isSavingSession = useSelector((state: TRedux) => state.voting.isSavingSession);
 
   const selectedSession = React.useMemo(
-    () => sessionArray.find((session) => session._id === selectedSessionId) || null,
-    [selectedSessionId, sessionArray]
+    () => sessionArray.find((session) => session._id === editingSessionId) || null,
+    [editingSessionId, sessionArray]
   );
 
   const [name, setName] = React.useState<string>(selectedSession?.name || '');
@@ -39,7 +39,22 @@ const EditSessionPage: React.FC<{
   ]);
 
   const dispatch = useDispatch();
-  const dispatchSaveSession = React.useCallback(() => console.log('TODO'), []);
+  const dispatchSaveSession = React.useCallback(
+    () =>
+      dispatch(
+        _voting.saveSession(
+          user,
+          {
+            name,
+            startDate: startDate.toISOString(),
+            candidateOrder,
+            currentCandidateId
+          },
+          editingSessionId !== 'NEW' ? editingSessionId : undefined
+        )
+      ),
+    [candidateOrder, currentCandidateId, dispatch, editingSessionId, name, startDate, user]
+  );
 
   const candidateOptions = React.useMemo(
     () =>

@@ -32,7 +32,7 @@ const ModalController: React.FC = () => {
   const editingCandidateEmail = useSelector((state: TRedux) => state.voting.editingCandidateEmail);
   const isSavingCandidate = useSelector((state: TRedux) => state.voting.isSavingCandidate);
   const editingSessionId = useSelector((state: TRedux) => state.voting.editingSessionId);
-  const isSavingSession = false;
+  const isSavingSession = useSelector((state: TRedux) => state.voting.isSavingSession);
 
   const dispatch = useDispatch();
   const dispatchCancelEditEvent = React.useCallback(() => dispatch(_kappa.cancelEditEvent()), [dispatch]);

@@ -29,7 +29,13 @@ import {
   STOP_SESSION_SUCCESS,
   STOP_SESSION_FAILURE,
   EDIT_SESSION,
-  CANCEL_EDIT_SESSION
+  CANCEL_EDIT_SESSION,
+  SAVE_SESSION,
+  DELETE_SESSION,
+  SAVE_SESSION_SUCCESS,
+  SAVE_SESSION_FAILURE,
+  DELETE_SESSION_SUCCESS,
+  DELETE_SESSION_FAILURE
 } from '@reducers/voting';
 import { atan } from 'react-native-reanimated';
 
@@ -200,6 +206,84 @@ export const getSessions = (user: TUser) => {
         dispatch(getSessionsSuccess(res.data));
       } else {
         dispatch(getSessionsFailure(res.error));
+      }
+    });
+  };
+};
+
+const savingSession = () => {
+  return {
+    type: SAVE_SESSION
+  };
+};
+
+const saveSessionSuccess = (data) => {
+  return {
+    type: SAVE_SESSION_SUCCESS,
+    session: data.session
+  };
+};
+
+const saveSessionFailure = (error) => {
+  return {
+    type: SAVE_SESSION_FAILURE,
+    error
+  };
+};
+
+export const saveSession = (user: TUser, session: Partial<TSession>, _id?: string) => {
+  return (dispatch) => {
+    dispatch(savingSession());
+
+    if (_id) {
+      Voting.updateSession({ user, _id, changes: session }).then((res) => {
+        if (res.success) {
+          dispatch(saveSessionSuccess(res.data));
+        } else {
+          dispatch(saveSessionFailure(res.error));
+        }
+      });
+    } else {
+      Voting.createSession({ user, session }).then((res) => {
+        if (res.success) {
+          dispatch(saveSessionSuccess(res.data));
+        } else {
+          dispatch(saveSessionFailure(res.error));
+        }
+      });
+    }
+  };
+};
+
+const deletingSession = () => {
+  return {
+    type: DELETE_SESSION
+  };
+};
+
+const deleteSessionSuccess = (data) => {
+  return {
+    type: DELETE_SESSION_SUCCESS,
+    session: data.session
+  };
+};
+
+const deleteSessionFailure = (error) => {
+  return {
+    type: DELETE_SESSION_FAILURE,
+    error
+  };
+};
+
+export const deleteSession = (user: TUser, _id: string) => {
+  return (dispatch) => {
+    dispatch(deletingSession());
+
+    Voting.deleteSession({ user, _id }).then((res) => {
+      if (res.success) {
+        dispatch(deleteSessionSuccess(res.data));
+      } else {
+        dispatch(deleteSessionFailure(res.error));
       }
     });
   };

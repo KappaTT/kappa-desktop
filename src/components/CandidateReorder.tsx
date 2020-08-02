@@ -52,6 +52,7 @@ const styles = StyleSheet.create({
   candidateItem: {
     width: '100%',
     height: 48,
+    backgroundColor: `${theme.COLORS.WHITE}DF`,
     borderBottomColor: theme.COLORS.LIGHT_GRAY,
     borderBottomWidth: 1,
     display: 'flex',
