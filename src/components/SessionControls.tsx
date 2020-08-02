@@ -20,11 +20,10 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
   const candidateArray = useSelector((state: TRedux) => state.voting.candidateArray);
   const sessionArray = useSelector((state: TRedux) => state.voting.sessionArray);
   const selectedSessionId = useSelector((state: TRedux) => state.voting.selectedSessionId);
-  const currentCandidateId = useSelector((state: TRedux) => state.voting.currentCandidateId);
 
   const currentCandidate = React.useMemo(
-    () => candidateArray.find((candidate) => candidate._id === currentCandidateId) || null,
-    [candidateArray, currentCandidateId]
+    () => (session ? candidateArray.find((candidate) => candidate._id === session.currentCandidateId) || null : null),
+    [candidateArray, session]
   );
 
   const isSessionActive = React.useMemo(() => session?.active && session?.operatorEmail === user.email, [

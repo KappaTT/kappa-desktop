@@ -29,13 +29,7 @@ const EditCandidatePage: React.FC<{
   const isSavingCandidate = useSelector((state: TRedux) => state.voting.isSavingCandidate);
 
   const selectedCandidate = React.useMemo(() => {
-    const foundCandidate = candidateArray.find((candidate) => candidate.email === editingCandidateEmail);
-
-    if (foundCandidate) {
-      return foundCandidate;
-    }
-
-    return null;
+    return candidateArray.find((candidate) => candidate.email === editingCandidateEmail) || null;
   }, [candidateArray, editingCandidateEmail]);
 
   const [email, setEmail] = React.useState<string>(selectedCandidate?.email || '');

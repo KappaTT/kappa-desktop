@@ -2,20 +2,16 @@ import React from 'react';
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 import { TRedux } from '@reducers';
 import { _auth, _voting } from '@reducers/actions';
 import { TCandidate } from '@backend/voting';
 import { theme } from '@constants';
-import { prettyPhone, sortEventByDate } from '@services/kappaService';
-import { CLASS_YEAR_OPTIONS } from '@services/votingService';
-import { Icon, RadioList, FormattedInput, CheckList, Switch } from '@components';
+import { Icon, FormattedInput, CheckList } from '@components';
 
-const numberFormatter = (text: string) => {
-  return text !== undefined ? text.replace(/\D/g, '') : '';
-};
-
-const emailFormatter = (text: string) => {
+const nameFormatter = (text: string) => {
   return text !== undefined ? text.trim() : '';
 };
 
@@ -23,175 +19,109 @@ const EditSessionPage: React.FC<{
   onPressCancel(): void;
 }> = ({ onPressCancel }) => {
   const user = useSelector((state: TRedux) => state.auth.user);
-  const eventArray = useSelector((state: TRedux) => state.kappa.eventArray);
   const candidateArray = useSelector((state: TRedux) => state.voting.candidateArray);
-  const editingCandidateEmail = useSelector((state: TRedux) => state.voting.editingCandidateEmail);
-  const isSavingCandidate = useSelector((state: TRedux) => state.voting.isSavingCandidate);
+  const sessionArray = useSelector((state: TRedux) => state.voting.sessionArray);
+  const selectedSessionId = useSelector((state: TRedux) => state.voting.selectedSessionId);
+  const isSavingSession = false;
 
-  const selectedCandidate = React.useMemo(() => {
-    const foundCandidate = candidateArray.find((candidate) => candidate.email === editingCandidateEmail);
+  const selectedSession = React.useMemo(
+    () => sessionArray.find((session) => session._id === selectedSessionId) || null,
+    [selectedSessionId, sessionArray]
+  );
 
-    if (foundCandidate) {
-      return foundCandidate;
-    }
-
-    return null;
-  }, [candidateArray, editingCandidateEmail]);
-
-  const [email, setEmail] = React.useState<string>(selectedCandidate?.email || '');
-  const [phone, setPhone] = React.useState<string>(selectedCandidate?.phone || '');
-  const [givenName, setGivenName] = React.useState<string>(selectedCandidate?.givenName || '');
-  const [familyName, setFamilyName] = React.useState<string>(selectedCandidate?.familyName || '');
-  const [classYear, setClassYear] = React.useState<TCandidate['classYear']>(selectedCandidate?.classYear || '');
-  const [major, setMajor] = React.useState<string>(selectedCandidate?.major || '');
-  const [secondTimeRush, setSecondTimeRush] = React.useState<boolean>(selectedCandidate?.secondTimeRush || false);
-  const [attendedEvents, setAttendedEvents] = React.useState<string[]>(selectedCandidate?.events || []);
+  const [name, setName] = React.useState<string>(selectedSession?.name || '');
+  const [startDate, setStartDate] = React.useState(
+    selectedSession ? moment(selectedSession.startDate) : moment(new Date()).startOf('hour')
+  );
+  const [candidateOrder, setCandidateOrder] = React.useState<string[]>(selectedSession?.candidateOrder || []);
+  const currentCandidateId = React.useMemo(() => (candidateOrder.length > 0 ? candidateOrder[0] : ''), [
+    candidateOrder
+  ]);
 
   const dispatch = useDispatch();
-  const dispatchSaveCandidate = React.useCallback(
+  const dispatchSaveSession = React.useCallback(() => console.log('TODO'), []);
+
+  const candidateOptions = React.useMemo(
     () =>
-      dispatch(
-        _voting.saveCandidate(
-          user,
-          {
-            email,
-            phone,
-            givenName,
-            familyName,
-            classYear,
-            major,
-            secondTimeRush,
-            events: attendedEvents
-          },
-          editingCandidateEmail !== 'NEW' ? editingCandidateEmail : undefined
-        )
-      ),
-    [
-      attendedEvents,
-      classYear,
-      dispatch,
-      editingCandidateEmail,
-      email,
-      familyName,
-      givenName,
-      major,
-      phone,
-      secondTimeRush,
-      user
-    ]
-  );
-
-  const emailIsDuplicate = React.useMemo(() => {
-    if (email !== editingCandidateEmail) {
-      if (candidateArray.find((candidate) => candidate.email === email)) {
-        return true;
-      }
-    }
-
-    return false;
-  }, [candidateArray, editingCandidateEmail, email]);
-
-  const prettyPhoneValue = React.useMemo(() => prettyPhone(phone), [phone]);
-  const selectedEvents = React.useMemo(() => {
-    const events = {};
-
-    for (const event of attendedEvents) {
-      events[event] = true;
-    }
-
-    return events;
-  }, [attendedEvents]);
-  const eventOptions = React.useMemo(
-    () =>
-      eventArray.map((event) => ({
-        id: event._id,
-        title: event.title,
-        subtitle: moment(event.start).format('ddd LLL')
+      candidateArray.map((candidate) => ({
+        id: candidate._id,
+        title: `${candidate.familyName}, ${candidate.givenName}` + (candidate.approved ? ' (APPROVED)' : ''),
+        subtitle: `${candidate.classYear} in ${candidate.major}`
       })),
-    [eventArray]
+    [candidateArray]
   );
 
-  const readyToSave = React.useMemo(
-    () =>
-      !(
-        email === '' ||
-        emailIsDuplicate ||
-        email.indexOf('@') === -1 ||
-        email.indexOf('.') === -1 ||
-        givenName === '' ||
-        familyName === '' ||
-        prettyPhoneValue === 'Invalid' ||
-        classYear === ''
-      ),
-    [classYear, email, emailIsDuplicate, familyName, givenName, prettyPhoneValue]
+  const readyToSave = React.useMemo(() => !(name === ''), [name]);
+
+  const timezone = React.useMemo(() => {
+    const date = new Date().toString();
+
+    return date.substring(date.indexOf('(') + 1, date.lastIndexOf(')'));
+  }, []);
+
+  const onChangeName = React.useCallback((text: string) => {
+    setName(text);
+  }, []);
+
+  const onChangeStartDate = React.useCallback(
+    (selectedDate) => {
+      setStartDate(moment(selectedDate || startDate));
+    },
+    [startDate]
   );
 
-  const onChangeEmail = React.useCallback((text: string) => {
-    setEmail(text);
-  }, []);
+  const onChangeTime = React.useCallback(
+    (selectedDate) => {
+      setStartDate(moment(`${startDate.format('YYYY-MM-DD')} ${moment(selectedDate).format('HH:mm')}`));
+    },
+    [startDate]
+  );
 
-  const onChangePhone = React.useCallback((text: string) => {
-    setPhone(text);
-  }, []);
+  const selectedCandidates = React.useMemo(() => {
+    const candidates = {};
 
-  const onChangeGivenName = React.useCallback((text: string) => {
-    setGivenName(text);
-  }, []);
+    for (const candidateId of candidateOrder) {
+      candidates[candidateId] = true;
+    }
 
-  const onChangeFamilyName = React.useCallback((text: string) => {
-    setFamilyName(text);
-  }, []);
+    return candidates;
+  }, [candidateOrder]);
 
-  const onChangeMajor = React.useCallback((text: string) => {
-    setMajor(text);
-  }, []);
+  const onChangeSelectedCandidates = React.useCallback(
+    (selectedCandidateId: string) => {
+      const newCandidates = [];
 
-  const onChangeClassYear = React.useCallback((chosen: TCandidate['classYear']) => {
-    setClassYear(chosen);
-  }, []);
-
-  const onChangeSecondTimeRush = React.useCallback((newValue: boolean) => {
-    setSecondTimeRush(newValue);
-  }, []);
-
-  const onChangeEvents = React.useCallback(
-    (eventId: string) => {
-      const newAttendedEvents = [];
-
-      for (const event of eventArray) {
-        if (
-          (event._id !== eventId && selectedEvents[event._id] === true) ||
-          (event._id === eventId && selectedEvents[event._id] !== true)
-        ) {
-          newAttendedEvents.push(event._id);
+      for (const candidateId of candidateOrder) {
+        if (selectedCandidateId !== candidateId) {
+          newCandidates.push(candidateId);
         }
       }
 
-      setAttendedEvents(newAttendedEvents);
+      if (selectedCandidates[selectedCandidateId] !== true) {
+        newCandidates.push(selectedCandidateId);
+      }
+
+      setCandidateOrder(newCandidates);
     },
-    [eventArray, selectedEvents]
+    [candidateOrder, selectedCandidates]
   );
 
   const renderHeader = () => {
     return (
       <React.Fragment>
         <View style={styles.cancelWrapper}>
-          <TouchableOpacity activeOpacity={0.6} disabled={isSavingCandidate} onPress={onPressCancel}>
+          <TouchableOpacity activeOpacity={0.6} disabled={isSavingSession} onPress={onPressCancel}>
             <Text style={styles.cancelText}>Cancel</Text>
           </TouchableOpacity>
         </View>
 
         <View style={styles.titleContainer}>
-          <Text style={styles.titleText}>Edit Candidate</Text>
-          {selectedCandidate !== null && (
-            <Text style={styles.subtitleText}>
-              {selectedCandidate.givenName} {selectedCandidate.familyName}
-            </Text>
-          )}
+          <Text style={styles.titleText}>Edit Session</Text>
+          {selectedSession !== null && <Text style={styles.subtitleText}>{selectedSession.name}</Text>}
         </View>
 
         <View style={styles.saveWrapper}>
-          {isSavingCandidate ? (
+          {isSavingSession ? (
             <ActivityIndicator style={styles.saveLoader} color={theme.COLORS.PRIMARY} />
           ) : (
             <TouchableOpacity
@@ -200,7 +130,7 @@ const EditSessionPage: React.FC<{
               }}
               activeOpacity={0.6}
               disabled={!readyToSave}
-              onPress={dispatchSaveCandidate}
+              onPress={dispatchSaveSession}
             >
               <Text style={styles.saveText}>Save</Text>
             </TouchableOpacity>
@@ -210,7 +140,7 @@ const EditSessionPage: React.FC<{
     );
   };
 
-  const renderContactSection = () => {
+  const renderDetailsSection = () => {
     return (
       <View style={styles.sectionContent}>
         <ScrollView>
@@ -220,112 +150,66 @@ const EditSessionPage: React.FC<{
           </View>
 
           <FormattedInput
-            placeholderText="ex: Jeff"
+            placeholderText="ex: Third Week Voting"
             maxLength={32}
-            value={givenName}
-            formatter={emailFormatter}
-            onChangeText={onChangeGivenName}
+            value={name}
+            formatter={nameFormatter}
+            onChangeText={onChangeName}
           />
 
           <View style={styles.propertyHeaderContainer}>
-            <Text style={styles.propertyHeader}>Last Name</Text>
+            <Text style={styles.propertyHeader}>Voting Date</Text>
             <Text style={styles.propertyHeaderRequired}>*</Text>
           </View>
 
-          <FormattedInput
-            placeholderText="ex: Taylor-Chang"
-            maxLength={32}
-            value={familyName}
-            formatter={emailFormatter}
-            onChangeText={onChangeFamilyName}
-          />
+          <DatePicker selected={startDate.toDate()} onChange={onChangeStartDate} inline />
 
-          <View style={styles.propertyHeaderContainer}>
-            <Text style={styles.propertyHeader}>Email</Text>
+          <View style={[styles.propertyHeaderContainer]}>
+            <Text style={styles.propertyHeader}>Start Time ({timezone})</Text>
             <Text style={styles.propertyHeaderRequired}>*</Text>
           </View>
 
-          <FormattedInput
-            placeholderText="ex: jjt4@illinois.edu"
-            maxLength={64}
-            value={email}
-            error={emailIsDuplicate}
-            formatter={emailFormatter}
-            onChangeText={onChangeEmail}
+          <DatePicker
+            selected={startDate.toDate()}
+            onChange={onChangeTime}
+            showTimeSelect
+            showTimeSelectOnly
+            timeIntervals={15}
+            dateFormat="h:mm aa"
+            className="custom-time-picker"
           />
+        </ScrollView>
+      </View>
+    );
+  };
 
-          <Text style={styles.description}>The candidate's email must be unique. Please provide the full email.</Text>
-
+  const renderCandidateSelectionSection = () => {
+    return (
+      <View style={styles.sectionContent}>
+        <ScrollView>
           <View style={styles.propertyHeaderContainer}>
-            <Text style={styles.propertyHeader}>Phone Number</Text>
+            <Text style={styles.propertyHeader}>Eligible Candidates</Text>
+            <Text style={styles.propertyHeaderRequired}>*</Text>
           </View>
 
-          <FormattedInput
-            placeholderText="phone number"
-            maxLength={10}
-            value={phone}
-            formatter={numberFormatter}
-            onChangeText={onChangePhone}
-          />
+          <CheckList options={candidateOptions} selected={selectedCandidates} onChange={onChangeSelectedCandidates} />
 
           <Text style={styles.description}>
-            The phone number is solely for rush contact purposes, it will not be shared beyond exec.
+            Select which candidates need to be voted on. For instance for Final Voting, select ALL candidates who were
+            selected from Third Week Voting. You control the order in the next step.
           </Text>
         </ScrollView>
       </View>
     );
   };
 
-  const renderGradYearSection = () => {
+  const renderCandidateOrderSection = () => {
     return (
       <View style={styles.sectionContent}>
         <ScrollView>
           <View style={styles.propertyHeaderContainer}>
-            <Text style={styles.propertyHeader}>Class Year</Text>
-            <Text style={styles.propertyHeaderRequired}>*</Text>
+            <Text style={styles.propertyHeader}>Voting Order</Text>
           </View>
-
-          <RadioList options={CLASS_YEAR_OPTIONS} selected={classYear} onChange={onChangeClassYear} />
-
-          <Text style={styles.description}>
-            Choose their actual class year based on when they enrolled at the university, not by credit hours.
-          </Text>
-
-          <View style={styles.propertyHeaderContainer}>
-            <Text style={styles.propertyHeader}>Major</Text>
-            <Text style={styles.propertyHeaderRequired}>*</Text>
-          </View>
-
-          <FormattedInput
-            placeholderText="ex: Computer Science"
-            maxLength={64}
-            value={major}
-            onChangeText={onChangeMajor}
-          />
-
-          <View style={styles.propertyHeaderContainer}>
-            <Text style={styles.propertyHeader}>Second Time Rush</Text>
-          </View>
-
-          <Switch value={secondTimeRush} onValueChange={onChangeSecondTimeRush} />
-
-          <Text style={styles.description}>Turn this on only if the candidate has rushed before.</Text>
-        </ScrollView>
-      </View>
-    );
-  };
-
-  const renderEventsSection = () => {
-    return (
-      <View style={styles.sectionContent}>
-        <ScrollView>
-          <View style={styles.propertyHeaderContainer}>
-            <Text style={styles.propertyHeader}>Attended Events</Text>
-          </View>
-
-          <CheckList options={eventOptions} selected={selectedEvents} onChange={onChangeEvents} />
-
-          <Text style={styles.description}>Select all the events that the candidate attended.</Text>
         </ScrollView>
       </View>
     );
@@ -356,15 +240,15 @@ const EditSessionPage: React.FC<{
       <View style={styles.header}>{renderHeader()}</View>
 
       <View style={styles.content}>
-        <View style={styles.section}>{renderContactSection()}</View>
+        <View style={styles.section}>{renderDetailsSection()}</View>
 
         {renderDivider(null)}
 
-        <View style={styles.section}>{renderGradYearSection()}</View>
+        <View style={styles.section}>{renderCandidateSelectionSection()}</View>
 
         {renderDivider(null)}
 
-        <View style={styles.section}>{renderEventsSection()}</View>
+        <View style={styles.section}>{renderCandidateOrderSection()}</View>
       </View>
     </View>
   );

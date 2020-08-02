@@ -44,7 +44,7 @@ const ModalController: React.FC = () => {
   const dispatchShowOnboarding = React.useCallback(() => dispatch(_auth.showOnboarding()), [dispatch]);
   const dispatchHideOnboarding = React.useCallback(() => dispatch(_auth.hideOnboarding()), [dispatch]);
   const dispatchCancelEditCandidate = React.useCallback(() => dispatch(_voting.cancelEditCandidate()), [dispatch]);
-  const dispatchCancelEditSession = React.useCallback(() => console.log('TODO'), []);
+  const dispatchCancelEditSession = React.useCallback(() => dispatch(_voting.cancelEditSession()), [dispatch]);
 
   React.useEffect(() => {
     if (!authorized || !user) {
