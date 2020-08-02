@@ -120,6 +120,18 @@ const EditSessionPage: React.FC<{
     [candidateOrder, selectedCandidates]
   );
 
+  const onPressAddAll = React.useCallback(() => {
+    const newCandidates = [...candidateOrder];
+
+    for (const candidate of candidateArray) {
+      if (selectedCandidates[candidate._id] !== true) {
+        newCandidates.push(candidate._id);
+      }
+    }
+
+    setCandidateOrder(newCandidates);
+  }, [candidateArray, candidateOrder, selectedCandidates]);
+
   const onChangeCandidateOrder = React.useCallback((richCandidateOrder: TCandidate[]) => {
     setCandidateOrder(richCandidateOrder.map((candidate) => candidate._id));
   }, []);
@@ -207,7 +219,11 @@ const EditSessionPage: React.FC<{
         <ScrollView>
           <View style={styles.propertyHeaderContainer}>
             <Text style={styles.propertyHeader}>Eligible Candidates</Text>
-            <Text style={styles.propertyHeaderRequired}>*</Text>
+            <Text style={[styles.propertyHeaderRequired, { flex: 1 }]}>*</Text>
+
+            <TouchableOpacity activeOpacity={0.6} onPress={onPressAddAll}>
+              <Text style={styles.propertyButtonText}>Add All</Text>
+            </TouchableOpacity>
           </View>
 
           <CheckList options={candidateOptions} selected={selectedCandidates} onChange={onChangeSelectedCandidates} />
@@ -364,6 +380,11 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans-SemiBold',
     fontSize: 13,
     textTransform: 'uppercase',
+    color: theme.COLORS.PRIMARY
+  },
+  propertyButtonText: {
+    fontFamily: 'OpenSans',
+    fontSize: 14,
     color: theme.COLORS.PRIMARY
   },
   description: {
