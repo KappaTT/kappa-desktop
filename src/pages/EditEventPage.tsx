@@ -223,30 +223,32 @@ const EditEventPage: React.FC<{
     return (
       <View style={styles.sectionContent}>
         <ScrollView>
-          <View style={styles.propertyHeaderContainer}>
-            <Text style={styles.propertyHeader}>Event Type</Text>
-            <Text style={styles.propertyHeaderRequired}>*</Text>
+          <View style={styles.scrollContent}>
+            <View style={styles.propertyHeaderContainer}>
+              <Text style={styles.propertyHeader}>Event Type</Text>
+              <Text style={styles.propertyHeaderRequired}>*</Text>
+            </View>
+
+            <RadioList
+              options={[
+                { id: 'GM', title: 'GM' },
+                { id: 'Weekly Happy Hour', title: 'Weekly Happy Hour' },
+                { id: 'Philanthropy', title: 'Philanthropy' },
+                { id: 'Professional', title: 'Professional' },
+                { id: 'Rush', title: 'Rush' },
+                { id: 'Brotherhood', title: 'Brotherhood' },
+                { id: 'Misc', title: 'Misc' }
+              ]}
+              selected={type}
+              onChange={onChangeType}
+            />
+
+            <Text style={styles.description}>
+              The type of event affects GM counts. If an event is not marked as a GM, it will not count towards the GM
+              attendance rate. Weekly Happy Hour events can only count for 1 Brother point per semester. Points must be
+              set per-event as well.
+            </Text>
           </View>
-
-          <RadioList
-            options={[
-              { id: 'GM', title: 'GM' },
-              { id: 'Weekly Happy Hour', title: 'Weekly Happy Hour' },
-              { id: 'Philanthropy', title: 'Philanthropy' },
-              { id: 'Professional', title: 'Professional' },
-              { id: 'Rush', title: 'Rush' },
-              { id: 'Brotherhood', title: 'Brotherhood' },
-              { id: 'Misc', title: 'Misc' }
-            ]}
-            selected={type}
-            onChange={onChangeType}
-          />
-
-          <Text style={styles.description}>
-            The type of event affects GM counts. If an event is not marked as a GM, it will not count towards the GM
-            attendance rate. Weekly Happy Hour events can only count for 1 Brother point per semester. Points must be
-            set per-event as well.
-          </Text>
         </ScrollView>
       </View>
     );
@@ -256,52 +258,54 @@ const EditEventPage: React.FC<{
     return (
       <View style={styles.sectionContent}>
         <ScrollView>
-          <View style={[styles.propertyHeaderContainer, { marginBottom: 4 }]}>
-            <Text style={styles.propertyHeader}>Date</Text>
-            <Text style={styles.propertyHeaderRequired}>*</Text>
+          <View style={styles.scrollContent}>
+            <View style={[styles.propertyHeaderContainer, { marginBottom: 4 }]}>
+              <Text style={styles.propertyHeader}>Date</Text>
+              <Text style={styles.propertyHeaderRequired}>*</Text>
+            </View>
+
+            <DatePicker selected={startDate.toDate()} onChange={onChangeDate} inline />
+
+            <View style={[styles.propertyHeaderContainer]}>
+              <Text style={styles.propertyHeader}>Start Time ({timezone})</Text>
+              <Text style={styles.propertyHeaderRequired}>*</Text>
+            </View>
+
+            <DatePicker
+              selected={startDate.toDate()}
+              onChange={onChangeTime}
+              showTimeSelect
+              showTimeSelectOnly
+              timeIntervals={15}
+              dateFormat="h:mm aa"
+              className="custom-time-picker"
+            />
+
+            <View style={styles.propertyHeaderContainer}>
+              <Text style={styles.propertyHeader}>Duration (minutes)</Text>
+              <Text style={styles.propertyHeaderRequired}>*</Text>
+            </View>
+
+            <FormattedInput
+              placeholderText="ex: 60"
+              maxLength={4}
+              error={showErrors && (duration === '' || duration === '0')}
+              value={duration}
+              formatter={numberFormatter}
+              onChangeText={onChangeDuration}
+            />
+
+            <View style={styles.propertyHeaderContainer}>
+              <Text style={styles.propertyHeader}>Location</Text>
+            </View>
+
+            <FormattedInput
+              placeholderText="ex: EHall 106b1"
+              maxLength={64}
+              value={location}
+              onChangeText={onChangeLocation}
+            />
           </View>
-
-          <DatePicker selected={startDate.toDate()} onChange={onChangeDate} inline />
-
-          <View style={[styles.propertyHeaderContainer]}>
-            <Text style={styles.propertyHeader}>Start Time ({timezone})</Text>
-            <Text style={styles.propertyHeaderRequired}>*</Text>
-          </View>
-
-          <DatePicker
-            selected={startDate.toDate()}
-            onChange={onChangeTime}
-            showTimeSelect
-            showTimeSelectOnly
-            timeIntervals={15}
-            dateFormat="h:mm aa"
-            className="custom-time-picker"
-          />
-
-          <View style={styles.propertyHeaderContainer}>
-            <Text style={styles.propertyHeader}>Duration (minutes)</Text>
-            <Text style={styles.propertyHeaderRequired}>*</Text>
-          </View>
-
-          <FormattedInput
-            placeholderText="ex: 60"
-            maxLength={4}
-            error={showErrors && (duration === '' || duration === '0')}
-            value={duration}
-            formatter={numberFormatter}
-            onChangeText={onChangeDuration}
-          />
-
-          <View style={styles.propertyHeaderContainer}>
-            <Text style={styles.propertyHeader}>Location</Text>
-          </View>
-
-          <FormattedInput
-            placeholderText="ex: EHall 106b1"
-            maxLength={64}
-            value={location}
-            onChangeText={onChangeLocation}
-          />
         </ScrollView>
       </View>
     );
@@ -311,52 +315,54 @@ const EditEventPage: React.FC<{
     return (
       <View style={styles.sectionContent}>
         <ScrollView>
-          <View style={styles.propertyHeaderContainer}>
-            <Text style={styles.propertyHeader}>Title</Text>
-            <Text style={styles.propertyHeaderRequired}>*</Text>
+          <View style={styles.scrollContent}>
+            <View style={styles.propertyHeaderContainer}>
+              <Text style={styles.propertyHeader}>Title</Text>
+              <Text style={styles.propertyHeaderRequired}>*</Text>
+            </View>
+
+            <FormattedInput
+              placeholderText="ex: General Meeting"
+              maxLength={32}
+              error={showErrors && title.trim() === ''}
+              value={title}
+              onChangeText={onChangeTitle}
+            />
+
+            <View style={styles.propertyHeaderContainer}>
+              <Text style={styles.propertyHeader}>Short Description</Text>
+            </View>
+
+            <FormattedInput
+              style={styles.multilineInput}
+              placeholderText="ex: Weekly meeting for the whole chapter"
+              maxLength={256}
+              multiline={true}
+              numberOfLines={6}
+              value={description}
+              onChangeText={onChangeDescription}
+            />
+
+            <View style={styles.propertyHeaderContainer}>
+              <Text style={styles.propertyHeader}>Mandatory</Text>
+            </View>
+
+            <Switch value={mandatory} onValueChange={onChangeMandatory} />
+
+            <Text style={styles.description}>
+              Choose if unexcused absence results in security deposit loss (ex: voting)
+            </Text>
+
+            <View style={styles.propertyHeaderContainer}>
+              <Text style={styles.propertyHeader}>Excusable</Text>
+            </View>
+
+            <Switch value={excusable} onValueChange={onChangeExcusable} />
+
+            <Text style={styles.description}>
+              Allow a valid excuse to count as attending (for instance GM). Do not choose this if there are points
+            </Text>
           </View>
-
-          <FormattedInput
-            placeholderText="ex: General Meeting"
-            maxLength={32}
-            error={showErrors && title.trim() === ''}
-            value={title}
-            onChangeText={onChangeTitle}
-          />
-
-          <View style={styles.propertyHeaderContainer}>
-            <Text style={styles.propertyHeader}>Short Description</Text>
-          </View>
-
-          <FormattedInput
-            style={styles.multilineInput}
-            placeholderText="ex: Weekly meeting for the whole chapter"
-            maxLength={256}
-            multiline={true}
-            numberOfLines={6}
-            value={description}
-            onChangeText={onChangeDescription}
-          />
-
-          <View style={styles.propertyHeaderContainer}>
-            <Text style={styles.propertyHeader}>Mandatory</Text>
-          </View>
-
-          <Switch value={mandatory} onValueChange={onChangeMandatory} />
-
-          <Text style={styles.description}>
-            Choose if unexcused absence results in security deposit loss (ex: voting)
-          </Text>
-
-          <View style={styles.propertyHeaderContainer}>
-            <Text style={styles.propertyHeader}>Excusable</Text>
-          </View>
-
-          <Switch value={excusable} onValueChange={onChangeExcusable} />
-
-          <Text style={styles.description}>
-            Allow a valid excuse to count as attending (for instance GM). Do not choose this if there are points
-          </Text>
         </ScrollView>
       </View>
     );
@@ -366,67 +372,69 @@ const EditEventPage: React.FC<{
     return (
       <View style={styles.sectionContent}>
         <ScrollView>
-          <View style={styles.propertyHeaderContainer}>
-            <Text style={styles.propertyHeader}>Professional</Text>
+          <View style={styles.scrollContent}>
+            <View style={styles.propertyHeaderContainer}>
+              <Text style={styles.propertyHeader}>Professional</Text>
+            </View>
+
+            <FormattedInput
+              placeholderText="points"
+              maxLength={1}
+              value={profPoints}
+              formatter={numberFormatter}
+              onChangeText={onChangeProfessional}
+            />
+
+            <View style={styles.propertyHeaderContainer}>
+              <Text style={styles.propertyHeader}>Philanthropy</Text>
+            </View>
+
+            <FormattedInput
+              placeholderText="points"
+              maxLength={1}
+              value={profPoints}
+              formatter={numberFormatter}
+              onChangeText={onChangePhilanthropy}
+            />
+
+            <View style={styles.propertyHeaderContainer}>
+              <Text style={styles.propertyHeader}>Brotherhood</Text>
+            </View>
+
+            <FormattedInput
+              placeholderText="points"
+              maxLength={1}
+              value={profPoints}
+              formatter={numberFormatter}
+              onChangeText={onChangeBrotherhood}
+            />
+
+            <View style={styles.propertyHeaderContainer}>
+              <Text style={styles.propertyHeader}>Rush</Text>
+            </View>
+
+            <FormattedInput
+              placeholderText="points"
+              maxLength={1}
+              value={profPoints}
+              formatter={numberFormatter}
+              onChangeText={onChangeRush}
+            />
+
+            <View style={styles.propertyHeaderContainer}>
+              <Text style={styles.propertyHeader}>Any</Text>
+            </View>
+
+            <FormattedInput
+              placeholderText="points"
+              maxLength={1}
+              value={profPoints}
+              formatter={numberFormatter}
+              onChangeText={onChangeAny}
+            />
+
+            <Text style={styles.description}>Points in "Any" count for whatever category the brother is missing</Text>
           </View>
-
-          <FormattedInput
-            placeholderText="points"
-            maxLength={1}
-            value={profPoints}
-            formatter={numberFormatter}
-            onChangeText={onChangeProfessional}
-          />
-
-          <View style={styles.propertyHeaderContainer}>
-            <Text style={styles.propertyHeader}>Philanthropy</Text>
-          </View>
-
-          <FormattedInput
-            placeholderText="points"
-            maxLength={1}
-            value={profPoints}
-            formatter={numberFormatter}
-            onChangeText={onChangePhilanthropy}
-          />
-
-          <View style={styles.propertyHeaderContainer}>
-            <Text style={styles.propertyHeader}>Brotherhood</Text>
-          </View>
-
-          <FormattedInput
-            placeholderText="points"
-            maxLength={1}
-            value={profPoints}
-            formatter={numberFormatter}
-            onChangeText={onChangeBrotherhood}
-          />
-
-          <View style={styles.propertyHeaderContainer}>
-            <Text style={styles.propertyHeader}>Rush</Text>
-          </View>
-
-          <FormattedInput
-            placeholderText="points"
-            maxLength={1}
-            value={profPoints}
-            formatter={numberFormatter}
-            onChangeText={onChangeRush}
-          />
-
-          <View style={styles.propertyHeaderContainer}>
-            <Text style={styles.propertyHeader}>Any</Text>
-          </View>
-
-          <FormattedInput
-            placeholderText="points"
-            maxLength={1}
-            value={profPoints}
-            formatter={numberFormatter}
-            onChangeText={onChangeAny}
-          />
-
-          <Text style={styles.description}>Points in "Any" count for whatever category the brother is missing</Text>
         </ScrollView>
       </View>
     );
@@ -539,7 +547,7 @@ const styles = StyleSheet.create({
   },
   content: {
     marginTop: 44,
-    minHeight: 560,
+    minHeight: 640,
     flex: 1,
     flexDirection: 'row',
     paddingHorizontal: 8
@@ -554,6 +562,9 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     paddingHorizontal: 8
+  },
+  scrollContent: {
+    paddingBottom: 16
   },
   propertyHeaderContainer: {
     marginTop: 16,

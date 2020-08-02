@@ -9,7 +9,7 @@ import { TRedux } from '@reducers';
 import { _auth, _voting } from '@reducers/actions';
 import { TCandidate } from '@backend/voting';
 import { theme } from '@constants';
-import { Icon, FormattedInput, CheckList, CandidateReorder } from '@components';
+import { Icon, FormattedInput, CheckList, CandidateReorder, Switch } from '@components';
 
 const nameFormatter = (text: string) => {
   return text !== undefined ? text.trim() : '';
@@ -23,12 +23,14 @@ const EditSessionPage: React.FC<{
   const sessionArray = useSelector((state: TRedux) => state.voting.sessionArray);
   const editingSessionId = useSelector((state: TRedux) => state.voting.editingSessionId);
   const isSavingSession = useSelector((state: TRedux) => state.voting.isSavingSession);
+  const isDeletingSession = useSelector((state: TRedux) => state.voting.isDeletingSession);
 
   const selectedSession = React.useMemo(
     () => sessionArray.find((session) => session._id === editingSessionId) || null,
     [editingSessionId, sessionArray]
   );
 
+  const [readyToDelete, setReadyToDelete] = React.useState<boolean>(false);
   const [name, setName] = React.useState<string>(selectedSession?.name || '');
   const [startDate, setStartDate] = React.useState(
     selectedSession ? moment(selectedSession.startDate) : moment(new Date()).startOf('hour')
@@ -55,6 +57,11 @@ const EditSessionPage: React.FC<{
       ),
     [candidateOrder, currentCandidateId, dispatch, editingSessionId, name, startDate, user]
   );
+  const dispatchDeleteSession = React.useCallback(() => dispatch(_voting.deleteSession(user, editingSessionId)), [
+    dispatch,
+    editingSessionId,
+    user
+  ]);
 
   const candidateOptions = React.useMemo(
     () =>
@@ -151,6 +158,10 @@ const EditSessionPage: React.FC<{
     setCandidateOrder(richCandidateOrder.map((candidate) => candidate._id));
   }, []);
 
+  const onChangeReadyToDelete = React.useCallback((newValue: boolean) => {
+    setReadyToDelete(newValue);
+  }, []);
+
   const renderHeader = () => {
     return (
       <React.Fragment>
@@ -189,40 +200,78 @@ const EditSessionPage: React.FC<{
     return (
       <View style={styles.sectionContent}>
         <ScrollView>
-          <View style={styles.propertyHeaderContainer}>
-            <Text style={styles.propertyHeader}>First Name</Text>
-            <Text style={styles.propertyHeaderRequired}>*</Text>
+          <View style={styles.scrollContent}>
+            <View style={styles.propertyHeaderContainer}>
+              <Text style={styles.propertyHeader}>First Name</Text>
+              <Text style={styles.propertyHeaderRequired}>*</Text>
+            </View>
+
+            <FormattedInput
+              placeholderText="ex: Third Week Voting"
+              maxLength={32}
+              value={name}
+              formatter={nameFormatter}
+              onChangeText={onChangeName}
+            />
+
+            <View style={styles.propertyHeaderContainer}>
+              <Text style={styles.propertyHeader}>Voting Date</Text>
+              <Text style={styles.propertyHeaderRequired}>*</Text>
+            </View>
+
+            <DatePicker selected={startDate.toDate()} onChange={onChangeStartDate} inline />
+
+            <View style={[styles.propertyHeaderContainer]}>
+              <Text style={styles.propertyHeader}>Start Time ({timezone})</Text>
+              <Text style={styles.propertyHeaderRequired}>*</Text>
+            </View>
+
+            <DatePicker
+              selected={startDate.toDate()}
+              onChange={onChangeTime}
+              showTimeSelect
+              showTimeSelectOnly
+              timeIntervals={15}
+              dateFormat="h:mm aa"
+              className="custom-time-picker"
+            />
+
+            {selectedSession !== null && (
+              <View style={styles.dangerZone}>
+                <View style={styles.deleteZone}>
+                  <View style={styles.warning}>
+                    <Text style={styles.zoneLabel}>Delete this candidate</Text>
+                    <Text style={[styles.description, { marginTop: 2 }]}>
+                      Deleting a session will delete all associated votes. Please double check and be certain this is
+                      the session you want to delete.
+                    </Text>
+                  </View>
+
+                  {isDeletingSession ? (
+                    <ActivityIndicator style={styles.zoneIcon} color={theme.COLORS.PRIMARY} />
+                  ) : (
+                    <TouchableOpacity
+                      style={!readyToDelete && { opacity: 0.4 }}
+                      disabled={!readyToDelete}
+                      onPress={dispatchDeleteSession}
+                    >
+                      <Icon
+                        style={styles.zoneIcon}
+                        family="Feather"
+                        name="trash-2"
+                        size={32}
+                        color={theme.COLORS.PRIMARY}
+                      />
+                    </TouchableOpacity>
+                  )}
+                </View>
+                <View style={styles.enableDeleteContainer}>
+                  <Switch value={readyToDelete} onValueChange={onChangeReadyToDelete} />
+                  <Text style={styles.readyToDelete}>I am ready to delete this candidate</Text>
+                </View>
+              </View>
+            )}
           </View>
-
-          <FormattedInput
-            placeholderText="ex: Third Week Voting"
-            maxLength={32}
-            value={name}
-            formatter={nameFormatter}
-            onChangeText={onChangeName}
-          />
-
-          <View style={styles.propertyHeaderContainer}>
-            <Text style={styles.propertyHeader}>Voting Date</Text>
-            <Text style={styles.propertyHeaderRequired}>*</Text>
-          </View>
-
-          <DatePicker selected={startDate.toDate()} onChange={onChangeStartDate} inline />
-
-          <View style={[styles.propertyHeaderContainer]}>
-            <Text style={styles.propertyHeader}>Start Time ({timezone})</Text>
-            <Text style={styles.propertyHeaderRequired}>*</Text>
-          </View>
-
-          <DatePicker
-            selected={startDate.toDate()}
-            onChange={onChangeTime}
-            showTimeSelect
-            showTimeSelectOnly
-            timeIntervals={15}
-            dateFormat="h:mm aa"
-            className="custom-time-picker"
-          />
         </ScrollView>
       </View>
     );
@@ -232,21 +281,23 @@ const EditSessionPage: React.FC<{
     return (
       <View style={styles.sectionContent}>
         <ScrollView>
-          <View style={styles.propertyHeaderContainer}>
-            <Text style={styles.propertyHeader}>Eligible Candidates</Text>
-            <Text style={[styles.propertyHeaderRequired, { flex: 1 }]}>*</Text>
+          <View style={styles.scrollContent}>
+            <View style={styles.propertyHeaderContainer}>
+              <Text style={styles.propertyHeader}>Eligible Candidates</Text>
+              <Text style={[styles.propertyHeaderRequired, { flex: 1 }]}>*</Text>
 
-            <TouchableOpacity activeOpacity={0.6} onPress={onPressAddAll}>
-              <Text style={styles.propertyButtonText}>Add All</Text>
-            </TouchableOpacity>
+              <TouchableOpacity activeOpacity={0.6} onPress={onPressAddAll}>
+                <Text style={styles.propertyButtonText}>Add All</Text>
+              </TouchableOpacity>
+            </View>
+
+            <CheckList options={candidateOptions} selected={selectedCandidates} onChange={onChangeSelectedCandidates} />
+
+            <Text style={styles.description}>
+              Select which candidates need to be voted on. For instance for Final Voting, select ALL candidates who were
+              selected from Third Week Voting. You control the order in the next step.
+            </Text>
           </View>
-
-          <CheckList options={candidateOptions} selected={selectedCandidates} onChange={onChangeSelectedCandidates} />
-
-          <Text style={styles.description}>
-            Select which candidates need to be voted on. For instance for Final Voting, select ALL candidates who were
-            selected from Third Week Voting. You control the order in the next step.
-          </Text>
         </ScrollView>
       </View>
     );
@@ -256,16 +307,18 @@ const EditSessionPage: React.FC<{
     return (
       <View style={styles.sectionContent}>
         <ScrollView>
-          <View style={styles.propertyHeaderContainer}>
-            <Text style={styles.propertyHeader}>Voting Order</Text>
-            <Text style={styles.propertyHeaderRequired}>*</Text>
+          <View style={styles.scrollContent}>
+            <View style={styles.propertyHeaderContainer}>
+              <Text style={styles.propertyHeader}>Voting Order</Text>
+              <Text style={styles.propertyHeaderRequired}>*</Text>
+            </View>
+
+            <CandidateReorder richCandidateOrder={richCandidateOrder} onChangeOrder={onChangeCandidateOrder} />
+
+            <Text style={styles.description}>
+              Voting will automatically start with the top candidate in the list and proceed down the list one by one.
+            </Text>
           </View>
-
-          <CandidateReorder richCandidateOrder={richCandidateOrder} onChangeOrder={onChangeCandidateOrder} />
-
-          <Text style={styles.description}>
-            Voting will automatically start with the top candidate in the list and proceed down the list one by one.
-          </Text>
         </ScrollView>
       </View>
     );
@@ -363,7 +416,7 @@ const styles = StyleSheet.create({
   },
   content: {
     marginTop: 44,
-    minHeight: 560,
+    minHeight: 640,
     flex: 1,
     flexDirection: 'row',
     paddingHorizontal: 8
@@ -378,6 +431,9 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     paddingHorizontal: 8
+  },
+  scrollContent: {
+    paddingBottom: 16
   },
   propertyHeaderContainer: {
     marginTop: 16,
@@ -423,6 +479,41 @@ const styles = StyleSheet.create({
   },
   dividerIcon: {
     marginVertical: 8
+  },
+  dangerZone: {
+    marginTop: 16,
+    padding: 16,
+    borderRadius: 8,
+    backgroundColor: theme.COLORS.INPUT_ERROR_LIGHT
+  },
+  deleteZone: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  warning: {
+    flex: 1,
+    marginRight: 8
+  },
+  zoneLabel: {
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 14
+  },
+  zoneIcon: {
+    width: 32
+  },
+  enableDeleteContainer: {
+    marginTop: 8,
+    marginLeft: 16,
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  readyToDelete: {
+    marginLeft: 8,
+    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 13
   }
 });
 

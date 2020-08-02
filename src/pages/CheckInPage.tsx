@@ -162,28 +162,30 @@ const CheckInPage: React.FC<{
     return (
       <View style={styles.sectionContent}>
         <ScrollView>
-          <View style={styles.propertyHeaderContainer}>
-            <Text style={styles.propertyHeader}>Event</Text>
-            <Text style={styles.propertyHeaderRequired}>*</Text>
-          </View>
+          <View style={styles.scrollContent}>
+            <View style={styles.propertyHeaderContainer}>
+              <Text style={styles.propertyHeader}>Event</Text>
+              <Text style={styles.propertyHeaderRequired}>*</Text>
+            </View>
 
-          {eventOptions.length > 0 ? (
-            <React.Fragment>
-              <RadioList options={eventOptions} selected={eventId} onChange={onChangeEventId} />
+            {eventOptions.length > 0 ? (
+              <React.Fragment>
+                <RadioList options={eventOptions} selected={eventId} onChange={onChangeEventId} />
 
+                <Text style={styles.description}>
+                  You may only check into an event on the same day it happened. If you forgot to check in and it is the
+                  same day, you can still submit the code. If it isn't, please send a late request and the exec board
+                  will consider it. Regular excuses must be requested before an event.
+                </Text>
+              </React.Fragment>
+            ) : (
               <Text style={styles.description}>
-                You may only check into an event on the same day it happened. If you forgot to check in and it is the
-                same day, you can still submit the code. If it isn't, please send a late request and the exec board will
-                consider it. Regular excuses must be requested before an event.
+                No events available to check in for. You may only check into an event on the same day it happened. If
+                you forgot to check in and it is the same day, you can still submit the code. If it isn't, please send a
+                late request and the exec board will consider it. Regular excuses must be requested before an event.
               </Text>
-            </React.Fragment>
-          ) : (
-            <Text style={styles.description}>
-              No events available to check in for. You may only check into an event on the same day it happened. If you
-              forgot to check in and it is the same day, you can still submit the code. If it isn't, please send a late
-              request and the exec board will consider it. Regular excuses must be requested before an event.
-            </Text>
-          )}
+            )}
+          </View>
         </ScrollView>
       </View>
     );
@@ -193,18 +195,20 @@ const CheckInPage: React.FC<{
     return (
       <View style={styles.sectionContent}>
         <ScrollView>
-          <View style={styles.propertyHeaderContainer}>
-            <Text style={styles.propertyHeader}>Code</Text>
-            <Text style={styles.propertyHeaderRequired}>*</Text>
-          </View>
+          <View style={styles.scrollContent}>
+            <View style={styles.propertyHeaderContainer}>
+              <Text style={styles.propertyHeader}>Code</Text>
+              <Text style={styles.propertyHeaderRequired}>*</Text>
+            </View>
 
-          <FormattedInput
-            placeholderText="ex: 1234"
-            maxLength={4}
-            value={eventCode}
-            formatter={numberFormatter}
-            onChangeText={onChangeEventCode}
-          />
+            <FormattedInput
+              placeholderText="ex: 1234"
+              maxLength={4}
+              value={eventCode}
+              formatter={numberFormatter}
+              onChangeText={onChangeEventCode}
+            />
+          </View>
         </ScrollView>
       </View>
     );
@@ -299,7 +303,7 @@ const styles = StyleSheet.create({
   },
   content: {
     marginTop: 44,
-    minHeight: 560,
+    minHeight: 640,
     flex: 1,
     flexDirection: 'row',
     paddingHorizontal: 8
@@ -314,6 +318,9 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     paddingHorizontal: 8
+  },
+  scrollContent: {
+    paddingBottom: 16
   },
   propertyHeaderContainer: {
     marginTop: 16,

@@ -166,33 +166,35 @@ const RequestExcusePage: React.FC<{
     return (
       <View style={styles.sectionContent}>
         <ScrollView>
-          <View style={styles.propertyHeaderContainer}>
-            <Text style={styles.propertyHeader}>Event</Text>
-            <Text style={styles.propertyHeaderRequired}>*</Text>
-          </View>
+          <View style={styles.scrollContent}>
+            <View style={styles.propertyHeaderContainer}>
+              <Text style={styles.propertyHeader}>Event</Text>
+              <Text style={styles.propertyHeaderRequired}>*</Text>
+            </View>
 
-          {eventOptions.length > 0 ? (
-            <React.Fragment>
-              <RadioList
-                options={eventOptions}
-                selected={selectedEvent ? selectedEvent._id : ''}
-                onChange={onChangeEventId}
-              />
+            {eventOptions.length > 0 ? (
+              <React.Fragment>
+                <RadioList
+                  options={eventOptions}
+                  selected={selectedEvent ? selectedEvent._id : ''}
+                  onChange={onChangeEventId}
+                />
 
+                <Text style={styles.description}>
+                  You may only check into an event on the same day it happened. If you forgot to check in and it is the
+                  same day, you can still submit the code. If it isn't, please send a late request and the exec board
+                  will consider it. Regular excuses must be requested before an event.
+                </Text>
+              </React.Fragment>
+            ) : (
               <Text style={styles.description}>
-                You may only check into an event on the same day it happened. If you forgot to check in and it is the
-                same day, you can still submit the code. If it isn't, please send a late request and the exec board will
-                consider it. Regular excuses must be requested before an event.
+                No events available to check in or request excuses for. You may only check into an event on the same day
+                it happened. If you forgot to check in and it is the same day, you can still submit the code. If it
+                isn't, please send a late request and the exec board will consider it. Regular excuses must be requested
+                before an event otherwise.
               </Text>
-            </React.Fragment>
-          ) : (
-            <Text style={styles.description}>
-              No events available to check in or request excuses for. You may only check into an event on the same day
-              it happened. If you forgot to check in and it is the same day, you can still submit the code. If it isn't,
-              please send a late request and the exec board will consider it. Regular excuses must be requested before
-              an event otherwise.
-            </Text>
-          )}
+            )}
+          </View>
         </ScrollView>
       </View>
     );
@@ -202,33 +204,36 @@ const RequestExcusePage: React.FC<{
     return (
       <View style={styles.sectionContent}>
         <ScrollView>
-          <View style={styles.propertyHeaderContainer}>
-            <Text style={styles.propertyHeader}>Reason</Text>
-            <Text style={styles.propertyHeaderRequired}>*</Text>
+          <View style={styles.scrollContent}>
+            <View style={styles.propertyHeaderContainer}>
+              <Text style={styles.propertyHeader}>Reason</Text>
+              <Text style={styles.propertyHeaderRequired}>*</Text>
+            </View>
+
+            <FormattedInput
+              style={styles.multilineInput}
+              placeholderText="ex: I have an exam"
+              maxLength={256}
+              multiline={true}
+              numberOfLines={6}
+              value={reason}
+              onChangeText={onChangeReason}
+            />
+
+            {late && (
+              <React.Fragment>
+                <Text style={styles.description}>
+                  Submit a special request if you were unable to submit an excuse beforehand but had a valid excuse or
+                  if you missed the check in but attended the event. Please provide any details that you think we should
+                  consider. We may not be able to approve all requests but we will try to be as understanding as
+                  possible!
+                </Text>
+                <Text style={styles.description}>
+                  Example: I couldn't submit the code due to bad reception at Legends, but this was the code: 1234
+                </Text>
+              </React.Fragment>
+            )}
           </View>
-
-          <FormattedInput
-            style={styles.multilineInput}
-            placeholderText="ex: I have an exam"
-            maxLength={256}
-            multiline={true}
-            numberOfLines={6}
-            value={reason}
-            onChangeText={onChangeReason}
-          />
-
-          {late && (
-            <React.Fragment>
-              <Text style={styles.description}>
-                Submit a special request if you were unable to submit an excuse beforehand but had a valid excuse or if
-                you missed the check in but attended the event. Please provide any details that you think we should
-                consider. We may not be able to approve all requests but we will try to be as understanding as possible!
-              </Text>
-              <Text style={styles.description}>
-                Example: I couldn't submit the code due to bad reception at Legends, but this was the code: 1234
-              </Text>
-            </React.Fragment>
-          )}
         </ScrollView>
       </View>
     );
@@ -323,7 +328,7 @@ const styles = StyleSheet.create({
   },
   content: {
     marginTop: 44,
-    minHeight: 560,
+    minHeight: 640,
     flex: 1,
     flexDirection: 'row',
     paddingHorizontal: 8
@@ -338,6 +343,9 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     paddingHorizontal: 8
+  },
+  scrollContent: {
+    paddingBottom: 16
   },
   propertyHeaderContainer: {
     marginTop: 16,

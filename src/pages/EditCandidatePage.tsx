@@ -208,63 +208,65 @@ const EditCandidatePage: React.FC<{
     return (
       <View style={styles.sectionContent}>
         <ScrollView>
-          <View style={styles.propertyHeaderContainer}>
-            <Text style={styles.propertyHeader}>First Name</Text>
-            <Text style={styles.propertyHeaderRequired}>*</Text>
+          <View style={styles.scrollContent}>
+            <View style={styles.propertyHeaderContainer}>
+              <Text style={styles.propertyHeader}>First Name</Text>
+              <Text style={styles.propertyHeaderRequired}>*</Text>
+            </View>
+
+            <FormattedInput
+              placeholderText="ex: Jeff"
+              maxLength={32}
+              value={givenName}
+              formatter={emailFormatter}
+              onChangeText={onChangeGivenName}
+            />
+
+            <View style={styles.propertyHeaderContainer}>
+              <Text style={styles.propertyHeader}>Last Name</Text>
+              <Text style={styles.propertyHeaderRequired}>*</Text>
+            </View>
+
+            <FormattedInput
+              placeholderText="ex: Taylor-Chang"
+              maxLength={32}
+              value={familyName}
+              formatter={emailFormatter}
+              onChangeText={onChangeFamilyName}
+            />
+
+            <View style={styles.propertyHeaderContainer}>
+              <Text style={styles.propertyHeader}>Email</Text>
+              <Text style={styles.propertyHeaderRequired}>*</Text>
+            </View>
+
+            <FormattedInput
+              placeholderText="ex: jjt4@illinois.edu"
+              maxLength={64}
+              value={email}
+              error={emailIsDuplicate}
+              formatter={emailFormatter}
+              onChangeText={onChangeEmail}
+            />
+
+            <Text style={styles.description}>The candidate's email must be unique. Please provide the full email.</Text>
+
+            <View style={styles.propertyHeaderContainer}>
+              <Text style={styles.propertyHeader}>Phone Number</Text>
+            </View>
+
+            <FormattedInput
+              placeholderText="phone number"
+              maxLength={10}
+              value={phone}
+              formatter={numberFormatter}
+              onChangeText={onChangePhone}
+            />
+
+            <Text style={styles.description}>
+              The phone number is solely for rush contact purposes, it will not be shared beyond exec.
+            </Text>
           </View>
-
-          <FormattedInput
-            placeholderText="ex: Jeff"
-            maxLength={32}
-            value={givenName}
-            formatter={emailFormatter}
-            onChangeText={onChangeGivenName}
-          />
-
-          <View style={styles.propertyHeaderContainer}>
-            <Text style={styles.propertyHeader}>Last Name</Text>
-            <Text style={styles.propertyHeaderRequired}>*</Text>
-          </View>
-
-          <FormattedInput
-            placeholderText="ex: Taylor-Chang"
-            maxLength={32}
-            value={familyName}
-            formatter={emailFormatter}
-            onChangeText={onChangeFamilyName}
-          />
-
-          <View style={styles.propertyHeaderContainer}>
-            <Text style={styles.propertyHeader}>Email</Text>
-            <Text style={styles.propertyHeaderRequired}>*</Text>
-          </View>
-
-          <FormattedInput
-            placeholderText="ex: jjt4@illinois.edu"
-            maxLength={64}
-            value={email}
-            error={emailIsDuplicate}
-            formatter={emailFormatter}
-            onChangeText={onChangeEmail}
-          />
-
-          <Text style={styles.description}>The candidate's email must be unique. Please provide the full email.</Text>
-
-          <View style={styles.propertyHeaderContainer}>
-            <Text style={styles.propertyHeader}>Phone Number</Text>
-          </View>
-
-          <FormattedInput
-            placeholderText="phone number"
-            maxLength={10}
-            value={phone}
-            formatter={numberFormatter}
-            onChangeText={onChangePhone}
-          />
-
-          <Text style={styles.description}>
-            The phone number is solely for rush contact purposes, it will not be shared beyond exec.
-          </Text>
         </ScrollView>
       </View>
     );
@@ -274,36 +276,38 @@ const EditCandidatePage: React.FC<{
     return (
       <View style={styles.sectionContent}>
         <ScrollView>
-          <View style={styles.propertyHeaderContainer}>
-            <Text style={styles.propertyHeader}>Class Year</Text>
-            <Text style={styles.propertyHeaderRequired}>*</Text>
+          <View style={styles.scrollContent}>
+            <View style={styles.propertyHeaderContainer}>
+              <Text style={styles.propertyHeader}>Class Year</Text>
+              <Text style={styles.propertyHeaderRequired}>*</Text>
+            </View>
+
+            <RadioList options={CLASS_YEAR_OPTIONS} selected={classYear} onChange={onChangeClassYear} />
+
+            <Text style={styles.description}>
+              Choose their actual class year based on when they enrolled at the university, not by credit hours.
+            </Text>
+
+            <View style={styles.propertyHeaderContainer}>
+              <Text style={styles.propertyHeader}>Major</Text>
+              <Text style={styles.propertyHeaderRequired}>*</Text>
+            </View>
+
+            <FormattedInput
+              placeholderText="ex: Computer Science"
+              maxLength={64}
+              value={major}
+              onChangeText={onChangeMajor}
+            />
+
+            <View style={styles.propertyHeaderContainer}>
+              <Text style={styles.propertyHeader}>Second Time Rush</Text>
+            </View>
+
+            <Switch value={secondTimeRush} onValueChange={onChangeSecondTimeRush} />
+
+            <Text style={styles.description}>Turn this on only if the candidate has rushed before.</Text>
           </View>
-
-          <RadioList options={CLASS_YEAR_OPTIONS} selected={classYear} onChange={onChangeClassYear} />
-
-          <Text style={styles.description}>
-            Choose their actual class year based on when they enrolled at the university, not by credit hours.
-          </Text>
-
-          <View style={styles.propertyHeaderContainer}>
-            <Text style={styles.propertyHeader}>Major</Text>
-            <Text style={styles.propertyHeaderRequired}>*</Text>
-          </View>
-
-          <FormattedInput
-            placeholderText="ex: Computer Science"
-            maxLength={64}
-            value={major}
-            onChangeText={onChangeMajor}
-          />
-
-          <View style={styles.propertyHeaderContainer}>
-            <Text style={styles.propertyHeader}>Second Time Rush</Text>
-          </View>
-
-          <Switch value={secondTimeRush} onValueChange={onChangeSecondTimeRush} />
-
-          <Text style={styles.description}>Turn this on only if the candidate has rushed before.</Text>
         </ScrollView>
       </View>
     );
@@ -313,13 +317,15 @@ const EditCandidatePage: React.FC<{
     return (
       <View style={styles.sectionContent}>
         <ScrollView>
-          <View style={styles.propertyHeaderContainer}>
-            <Text style={styles.propertyHeader}>Attended Events</Text>
+          <View style={styles.scrollContent}>
+            <View style={styles.propertyHeaderContainer}>
+              <Text style={styles.propertyHeader}>Attended Events</Text>
+            </View>
+
+            <CheckList options={eventOptions} selected={selectedEvents} onChange={onChangeEvents} />
+
+            <Text style={styles.description}>Select all the events that the candidate attended.</Text>
           </View>
-
-          <CheckList options={eventOptions} selected={selectedEvents} onChange={onChangeEvents} />
-
-          <Text style={styles.description}>Select all the events that the candidate attended.</Text>
         </ScrollView>
       </View>
     );
@@ -417,7 +423,7 @@ const styles = StyleSheet.create({
   },
   content: {
     marginTop: 44,
-    minHeight: 560,
+    minHeight: 640,
     flex: 1,
     flexDirection: 'row',
     paddingHorizontal: 8
@@ -432,6 +438,9 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     paddingHorizontal: 8
+  },
+  scrollContent: {
+    paddingBottom: 16
   },
   propertyHeaderContainer: {
     marginTop: 16,

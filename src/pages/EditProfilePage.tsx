@@ -112,27 +112,29 @@ const EditProfilePage: React.FC<{
     return (
       <View style={styles.sectionContent}>
         <ScrollView>
-          <View style={styles.propertyHeaderContainer}>
-            <Text style={styles.propertyHeader}>Phone Number</Text>
-            <Text style={styles.propertyHeaderRequired}>*</Text>
+          <View style={styles.scrollContent}>
+            <View style={styles.propertyHeaderContainer}>
+              <Text style={styles.propertyHeader}>Phone Number</Text>
+              <Text style={styles.propertyHeaderRequired}>*</Text>
+            </View>
+
+            <FormattedInput
+              placeholderText="phone number"
+              maxLength={10}
+              value={phone}
+              formatter={numberFormatter}
+              onChangeText={onChangePhone}
+            />
+
+            <Text style={styles.description}>
+              Your phone number will be shared with brothers and used if anyone needs to contact you.
+            </Text>
+
+            <Text style={styles.description}>
+              Please fill out all missing information. Information provided by the university or our official records
+              cannot be edited at this time.
+            </Text>
           </View>
-
-          <FormattedInput
-            placeholderText="phone number"
-            maxLength={10}
-            value={phone}
-            formatter={numberFormatter}
-            onChangeText={onChangePhone}
-          />
-
-          <Text style={styles.description}>
-            Your phone number will be shared with brothers and used if anyone needs to contact you.
-          </Text>
-
-          <Text style={styles.description}>
-            Please fill out all missing information. Information provided by the university or our official records
-            cannot be edited at this time.
-          </Text>
         </ScrollView>
       </View>
     );
@@ -142,17 +144,19 @@ const EditProfilePage: React.FC<{
     return (
       <View style={styles.sectionContent}>
         <ScrollView>
-          <View style={styles.propertyHeaderContainer}>
-            <Text style={styles.propertyHeader}>Grad Year</Text>
-            <Text style={styles.propertyHeaderRequired}>*</Text>
+          <View style={styles.scrollContent}>
+            <View style={styles.propertyHeaderContainer}>
+              <Text style={styles.propertyHeader}>Grad Year</Text>
+              <Text style={styles.propertyHeaderRequired}>*</Text>
+            </View>
+
+            <RadioList options={gradYearOptions} selected={gradYear} onChange={onChangeGradYear} />
+
+            <Text style={styles.description}>
+              Choose the term that you will graduate in, not by credit hours, this is used to determine your points
+              requirements and alumni status.
+            </Text>
           </View>
-
-          <RadioList options={gradYearOptions} selected={gradYear} onChange={onChangeGradYear} />
-
-          <Text style={styles.description}>
-            Choose the term that you will graduate in, not by credit hours, this is used to determine your points
-            requirements and alumni status.
-          </Text>
         </ScrollView>
       </View>
     );
@@ -246,7 +250,7 @@ const styles = StyleSheet.create({
   },
   content: {
     marginTop: 44,
-    minHeight: 560,
+    minHeight: 640,
     flex: 1,
     flexDirection: 'row',
     paddingHorizontal: 8
@@ -261,6 +265,9 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     paddingHorizontal: 8
+  },
+  scrollContent: {
+    paddingBottom: 16
   },
   propertyHeaderContainer: {
     marginTop: 16,
