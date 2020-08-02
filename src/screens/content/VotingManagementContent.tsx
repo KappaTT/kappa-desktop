@@ -249,9 +249,9 @@ const VotingManagementContent: React.FC<{
         <View style={styles.headerChildren}>
           <View style={styles.headerButtonContainer}>
             <TouchableOpacity
-              style={{ opacity: selectedSession === null ? 0.4 : 1 }}
+              style={{ opacity: selectedSession === null || selectedSession.active === true ? 0.4 : 1 }}
               activeOpacity={0.6}
-              disabled={selectedSessionId === null}
+              disabled={selectedSession === null || selectedSession.active === true}
               onPress={dispatchEditSession}
             >
               <Text style={styles.headerButtonText}>Edit Session</Text>
