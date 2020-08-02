@@ -10,7 +10,6 @@ import {
   mergeSessions,
   sortSessionByDate
 } from '@services/votingService';
-import { start } from 'repl';
 
 export const SET_GLOBAL_ERROR_MESSAGE = 'SET_GLOBAL_ERROR_MESSAGE';
 export const CLEAR_GLOBAL_ERROR_MESSAGE = 'CLEAR_GLOBAL_ERROR_MESSAGE';
@@ -48,8 +47,6 @@ export const STOP_SESSION_FAILURE = 'STOP_SESSION_FAILURE';
 
 export const SELECT_SESSION = 'SELECT_SESSION';
 export const UNSELECT_SESSION = 'UNSELECT_SESSION';
-export const SELECT_SESSION_CANDIDATE = 'SELECT_SESSION_CANDIDATE';
-export const UNSELECT_SESSION_CANDIDATE = 'UNSELECT_SESSION_CANDIDATE';
 export const EDIT_SESSION = 'EDIT_SESSION';
 export const CANCEL_EDIT_SESSION = 'CANCEL_EDIT_SESSION';
 
@@ -96,7 +93,6 @@ export interface TVotingState {
   selectedSessionId: string;
   editingSessionId: string;
   currentCandidateId: string;
-  selectedSessionCandidateId: string;
 
   loadHistory: TLoadHistory;
   candidateArray: TCandidate[];
@@ -149,7 +145,6 @@ const initialState: TVotingState = {
   selectedSessionId: '',
   editingSessionId: '',
   currentCandidateId: '',
-  selectedSessionCandidateId: '',
 
   loadHistory: {},
   candidateArray: [],
@@ -387,16 +382,6 @@ export default (state = initialState, action: any): TVotingState => {
         ...state,
         selectedSessionId: '',
         currentCandidateId: ''
-      };
-    case SELECT_SESSION_CANDIDATE:
-      return {
-        ...state,
-        selectedSessionCandidateId: action._id
-      };
-    case UNSELECT_SESSION_CANDIDATE:
-      return {
-        ...state,
-        selectedSessionCandidateId: ''
       };
     case EDIT_SESSION:
       return {

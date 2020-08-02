@@ -18,10 +18,8 @@ import {
   GET_SESSIONS,
   GET_SESSIONS_SUCCESS,
   GET_SESSIONS_FAILURE,
-  SELECT_SESSION_CANDIDATE,
   SELECT_SESSION,
   UNSELECT_SESSION,
-  UNSELECT_SESSION_CANDIDATE,
   START_SESSION,
   START_SESSION_SUCCESS,
   START_SESSION_FAILURE,
@@ -367,19 +365,6 @@ export const selectSession = (session: TSession) => {
 export const unselectSession = () => {
   return {
     type: UNSELECT_SESSION
-  };
-};
-
-export const selectSessionCandidate = (candidate: TCandidate) => {
-  return {
-    type: SELECT_SESSION_CANDIDATE,
-    _id: candidate._id
-  };
-};
-
-export const unselectSessionCandidate = () => {
-  return {
-    type: UNSELECT_SESSION_CANDIDATE
   };
 };
 

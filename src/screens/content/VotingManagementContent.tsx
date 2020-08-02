@@ -12,7 +12,6 @@ import { TCandidate, TSession } from '@backend/voting';
 import { theme } from '@constants';
 import { HEADER_HEIGHT } from '@services/utils';
 import { Header, SubHeader, Icon, SessionItem, SessionCandidateItem, SessionControls } from '@components';
-import { selectSessionCandidate } from '@reducers/actions/voting';
 
 const VotingManagementContent: React.FC<{
   navigation: ParamType;

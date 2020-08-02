@@ -9,13 +9,24 @@ import { TCandidate } from '@backend/voting';
 import Icon from '@components/Icon';
 
 const SessionCandidateItem: React.FC<{ candidate: TCandidate }> = ({ candidate }) => {
+  const user = useSelector((state: TRedux) => state.auth.user);
   const currentCandidateId = useSelector((state: TRedux) => state.voting.currentCandidateId);
+  const selectedSessionId = useSelector((state: TRedux) => state.voting.selectedSessionId);
 
   const dispatch = useDispatch();
-  const dispatchSelectSessionCandidate = React.useCallback(() => dispatch(_voting.selectSessionCandidate(candidate)), [
-    candidate,
-    dispatch
-  ]);
+  const dispatchSelectSessionCandidate = React.useCallback(
+    () =>
+      dispatch(
+        _voting.saveSession(
+          user,
+          {
+            currentCandidateId: candidate._id
+          },
+          selectedSessionId
+        )
+      ),
+    [candidate._id, dispatch, selectedSessionId, user]
+  );
 
   const isSelected = React.useMemo(() => currentCandidateId === candidate._id, [candidate._id, currentCandidateId]);
 
