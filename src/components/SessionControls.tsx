@@ -195,7 +195,7 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
 
                       {approvedCandidates.length > 0 ? (
                         <View>
-                          {approvedCandidates.map((candidate) => (
+                          {approvedCandidates.map((candidate, index) => (
                             <View key={`approved-${candidate._id}`} style={styles.approvedCandidateContainer}>
                               <View>
                                 <Text style={styles.approvedCandidateName}>
@@ -205,6 +205,7 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
                                   {candidate.classYear} in {candidate.major}
                                 </Text>
                               </View>
+                              <Text style={styles.approvedCandidateIndex}>{index + 1}</Text>
                             </View>
                           ))}
                         </View>
@@ -255,12 +256,12 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
               borderColor={theme.COLORS.SUPER_LIGHT_BLUE_GRAY}
               data={[
                 {
-                  count: 0,
+                  count: candidateIndex,
                   label: 'Complete',
                   color: theme.COLORS.PRIMARY
                 },
                 {
-                  count: session.candidateOrder.length,
+                  count: session.candidateOrder.length - candidateIndex,
                   label: 'Remaining',
                   color: theme.COLORS.BORDER
                 }
@@ -407,6 +408,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between'
+  },
+  approvedCandidateIndex: {
+    marginRight: 8,
+    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 17,
+    color: theme.COLORS.PRIMARY_GREEN
   },
   approvedCandidateName: {
     fontFamily: 'OpenSans',
