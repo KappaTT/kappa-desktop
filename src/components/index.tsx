@@ -1,5 +1,6 @@
 import BrotherItem from './BrotherItem';
 import CandidateItem from './CandidateItem';
+import CandidateReorder from './CandidateReorder';
 import CandidateViewer from './CandidateViewer';
 import CheckList from './CheckList';
 import CheckListButton from './CheckListButton';
@@ -31,6 +32,7 @@ import ToastController from './ToastController';
 export {
   BrotherItem,
   CandidateItem,
+  CandidateReorder,
   CandidateViewer,
   CheckList,
   CheckListButton,

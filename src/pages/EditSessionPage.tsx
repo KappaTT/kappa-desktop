@@ -9,7 +9,7 @@ import { TRedux } from '@reducers';
 import { _auth, _voting } from '@reducers/actions';
 import { TCandidate } from '@backend/voting';
 import { theme } from '@constants';
-import { Icon, FormattedInput, CheckList } from '@components';
+import { Icon, FormattedInput, CheckList, CandidateReorder } from '@components';
 
 const nameFormatter = (text: string) => {
   return text !== undefined ? text.trim() : '';
@@ -50,6 +50,20 @@ const EditSessionPage: React.FC<{
       })),
     [candidateArray]
   );
+
+  const richCandidateOrder = React.useMemo(() => {
+    const richOrder = [];
+
+    for (const candidateId of candidateOrder) {
+      const candidate = candidateArray.find((candidate) => candidate._id === candidateId);
+
+      if (candidate) {
+        richOrder.push(candidate);
+      }
+    }
+
+    return richOrder;
+  }, [candidateArray, candidateOrder]);
 
   const readyToSave = React.useMemo(() => !(name === ''), [name]);
 
@@ -105,6 +119,10 @@ const EditSessionPage: React.FC<{
     },
     [candidateOrder, selectedCandidates]
   );
+
+  const onChangeCandidateOrder = React.useCallback((richCandidateOrder: TCandidate[]) => {
+    setCandidateOrder(richCandidateOrder.map((candidate) => candidate._id));
+  }, []);
 
   const renderHeader = () => {
     return (
@@ -209,7 +227,14 @@ const EditSessionPage: React.FC<{
         <ScrollView>
           <View style={styles.propertyHeaderContainer}>
             <Text style={styles.propertyHeader}>Voting Order</Text>
+            <Text style={styles.propertyHeaderRequired}>*</Text>
           </View>
+
+          <CandidateReorder richCandidateOrder={richCandidateOrder} onChangeOrder={onChangeCandidateOrder} />
+
+          <Text style={styles.description}>
+            Voting will automatically start with the top candidate in the list and proceed down the list one by one.
+          </Text>
         </ScrollView>
       </View>
     );
