@@ -31,6 +31,8 @@ const VotingManagementContent: React.FC<{
   const getCandidatesError = useSelector((state: TRedux) => state.voting.getCandidatesError);
   const isGettingSessions = useSelector((state: TRedux) => state.voting.isGettingSessions);
   const getSessionsError = useSelector((state: TRedux) => state.voting.getSessionsError);
+  const isStartingSession = useSelector((state: TRedux) => state.voting.isStartingSession);
+  const isStoppingSession = useSelector((state: TRedux) => state.voting.isStoppingSession);
 
   const dispatch = useDispatch();
   const dispatchGetEvents = React.useCallback(() => dispatch(_kappa.getEvents(user)), [dispatch, user]);
@@ -117,7 +119,7 @@ const VotingManagementContent: React.FC<{
     }
   }, [selectedSession, showingSessions]);
 
-  const onPressStartTopSession = React.useCallback(() => {
+  const onPressStartStopSession = React.useCallback(() => {
     if (selectedSession) {
       if (selectedSession.active && selectedSession.operatorEmail === user.email) {
         dispatchStopSession(selectedSession);
@@ -221,7 +223,11 @@ const VotingManagementContent: React.FC<{
           {selectedSession !== null && (
             <View style={styles.headerChildren}>
               {selectedSession.operatorEmail === user.email || selectedSession.operatorEmail === '' ? (
-                <TouchableOpacity activeOpacity={0.6} onPress={onPressStartTopSession}>
+                <TouchableOpacity
+                  activeOpacity={0.6}
+                  disabled={isStartingSession || isStoppingSession}
+                  onPress={onPressStartStopSession}
+                >
                   <Text style={styles.headerButtonText}>{selectedSession.active ? 'Stop' : 'Start'}</Text>
                 </TouchableOpacity>
               ) : (
@@ -233,7 +239,7 @@ const VotingManagementContent: React.FC<{
           )}
         </SubHeader>
 
-        <SessionControls session={selectedSession} />
+        {selectedSession !== null && <SessionControls session={selectedSession} />}
       </View>
     );
   };

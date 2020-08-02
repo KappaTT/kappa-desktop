@@ -11,6 +11,7 @@ import { TEvent } from '@backend/kappa';
 import RoundButton from '@components/RoundButton';
 import Icon from '@components/Icon';
 import HorizontalSegmentBar from '@components/HorizontalSegmentBar';
+import { saveSession } from '@reducers/actions/voting';
 
 const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
   const user = useSelector((state: TRedux) => state.auth.user);
@@ -20,13 +21,14 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
   const candidateArray = useSelector((state: TRedux) => state.voting.candidateArray);
   const sessionArray = useSelector((state: TRedux) => state.voting.sessionArray);
   const selectedSessionId = useSelector((state: TRedux) => state.voting.selectedSessionId);
+  const isSavingCandidate = useSelector((state: TRedux) => state.voting.isSavingCandidate);
 
   const currentCandidate = React.useMemo(
-    () => (session ? candidateArray.find((candidate) => candidate._id === session.currentCandidateId) || null : null),
+    () => candidateArray.find((candidate) => candidate._id === session.currentCandidateId) || null,
     [candidateArray, session]
   );
 
-  const isSessionActive = React.useMemo(() => session?.active && session?.operatorEmail === user.email, [
+  const isSessionActive = React.useMemo(() => session.active && session.operatorEmail === user.email, [
     session,
     user.email
   ]);
@@ -48,14 +50,67 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
   }, [eventArray, currentCandidate]);
 
   const dispatch = useDispatch();
-  const dispatchApproveCandidate = React.useCallback(() => console.log('TODO'), []);
-  const dispatchUnapproveCandidate = React.useCallback(() => console.log('TODO'), []);
+  const dispatchApproveCandidate = React.useCallback(
+    () => dispatch(_voting.saveCandidate(user, { approved: true }, currentCandidate?.email)),
+    [currentCandidate, dispatch, user]
+  );
+  const dispatchUnapproveCandidate = React.useCallback(
+    () => dispatch(_voting.saveCandidate(user, { approved: false }, currentCandidate?.email)),
+    [currentCandidate, dispatch, user]
+  );
 
-  const canGoBackward = React.useMemo(() => false, []);
-  const canGoForward = React.useMemo(() => true, []);
+  const approvedCandidates = React.useMemo(
+    () =>
+      candidateArray
+        .filter((candidate) => candidate.approved)
+        .map((candidate) => ({
+          ...candidate,
+          thisSession: session.candidateOrder.findIndex((candidateId) => candidateId === candidate._id)
+        })),
+    [candidateArray, session.candidateOrder]
+  );
 
-  const onPressBackward = React.useCallback(() => console.log('TODO'), []);
-  const onPressForward = React.useCallback(() => console.log('TODO'), []);
+  const candidateIndex = React.useMemo(
+    () => session.candidateOrder.findIndex((candidateId) => candidateId === session.currentCandidateId),
+    [session.candidateOrder, session.currentCandidateId]
+  );
+
+  const canGoBackward = React.useMemo(() => candidateIndex > 0, [candidateIndex]);
+  const canGoForward = React.useMemo(() => candidateIndex < session.candidateOrder.length - 1, [
+    candidateIndex,
+    session.candidateOrder.length
+  ]);
+
+  const onPressBackward = React.useCallback(
+    () =>
+      dispatch(
+        _voting.saveSession(
+          user,
+          {
+            currentCandidateId:
+              candidateIndex > 0 ? session.candidateOrder[candidateIndex - 1] : session.candidateOrder[candidateIndex]
+          },
+          session._id
+        )
+      ),
+    [candidateIndex, dispatch, session._id, session.candidateOrder, user]
+  );
+  const onPressForward = React.useCallback(
+    () =>
+      dispatch(
+        _voting.saveSession(
+          user,
+          {
+            currentCandidateId:
+              candidateIndex < session.candidateOrder.length - 1
+                ? session.candidateOrder[candidateIndex + 1]
+                : session.candidateOrder[candidateIndex]
+          },
+          session._id
+        )
+      ),
+    [candidateIndex, dispatch, session._id, session.candidateOrder, user]
+  );
 
   return (
     <View
@@ -68,19 +123,38 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
             {currentCandidate !== null && (
               <View style={styles.candidateArea}>
                 <View style={styles.candidateHeader}>
-                  <Text style={styles.name}>
-                    {currentCandidate.familyName}, {currentCandidate.givenName}
-                  </Text>
+                  <View style={styles.candidateName}>
+                    <Text style={styles.name}>
+                      {currentCandidate.familyName}, {currentCandidate.givenName}
+                    </Text>
+
+                    {currentCandidate.approved && (
+                      <Icon
+                        style={styles.approvedIcon}
+                        family="Feather"
+                        name="check"
+                        size={24}
+                        color={theme.COLORS.PRIMARY_GREEN}
+                      />
+                    )}
+                  </View>
 
                   {currentCandidate.approved ? (
                     <RoundButton
                       label="Unapprove"
                       alt={true}
                       color={theme.COLORS.PRIMARY}
+                      bgColor={theme.COLORS.SUPER_LIGHT_BLUE_GRAY}
+                      loading={isSavingCandidate}
                       onPress={dispatchUnapproveCandidate}
                     />
                   ) : (
-                    <RoundButton label="Approve" color={theme.COLORS.PRIMARY} onPress={dispatchApproveCandidate} />
+                    <RoundButton
+                      label="Approve"
+                      color={theme.COLORS.PRIMARY}
+                      loading={isSavingCandidate}
+                      onPress={dispatchApproveCandidate}
+                    />
                   )}
                 </View>
 
@@ -114,6 +188,33 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
               <React.Fragment>
                 <View style={styles.statsArea}>
                   <View style={styles.voteListArea}>
+                    <View style={styles.approvedCandidates}>
+                      <Text style={[styles.voteCategoryTitle, { color: theme.COLORS.PRIMARY_GREEN }]}>
+                        Approved Candidates
+                      </Text>
+
+                      {approvedCandidates.length > 0 ? (
+                        <View>
+                          {approvedCandidates.map((candidate) => (
+                            <View key={`approved-${candidate._id}`} style={styles.approvedCandidateContainer}>
+                              <View>
+                                <Text style={styles.approvedCandidateName}>
+                                  {candidate.familyName}, {candidate.givenName}
+                                </Text>
+                                <Text style={styles.approvedCandidateDetails}>
+                                  {candidate.classYear} in {candidate.major}
+                                </Text>
+                              </View>
+                            </View>
+                          ))}
+                        </View>
+                      ) : (
+                        <Text style={styles.noVotes}>No Candidates</Text>
+                      )}
+                    </View>
+                    <View style={styles.dividerWrapper}>
+                      <View style={styles.divider} />
+                    </View>
                     <View style={styles.goodVotes}>
                       <Text style={styles.voteCategoryTitle}>Voted to Approve</Text>
                       <Text style={styles.noVotes}>No votes</Text>
@@ -205,9 +306,16 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center'
   },
+  candidateName: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
   name: {
     fontFamily: 'OpenSans-SemiBold',
     fontSize: 16
+  },
+  approvedIcon: {
+    marginLeft: 8
   },
   splitPropertyRow: {
     flexDirection: 'row',
@@ -286,9 +394,33 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans',
     fontSize: 15
   },
-  goodVotes: {
+  approvedCandidates: {
     flex: 1,
     paddingRight: 16
+  },
+  approvedCandidateContainer: {
+    width: '100%',
+    height: 48,
+    borderBottomColor: theme.COLORS.LIGHT_GRAY,
+    borderBottomWidth: 1,
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between'
+  },
+  approvedCandidateName: {
+    fontFamily: 'OpenSans',
+    fontSize: 15,
+    color: theme.COLORS.BLACK
+  },
+  approvedCandidateDetails: {
+    fontFamily: 'OpenSans',
+    fontSize: 12,
+    color: theme.COLORS.DARK_GRAY
+  },
+  goodVotes: {
+    flex: 1,
+    paddingHorizontal: 16
   },
   badVotes: {
     flex: 1,

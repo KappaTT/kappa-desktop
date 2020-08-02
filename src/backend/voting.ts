@@ -28,9 +28,6 @@ export interface TSession {
   candidateOrder: string[];
   currentCandidateId: string;
   active: boolean;
-  verdict: {
-    [_id: string]: boolean;
-  };
 }
 
 export interface TGetCandidatesPayload {

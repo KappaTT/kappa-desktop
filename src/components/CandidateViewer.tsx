@@ -23,15 +23,10 @@ const CandidateViewer: React.FC = () => {
 
   const [readyToDelete, setReadyToDelete] = React.useState<boolean>(false);
 
-  const selectedCandidate = React.useMemo(() => {
-    const foundCandidate = candidateArray.find((candidate) => candidate.email === selectedCandidateEmail);
-
-    if (foundCandidate) {
-      return foundCandidate;
-    }
-
-    return null;
-  }, [candidateArray, selectedCandidateEmail]);
+  const selectedCandidate = React.useMemo(
+    () => candidateArray.find((candidate) => candidate.email === selectedCandidateEmail) || null,
+    [candidateArray, selectedCandidateEmail]
+  );
 
   const attendedEvents = React.useMemo(() => {
     if (!selectedCandidate) return [];

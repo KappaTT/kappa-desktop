@@ -21,6 +21,7 @@ const EditCandidatesContent: React.FC<{
   const user = useSelector((state: TRedux) => state.auth.user);
   const kappaLoadHistory = useSelector((state: TRedux) => state.kappa.loadHistory);
   const votingLoadHistory = useSelector((state: TRedux) => state.voting.loadHistory);
+  const candidateArray = useSelector((state: TRedux) => state.voting.candidateArray);
   const selectedCandidateEmail = useSelector((state: TRedux) => state.voting.selectedCandidateEmail);
   const isGettingEvents = useSelector((state: TRedux) => state.kappa.isGettingEvents);
   const getEventsError = useSelector((state: TRedux) => state.kappa.getEventsError);
@@ -28,6 +29,12 @@ const EditCandidatesContent: React.FC<{
   const unapprovedCandidateArray = useSelector((state: TRedux) => state.voting.unapprovedCandidateArray);
   const isGettingCandidates = useSelector((state: TRedux) => state.voting.isGettingCandidates);
   const getCandidatesError = useSelector((state: TRedux) => state.voting.getCandidatesError);
+  const isSavingCandidate = useSelector((state: TRedux) => state.voting.isSavingCandidate);
+
+  const selectedCandidate = React.useMemo(
+    () => candidateArray.find((candidate) => candidate.email === selectedCandidateEmail) || null,
+    [candidateArray, selectedCandidateEmail]
+  );
 
   const dispatch = useDispatch();
   const dispatchGetEvents = React.useCallback(() => dispatch(_kappa.getEvents(user)), [dispatch, user]);
@@ -38,6 +45,19 @@ const EditCandidatesContent: React.FC<{
     [dispatch]
   );
   const dispatchUnselectCandidate = React.useCallback(() => dispatch(_voting.unselectCandidate()), [dispatch]);
+  const dispatchToggleApproveCandidate = React.useCallback(
+    () =>
+      dispatch(
+        _voting.saveCandidate(
+          user,
+          {
+            approved: !(selectedCandidate?.approved === true)
+          },
+          selectedCandidate?.email
+        )
+      ),
+    [dispatch, selectedCandidate, user]
+  );
 
   const refreshing = React.useMemo(() => isGettingCandidates, [isGettingCandidates]);
 
@@ -113,7 +133,18 @@ const EditCandidatesContent: React.FC<{
   const renderCandidateDetails = () => {
     return (
       <View style={styles.sectionContent}>
-        <SubHeader title="Candidate Details" />
+        <SubHeader title="Candidate Details">
+          <View style={styles.headerChildren}>
+            <TouchableOpacity
+              activeOpacity={0.6}
+              disabled={selectedCandidate === null || isSavingCandidate}
+              onPress={dispatchToggleApproveCandidate}
+            >
+              <Text style={styles.headerButtonText}>{selectedCandidate?.approved ? 'Unapprove' : 'Approve'}</Text>
+            </TouchableOpacity>
+          </View>
+        </SubHeader>
+
         <ScrollView>
           <CandidateViewer />
         </ScrollView>
