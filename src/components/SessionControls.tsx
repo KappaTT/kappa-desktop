@@ -184,6 +184,25 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
               </View>
             )}
 
+            <View style={styles.instructions}>
+              <Text style={styles.description}>
+                To start a voting session, click the "start" button in the top right corner of the controls. Once a
+                session is active, brothers will be prompted to submit votes. This page will automatically load new
+                votes.
+              </Text>
+              <Text style={styles.description}>
+                Once you have collected votes, you can review the negative votes for valid reasons. If a candidate has
+                no valid rejections, click the "approve" button. If the candidate should not be approved, click the
+                arrow to advance to the next candidate.
+              </Text>
+              <Text style={styles.description}>
+                The candidates who have been approved will appear in the list below. Once you finish a session (which
+                will correspond to a single round of voting), you can create a new session from the remaining unapproved
+                candidates and start the next session. Candidates will automatically be ordered by votes. If any
+                candidates were not voted on, they will automatically be prioritized in their current order.
+              </Text>
+            </View>
+
             {session !== null && (
               <React.Fragment>
                 <View style={styles.statsArea}>
@@ -444,7 +463,15 @@ const styles = StyleSheet.create({
     borderLeftColor: theme.COLORS.LIGHT_BORDER,
     borderLeftWidth: 1
   },
-  dangerZone: {}
+  description: {
+    marginTop: 12,
+    fontFamily: 'OpenSans',
+    fontSize: 12
+  },
+  dangerZone: {},
+  instructions: {
+    marginHorizontal: 16
+  }
 });
 
 export default SessionControls;
