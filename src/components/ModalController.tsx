@@ -33,6 +33,7 @@ const ModalController: React.FC = () => {
   const isSavingCandidate = useSelector((state: TRedux) => state.voting.isSavingCandidate);
   const editingSessionId = useSelector((state: TRedux) => state.voting.editingSessionId);
   const isSavingSession = useSelector((state: TRedux) => state.voting.isSavingSession);
+  const isDeletingSession = useSelector((state: TRedux) => state.voting.isDeletingSession);
 
   const dispatch = useDispatch();
   const dispatchCancelEditEvent = React.useCallback(() => dispatch(_kappa.cancelEditEvent()), [dispatch]);
@@ -125,7 +126,7 @@ const ModalController: React.FC = () => {
 
       <PopupModal
         visible={editingSessionId !== ''}
-        allowClose={!isSavingSession}
+        allowClose={!isSavingSession && !isDeletingSession}
         onDoneClosing={dispatchCancelEditSession}
       >
         <EditSessionPage onPressCancel={dispatchCancelEditSession} />

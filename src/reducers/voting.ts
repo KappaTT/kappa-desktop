@@ -323,6 +323,7 @@ export default (state = initialState, action: any): TVotingState => {
         ...state,
         isDeletingSession: false,
         editingSessionId: '',
+        selectedSessionId: '',
         sessionArray: state.sessionArray.slice().filter((session) => session._id !== action.session._id)
       };
     case DELETE_SESSION_FAILURE:

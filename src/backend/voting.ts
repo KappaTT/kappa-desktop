@@ -392,8 +392,8 @@ interface TDeleteSessionResponse extends TResponse {
 export const deleteSession = async (payload: TDeleteSessionPayload): Promise<TDeleteSessionResponse> => {
   try {
     const response = await makeAuthorizedRequest<TDeleteSessionRequestResponse>(
-      ENDPOINTS.DELETE_CANDIDATE({ _id: payload._id }),
-      METHODS.DELETE_CANDIDATE,
+      ENDPOINTS.DELETE_SESSION({ _id: payload._id }),
+      METHODS.DELETE_SESSION,
       {},
       payload.user.sessionToken
     );

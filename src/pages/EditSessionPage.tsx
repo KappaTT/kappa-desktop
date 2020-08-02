@@ -166,7 +166,7 @@ const EditSessionPage: React.FC<{
     return (
       <React.Fragment>
         <View style={styles.cancelWrapper}>
-          <TouchableOpacity activeOpacity={0.6} disabled={isSavingSession} onPress={onPressCancel}>
+          <TouchableOpacity activeOpacity={0.6} disabled={isSavingSession || isDeletingSession} onPress={onPressCancel}>
             <Text style={styles.cancelText}>Cancel</Text>
           </TouchableOpacity>
         </View>
@@ -185,7 +185,7 @@ const EditSessionPage: React.FC<{
                 opacity: readyToSave ? 1 : 0.6
               }}
               activeOpacity={0.6}
-              disabled={!readyToSave}
+              disabled={!readyToSave || isDeletingSession}
               onPress={dispatchSaveSession}
             >
               <Text style={styles.saveText}>Save</Text>
