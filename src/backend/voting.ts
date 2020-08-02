@@ -30,6 +30,15 @@ export interface TSession {
   active: boolean;
 }
 
+export interface TVote {
+  _id: string;
+  sessionId: string;
+  candidateId: string;
+  userEmail: string;
+  verdict: boolean;
+  reason: string;
+}
+
 export interface TGetCandidatesPayload {
   user: TUser;
 }
