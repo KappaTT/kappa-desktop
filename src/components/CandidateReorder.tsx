@@ -39,7 +39,7 @@ const CandidateReorder: React.FC<{
 
   return (
     <View>
-      <Container onSortEnd={onSortEnd}>
+      <Container onSortEnd={onSortEnd} lockAxis="y">
         {richCandidateOrder.map((candidate, index) => (
           <Item key={`candidate-${candidate._id}`} index={index} value={candidate} />
         ))}
