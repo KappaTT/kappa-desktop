@@ -8,6 +8,7 @@ import { _auth, _kappa, _ui, _voting } from '@reducers/actions';
 import { theme } from '@constants';
 import { TSession, TVote } from '@backend/voting';
 import { TEvent } from '@backend/kappa';
+import { TToast } from '@reducers/ui';
 import { getVotes } from '@services/votingService';
 import RoundButton from '@components/RoundButton';
 import Icon from '@components/Icon';
@@ -25,7 +26,7 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
   const createNextSessionDate = useSelector((state: TRedux) => state.voting.createNextSessionDate);
   const createNextSessionSession = useSelector((state: TRedux) => state.voting.createNextSessionSession);
 
-  const [createNextSessionStartDate, setCreateNextSessionStartDate] = React.useState(moment());
+  const [createNextSessionRequestDate, setCreateNextSessionRequestDate] = React.useState(moment());
   const [votingRefreshDate, setVotingRefreshDate] = React.useState(moment());
 
   const currentCandidate = React.useMemo(
@@ -56,6 +57,7 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
     session._id,
     user
   ]);
+  const dispatchShowToast = React.useCallback((toast: Partial<TToast>) => dispatch(_ui.showToast(toast)), [dispatch]);
 
   const isSessionActive = React.useMemo(() => session.active && session.operatorEmail === user.email, [
     session,
@@ -149,13 +151,29 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
 
   React.useEffect(() => {
     if (createNextSessionDate !== null && createNextSessionSession !== null) {
-      if (createNextSessionDate.isAfter(createNextSessionStartDate)) {
-        setCreateNextSessionStartDate(moment());
+      if (createNextSessionDate.isAfter(createNextSessionRequestDate)) {
+        setCreateNextSessionRequestDate(moment());
 
         dispatchSelectSession(createNextSessionSession);
+
+        dispatchShowToast({
+          title: 'Success',
+          message: 'Created next session!',
+          allowClose: true,
+          timer: 2000,
+          toastColor: theme.COLORS.PRIMARY_GREEN,
+          textColor: theme.COLORS.WHITE,
+          showBackdrop: false
+        });
       }
     }
-  }, [createNextSessionDate, createNextSessionSession, createNextSessionStartDate, dispatchSelectSession]);
+  }, [
+    createNextSessionDate,
+    createNextSessionRequestDate,
+    createNextSessionSession,
+    dispatchSelectSession,
+    dispatchShowToast
+  ]);
 
   React.useEffect(() => {
     if (session.active === true && votingRefreshDate.isBefore(moment()) && !isGettingCandidateVotes) {
