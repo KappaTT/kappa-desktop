@@ -11,7 +11,6 @@ import { TEvent } from '@backend/kappa';
 import RoundButton from '@components/RoundButton';
 import Icon from '@components/Icon';
 import HorizontalSegmentBar from '@components/HorizontalSegmentBar';
-import { saveSession } from '@reducers/actions/voting';
 
 const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
   const user = useSelector((state: TRedux) => state.auth.user);
@@ -113,76 +112,78 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
   );
 
   return (
-    <View
-      style={[styles.container, !isSessionActive && { opacity: 0.5 }]}
-      pointerEvents={isSessionActive ? 'auto' : 'none'}
-    >
+    <View style={styles.container}>
       <View style={styles.content}>
         <ScrollView>
           <View style={styles.scrollContent}>
-            {currentCandidate !== null && (
-              <View style={styles.candidateArea}>
-                <View style={styles.candidateHeader}>
-                  <View style={styles.candidateName}>
-                    <Text style={styles.name}>
-                      {currentCandidate.familyName}, {currentCandidate.givenName}
-                    </Text>
+            <View
+              style={[styles.activeContent, !isSessionActive && { opacity: 0.5 }]}
+              pointerEvents={isSessionActive ? 'auto' : 'none'}
+            >
+              {currentCandidate !== null && (
+                <View style={styles.candidateArea}>
+                  <View style={styles.candidateHeader}>
+                    <View style={styles.candidateName}>
+                      <Text style={styles.name}>
+                        {currentCandidate.familyName}, {currentCandidate.givenName}
+                      </Text>
 
-                    {currentCandidate.approved && (
-                      <Icon
-                        style={styles.approvedIcon}
-                        family="Feather"
-                        name="check"
-                        size={24}
-                        color={theme.COLORS.PRIMARY_GREEN}
+                      {currentCandidate.approved && (
+                        <Icon
+                          style={styles.approvedIcon}
+                          family="Feather"
+                          name="check"
+                          size={24}
+                          color={theme.COLORS.PRIMARY_GREEN}
+                        />
+                      )}
+                    </View>
+
+                    {currentCandidate.approved ? (
+                      <RoundButton
+                        label="Unapprove"
+                        alt={true}
+                        color={theme.COLORS.PRIMARY}
+                        bgColor={theme.COLORS.SUPER_LIGHT_BLUE_GRAY}
+                        loading={isSavingCandidate}
+                        onPress={dispatchUnapproveCandidate}
+                      />
+                    ) : (
+                      <RoundButton
+                        label="Approve"
+                        color={theme.COLORS.PRIMARY}
+                        loading={isSavingCandidate}
+                        onPress={dispatchApproveCandidate}
                       />
                     )}
                   </View>
 
-                  {currentCandidate.approved ? (
-                    <RoundButton
-                      label="Unapprove"
-                      alt={true}
-                      color={theme.COLORS.PRIMARY}
-                      bgColor={theme.COLORS.SUPER_LIGHT_BLUE_GRAY}
-                      loading={isSavingCandidate}
-                      onPress={dispatchUnapproveCandidate}
-                    />
-                  ) : (
-                    <RoundButton
-                      label="Approve"
-                      color={theme.COLORS.PRIMARY}
-                      loading={isSavingCandidate}
-                      onPress={dispatchApproveCandidate}
-                    />
-                  )}
-                </View>
+                  <View style={styles.splitPropertyRow}>
+                    <View style={styles.splitProperty}>
+                      <Text style={styles.propertyHeader}>Year</Text>
+                      <Text style={styles.propertyValue}>{currentCandidate.classYear}</Text>
+                    </View>
+                    <View style={styles.splitProperty}>
+                      <Text style={styles.propertyHeader}>Major</Text>
+                      <Text style={styles.propertyValue}>{currentCandidate.major}</Text>
+                    </View>
+                    <View style={styles.splitProperty}>
+                      <Text style={styles.propertyHeader}>2nd Time Rush</Text>
+                      <Text style={styles.propertyValue}>{currentCandidate.secondTimeRush ? 'Yes' : 'No'}</Text>
+                    </View>
+                  </View>
 
-                <View style={styles.splitPropertyRow}>
-                  <View style={styles.splitProperty}>
-                    <Text style={styles.propertyHeader}>Year</Text>
-                    <Text style={styles.propertyValue}>{currentCandidate.classYear}</Text>
-                  </View>
-                  <View style={styles.splitProperty}>
-                    <Text style={styles.propertyHeader}>Major</Text>
-                    <Text style={styles.propertyValue}>{currentCandidate.major}</Text>
-                  </View>
-                  <View style={styles.splitProperty}>
-                    <Text style={styles.propertyHeader}>2nd Time Rush</Text>
-                    <Text style={styles.propertyValue}>{currentCandidate.secondTimeRush ? 'Yes' : 'No'}</Text>
-                  </View>
+                  <Text style={styles.propertyHeader}>Attended Events</Text>
+                  {attendedEvents.map((event: TEvent) => (
+                    <View key={event._id} style={styles.eventContainer}>
+                      <Text style={styles.eventTitle}>{event.title}</Text>
+                      <Text style={styles.eventDate}>{moment(event.start).format('ddd LLL')}</Text>
+                    </View>
+                  ))}
+                  {attendedEvents.length === 0 && <Text style={styles.noEvents}>No events</Text>}
                 </View>
-
-                <Text style={styles.propertyHeader}>Attended Events</Text>
-                {attendedEvents.map((event: TEvent) => (
-                  <View key={event._id} style={styles.eventContainer}>
-                    <Text style={styles.eventTitle}>{event.title}</Text>
-                    <Text style={styles.eventDate}>{moment(event.start).format('ddd LLL')}</Text>
-                  </View>
-                ))}
-                {attendedEvents.length === 0 && <Text style={styles.noEvents}>No events</Text>}
-              </View>
-            )}
+              )}
+            </View>
 
             <View style={styles.instructions}>
               <Text style={styles.description}>
@@ -203,8 +204,11 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
               </Text>
             </View>
 
-            {session !== null && (
-              <React.Fragment>
+            <View
+              style={[styles.activeContent, !isSessionActive && { opacity: 0.5 }]}
+              pointerEvents={isSessionActive ? 'auto' : 'none'}
+            >
+              {session !== null && (
                 <View style={styles.statsArea}>
                   <View style={styles.voteListArea}>
                     <View style={styles.approvedCandidates}>
@@ -248,10 +252,10 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
                     </View>
                   </View>
                 </View>
+              )}
+            </View>
 
-                <View style={styles.dangerZone}></View>
-              </React.Fragment>
-            )}
+            {session !== null && <View style={styles.dangerZone} />}
           </View>
         </ScrollView>
       </View>
@@ -314,6 +318,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingBottom: 16
   },
+  activeContent: {},
   candidateArea: {
     marginTop: 16,
     marginHorizontal: 16,
