@@ -240,7 +240,7 @@ const EditSessionPage: React.FC<{
               <View style={styles.dangerZone}>
                 <View style={styles.deleteZone}>
                   <View style={styles.warning}>
-                    <Text style={styles.zoneLabel}>Delete this candidate</Text>
+                    <Text style={styles.zoneLabel}>Delete this session</Text>
                     <Text style={[styles.description, { marginTop: 2 }]}>
                       Deleting a session will delete all associated votes. Please double check and be certain this is
                       the session you want to delete.
