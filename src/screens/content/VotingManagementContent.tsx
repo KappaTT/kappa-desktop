@@ -30,7 +30,7 @@ const VotingManagementContent: React.FC<{
   const user = useSelector((state: TRedux) => state.auth.user);
   const kappaLoadHistory = useSelector((state: TRedux) => state.kappa.loadHistory);
   const votingLoadHistory = useSelector((state: TRedux) => state.voting.loadHistory);
-  const candidateArray = useSelector((state: TRedux) => state.voting.candidateArray);
+  const idToCandidate = useSelector((state: TRedux) => state.voting.idToCandidate);
   const sessionArray = useSelector((state: TRedux) => state.voting.sessionArray);
   const selectedSessionId = useSelector((state: TRedux) => state.voting.selectedSessionId);
   const isGettingEvents = useSelector((state: TRedux) => state.kappa.isGettingEvents);
@@ -99,15 +99,11 @@ const VotingManagementContent: React.FC<{
     const candidates: TCandidate[] = [];
 
     for (const candidateId of selectedSession.candidateOrder) {
-      const index = candidateArray.findIndex((candidate) => candidate._id === candidateId);
-
-      if (index >= 0) {
-        candidates.push(candidateArray[index]);
-      }
+      if (idToCandidate.hasOwnProperty(candidateId)) candidates.push(idToCandidate[candidateId]);
     }
 
     return candidates;
-  }, [candidateArray, selectedSession]);
+  }, [idToCandidate, selectedSession]);
 
   const loadData = React.useCallback(
     (force: boolean) => {
@@ -142,11 +138,11 @@ const VotingManagementContent: React.FC<{
     (force: boolean) => {
       if (
         !isGettingCandidateVotes &&
+        selectedSession !== null &&
+        selectedSession.currentCandidateId !== '' &&
+        selectedSession.active !== true &&
         (force ||
           (!getCandidateVotesError &&
-            selectedSession !== null &&
-            selectedSession.currentCandidateId !== '' &&
-            selectedSession.active !== true &&
             shouldLoad(votingLoadHistory, `votes-${selectedSession._id}-${selectedSession.currentCandidateId}`)))
       )
         dispatchGetCandidateVotes(selectedSession._id, selectedSession.currentCandidateId);
@@ -190,6 +186,7 @@ const VotingManagementContent: React.FC<{
 
         for (const session of sessionArray) {
           if (session.active) {
+            console.log('test2');
             dispatchSelectSession(session);
             return;
           }
@@ -197,6 +194,7 @@ const VotingManagementContent: React.FC<{
 
         for (const session of sessionArray) {
           if (moment(session.startDate).isSameOrAfter(now)) {
+            console.log('test2');
             dispatchSelectSession(session);
             return;
           }
@@ -204,9 +202,7 @@ const VotingManagementContent: React.FC<{
       } else {
         const index = sessionArray.findIndex((session) => session._id === selectedSessionId);
 
-        if (index >= 0) {
-          dispatchSelectSession(sessionArray[index]);
-        } else {
+        if (index === -1) {
           dispatchUnselectSession();
         }
       }

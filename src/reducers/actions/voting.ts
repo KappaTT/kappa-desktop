@@ -39,7 +39,10 @@ import {
   GET_ACTIVE_VOTES_FAILURE,
   GET_CANDIDATE_VOTES,
   GET_CANDIDATE_VOTES_SUCCESS,
-  GET_CANDIDATE_VOTES_FAILURE
+  GET_CANDIDATE_VOTES_FAILURE,
+  CREATE_NEXT_SESSION,
+  CREATE_NEXT_SESSION_SUCCESS,
+  CREATE_NEXT_SESSION_FAILURE
 } from '@reducers/voting';
 import { atan } from 'react-native-reanimated';
 
@@ -434,6 +437,40 @@ export const getCandidateVotes = (
         dispatch(getCandidateVotesSuccess(res.data, useLoadHistory));
       } else {
         dispatch(getCandidateVotesFailure(res.error));
+      }
+    });
+  };
+};
+
+const creatingNextSession = () => {
+  return {
+    type: CREATE_NEXT_SESSION
+  };
+};
+
+const createNextSessionSuccess = (data) => {
+  return {
+    type: CREATE_NEXT_SESSION_SUCCESS,
+    session: data.session
+  };
+};
+
+const createNextSessionFailure = (error) => {
+  return {
+    type: CREATE_NEXT_SESSION_FAILURE,
+    error
+  };
+};
+
+export const createNextSession = (user: TUser, sessionId: string) => {
+  return (dispatch) => {
+    dispatch(creatingNextSession());
+
+    Voting.createNextSession({ user, sessionId }).then((res) => {
+      if (res.success) {
+        dispatch(createNextSessionSuccess(res.data));
+      } else {
+        dispatch(createNextSessionFailure(res.error));
       }
     });
   };

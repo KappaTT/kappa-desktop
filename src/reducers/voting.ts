@@ -51,6 +51,9 @@ export const GET_ACTIVE_VOTES_FAILURE = 'GET_ACTIVE_VOTES_FAILURE';
 export const GET_CANDIDATE_VOTES = 'GET_CANDIDATE_VOTES';
 export const GET_CANDIDATE_VOTES_SUCCESS = 'GET_CANDIDATE_VOTES_SUCCESS';
 export const GET_CANDIDATE_VOTES_FAILURE = 'GET_CANDIDATE_VOTES_FAILURE';
+export const CREATE_NEXT_SESSION = 'CREATE_NEXT_SESSION';
+export const CREATE_NEXT_SESSION_SUCCESS = 'CREATE_NEXT_SESSION_SUCCESS';
+export const CREATE_NEXT_SESSION_FAILURE = 'CREATE_NEXT_SESSION_FAILURE';
 
 export const SELECT_SESSION = 'SELECT_SESSION';
 export const UNSELECT_SESSION = 'UNSELECT_SESSION';
@@ -105,6 +108,12 @@ export interface TVotingState {
   getCandidateVotesError: boolean;
   getCandidateVotesErrorMessage: string;
 
+  isCreatingNextSession: boolean;
+  createNextSessionError: boolean;
+  createNextSessionErrorMessage: string;
+  createNextSessionDate: moment.Moment;
+  createNextSessionSession: TSession;
+
   selectedSessionId: string;
   editingSessionId: string;
   currentCandidateId: string;
@@ -114,6 +123,7 @@ export interface TVotingState {
   approvedCandidateArray: TCandidate[];
   unapprovedCandidateArray: TCandidate[];
   emailToCandidate: TCandidateDict;
+  idToCandidate: TCandidateDict;
   sessionArray: TSession[];
   sessionToCandidateToVotes: TSessionToCandidateToVoteDict;
 }
@@ -166,6 +176,12 @@ const initialState: TVotingState = {
   getCandidateVotesError: false,
   getCandidateVotesErrorMessage: '',
 
+  isCreatingNextSession: false,
+  createNextSessionError: false,
+  createNextSessionErrorMessage: '',
+  createNextSessionDate: null,
+  createNextSessionSession: null,
+
   selectedSessionId: '',
   editingSessionId: '',
   currentCandidateId: '',
@@ -175,6 +191,7 @@ const initialState: TVotingState = {
   approvedCandidateArray: [],
   unapprovedCandidateArray: [],
   emailToCandidate: {},
+  idToCandidate: {},
   sessionArray: [],
   sessionToCandidateToVotes: {}
 };
@@ -456,6 +473,29 @@ export default (state = initialState, action: any): TVotingState => {
         isGettingCandidateVotes: false,
         getCandidateVotesError: true,
         getCandidateVotesErrorMessage: action.error.message,
+        ...setGlobalError(action.error.message, action.error.code)
+      };
+    case CREATE_NEXT_SESSION:
+      return {
+        ...state,
+        isCreatingNextSession: true,
+        createNextSessionError: false,
+        createNextSessionErrorMessage: ''
+      };
+    case CREATE_NEXT_SESSION_SUCCESS:
+      return {
+        ...state,
+        isCreatingNextSession: false,
+        createNextSessionDate: moment(),
+        createNextSessionSession: action.session,
+        sessionArray: mergeSessions(state.sessionArray, [action.session])
+      };
+    case CREATE_NEXT_SESSION_FAILURE:
+      return {
+        ...state,
+        isCreatingNextSession: false,
+        createNextSessionError: true,
+        createNextSessionErrorMessage: action.error.message,
         ...setGlobalError(action.error.message, action.error.code)
       };
     case SELECT_SESSION:

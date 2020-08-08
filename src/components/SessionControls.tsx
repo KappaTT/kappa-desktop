@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, ScrollView, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment';
 
@@ -18,10 +18,14 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
   const eventArray = useSelector((state: TRedux) => state.kappa.eventArray);
   const directory = useSelector((state: TRedux) => state.kappa.directory);
   const candidateArray = useSelector((state: TRedux) => state.voting.candidateArray);
+  const sessionToCandidateToVotes = useSelector((state: TRedux) => state.voting.sessionToCandidateToVotes);
   const isSavingCandidate = useSelector((state: TRedux) => state.voting.isSavingCandidate);
   const isGettingCandidateVotes = useSelector((state: TRedux) => state.voting.isGettingCandidateVotes);
-  const sessionToCandidateToVotes = useSelector((state: TRedux) => state.voting.sessionToCandidateToVotes);
+  const isCreatingNextSession = useSelector((state: TRedux) => state.voting.isCreatingNextSession);
+  const createNextSessionDate = useSelector((state: TRedux) => state.voting.createNextSessionDate);
+  const createNextSessionSession = useSelector((state: TRedux) => state.voting.createNextSessionSession);
 
+  const [createNextSessionStartDate, setCreateNextSessionStartDate] = React.useState(moment());
   const [votingRefreshDate, setVotingRefreshDate] = React.useState(moment());
 
   const currentCandidate = React.useMemo(
@@ -43,6 +47,15 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
       dispatch(_voting.getCandidateVotes(user, sessionId, candidateId, useLoadHistory)),
     [dispatch, user]
   );
+  const dispatchSelectSession = React.useCallback(
+    (newSession: TSession) => dispatch(_voting.selectSession(newSession)),
+    [dispatch]
+  );
+  const dispatchCreateNextSession = React.useCallback(() => dispatch(_voting.createNextSession(user, session._id)), [
+    dispatch,
+    session._id,
+    user
+  ]);
 
   const isSessionActive = React.useMemo(() => session.active && session.operatorEmail === user.email, [
     session,
@@ -123,12 +136,26 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
     [candidateIndex, dispatch, session._id, session.candidateOrder, user]
   );
 
+  const onPressCreateNextRound = React.useCallback(() => {
+    dispatchCreateNextSession();
+  }, [dispatchCreateNextSession]);
+
   const refreshVotes = React.useCallback(() => {
     if (!isGettingCandidateVotes && session.currentCandidateId !== '')
       dispatchGetCandidateVotes(session._id, session.currentCandidateId, false);
 
     setVotingRefreshDate(moment());
   }, [dispatchGetCandidateVotes, isGettingCandidateVotes, session]);
+
+  React.useEffect(() => {
+    if (createNextSessionDate !== null && createNextSessionSession !== null) {
+      if (createNextSessionDate.isAfter(createNextSessionStartDate)) {
+        setCreateNextSessionStartDate(moment());
+
+        dispatchSelectSession(createNextSessionSession);
+      }
+    }
+  }, [createNextSessionDate, createNextSessionSession, createNextSessionStartDate, dispatchSelectSession]);
 
   React.useEffect(() => {
     if (session.active === true && votingRefreshDate.isBefore(moment()) && !isGettingCandidateVotes) {
@@ -308,9 +335,19 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
                   </Text>
                 </View>
 
-                <TouchableOpacity disabled={false} onPress={() => console.log('TODO')}>
-                  <Icon style={styles.zoneIcon} family="Feather" name="upload" size={32} color={theme.COLORS.PRIMARY} />
-                </TouchableOpacity>
+                {isCreatingNextSession ? (
+                  <ActivityIndicator style={styles.zoneIcon} color={theme.COLORS.PRIMARY} />
+                ) : (
+                  <TouchableOpacity onPress={onPressCreateNextRound}>
+                    <Icon
+                      style={styles.zoneIcon}
+                      family="Feather"
+                      name="upload"
+                      size={32}
+                      color={theme.COLORS.PRIMARY}
+                    />
+                  </TouchableOpacity>
+                )}
               </View>
             </View>
           </View>

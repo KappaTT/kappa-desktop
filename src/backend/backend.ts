@@ -46,6 +46,7 @@ export const ENDPOINTS: {
   STOP_SESSION: (config: { _id: string }) => `stop-session/${config._id}`,
   GET_ACTIVE_VOTES: () => 'active-candidate/votes',
   GET_CANDIDATE_VOTES: () => 'votes',
+  CREATE_NEXT_SESSION: () => 'session/next',
   SUBMIT_VOTE: () => 'vote'
 };
 
@@ -79,6 +80,7 @@ export const METHODS: {
   STOP_SESSION: M_PATCH,
   GET_ACTIVE_VOTES: M_GET,
   GET_CANDIDATE_VOTES: M_POST,
+  CREATE_NEXT_SESSION: M_POST,
   SUBMIT_VOTE: M_POST
 };
 

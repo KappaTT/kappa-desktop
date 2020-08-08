@@ -615,3 +615,52 @@ export const getCandidateVotes = async (payload: TGetCandidateVotesPayload): Pro
     return fail({}, "that wasn't supposed to happen", -1);
   }
 };
+
+export interface TCreateNextSessionPayload {
+  user: TUser;
+  sessionId: string;
+}
+
+interface TCreateNextSessionRequestResponse {
+  session: TSession;
+}
+
+interface TCreateNextSessionResponse extends TResponse {
+  data?: TCreateNextSessionRequestResponse;
+}
+
+export const createNextSession = async (payload: TCreateNextSessionPayload): Promise<TCreateNextSessionResponse> => {
+  try {
+    const response = await makeAuthorizedRequest<TCreateNextSessionRequestResponse>(
+      ENDPOINTS.CREATE_NEXT_SESSION(),
+      METHODS.CREATE_NEXT_SESSION,
+      {
+        body: {
+          session: {
+            _id: payload.sessionId
+          }
+        }
+      },
+      payload.user.sessionToken
+    );
+
+    log('Get create next session response', response.code);
+
+    if (!response.success) {
+      return fail({}, 'issue connecting to the server', 500);
+    } else if (response.code !== 200) {
+      if (response.code === 401) {
+        return fail({}, 'your credentials were invalid or have expired', response.code);
+      }
+
+      return fail({}, response.error?.message, response.code);
+    }
+
+    return pass({
+      session: response.data.session
+    });
+  } catch (error) {
+    log(error);
+    return fail({}, "that wasn't supposed to happen", -1);
+  }
+};

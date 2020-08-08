@@ -1,8 +1,8 @@
 import moment from 'moment';
 
 import { TCandidateDict, TCandidate, TSession, TSessionToCandidateToVoteDict, TVote } from '@backend/voting';
-import { sortUserByName } from './kappaService';
 import { TDirectory } from '@backend/kappa';
+import { sortUserByName } from '@services/kappaService';
 
 export const CLASS_YEAR_OPTIONS = [
   { id: 'FR', title: 'Freshman' },
@@ -11,7 +11,7 @@ export const CLASS_YEAR_OPTIONS = [
   { id: 'SR', title: 'Senior' }
 ];
 
-export const separateByCandidateEmail = (candidates: TCandidate[]) => {
+export const separateByCandidateEmail = (candidates: TCandidate[]): TCandidateDict => {
   const separated = {};
 
   for (const candidate of candidates) {
@@ -21,7 +21,17 @@ export const separateByCandidateEmail = (candidates: TCandidate[]) => {
   return separated;
 };
 
-export const mergeCandidates = (emailToCandidate: TCandidateDict, newCandidates: TCandidate[]) => {
+export const separateByCandidateId = (candidates: TCandidate[]): TCandidateDict => {
+  const separated = {};
+
+  for (const candidate of candidates) {
+    separated[candidate._id] = candidate;
+  }
+
+  return separated;
+};
+
+export const mergeCandidates = (emailToCandidate: TCandidateDict, newCandidates: TCandidate[]): TCandidateDict => {
   const merged = emailToCandidate;
 
   for (const candidate of newCandidates) {
@@ -116,11 +126,13 @@ export const getVotes = (
 
 export const recomputeVotingState = ({ emailToCandidate }: { emailToCandidate: TCandidateDict }) => {
   const candidateArray = Object.values(emailToCandidate).sort(sortUserByName);
+  const idToCandidate = separateByCandidateId(candidateArray);
   const approvedCandidateArray = candidateArray.filter((candidate) => candidate.approved);
   const unapprovedCandidateArray = candidateArray.filter((candidate) => !candidate.approved);
 
   return {
     emailToCandidate,
+    idToCandidate,
     candidateArray,
     approvedCandidateArray,
     unapprovedCandidateArray
