@@ -209,8 +209,7 @@ export default (state = initialState, action: any): TVotingState => {
           candidates: moment()
         },
         ...recomputeVotingState({
-          emailToCandidate: separateByCandidateEmail(action.candidates),
-          sessionToCandidateToVotes: state.sessionToCandidateToVotes
+          emailToCandidate: separateByCandidateEmail(action.candidates)
         })
       };
     case GET_CANDIDATES_FAILURE:
@@ -234,8 +233,7 @@ export default (state = initialState, action: any): TVotingState => {
         isSavingCandidate: false,
         editingCandidateEmail: '',
         ...recomputeVotingState({
-          emailToCandidate: mergeCandidates(state.emailToCandidate, [action.candidate]),
-          sessionToCandidateToVotes: state.sessionToCandidateToVotes
+          emailToCandidate: mergeCandidates(state.emailToCandidate, [action.candidate])
         })
       };
     case SAVE_CANDIDATE_FAILURE:
@@ -262,8 +260,7 @@ export default (state = initialState, action: any): TVotingState => {
         isDeletingCandidate: false,
         selectedCandidateEmail: '',
         ...recomputeVotingState({
-          emailToCandidate: remainingCandidates,
-          sessionToCandidateToVotes: state.sessionToCandidateToVotes
+          emailToCandidate: remainingCandidates
         })
       };
     }
@@ -411,14 +408,14 @@ export default (state = initialState, action: any): TVotingState => {
         return {
           ...state,
           isGettingActiveVotes: false,
-          loadHistory: {
-            ...state.loadHistory,
-            [`votes-${action.session._id}-${action.candidate._id}`]: moment()
-          },
+          // loadHistory: {
+          //   ...state.loadHistory,
+          //   [`votes-${action.session._id}-${action.candidate._id}`]: moment()
+          // },
           sessionArray: mergeSessions(state.sessionArray, [action.session]),
+          sessionToCandidateToVotes: mergeVotes(state.sessionToCandidateToVotes, action.votes),
           ...recomputeVotingState({
-            emailToCandidate: mergeCandidates(state.emailToCandidate, [action.candidate]),
-            sessionToCandidateToVotes: mergeVotes(state.sessionToCandidateToVotes, action.votes)
+            emailToCandidate: mergeCandidates(state.emailToCandidate, [action.candidate])
           })
         };
       } else {
@@ -445,14 +442,11 @@ export default (state = initialState, action: any): TVotingState => {
       return {
         ...state,
         isGettingCandidateVotes: false,
-        loadHistory: {
-          ...state.loadHistory,
-          [`votes-${action.session._id}-${action.candidate._id}`]: moment()
-        },
-        ...recomputeVotingState({
-          emailToCandidate: state.emailToCandidate,
-          sessionToCandidateToVotes: mergeVotes(state.sessionToCandidateToVotes, action.votes)
-        })
+        // loadHistory: {
+        //   ...state.loadHistory,
+        //   [`votes-${action.session._id}-${action.candidate._id}`]: moment()
+        // },
+        sessionToCandidateToVotes: mergeVotes(state.sessionToCandidateToVotes, action.votes)
       };
     case GET_CANDIDATE_VOTES_FAILURE:
       return {

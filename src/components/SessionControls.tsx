@@ -18,9 +18,11 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
   const votingLoadHistory = useSelector((state: TRedux) => state.voting.loadHistory);
   const eventArray = useSelector((state: TRedux) => state.kappa.eventArray);
   const candidateArray = useSelector((state: TRedux) => state.voting.candidateArray);
-  const sessionArray = useSelector((state: TRedux) => state.voting.sessionArray);
-  const selectedSessionId = useSelector((state: TRedux) => state.voting.selectedSessionId);
   const isSavingCandidate = useSelector((state: TRedux) => state.voting.isSavingCandidate);
+  const isGettingCandidateVotes = useSelector((state: TRedux) => state.voting.isGettingCandidateVotes);
+  const sessionToCandidateToVotes = useSelector((state: TRedux) => state.voting.sessionToCandidateToVotes);
+
+  const [votingRefreshDate, setVotingRefreshDate] = React.useState(moment());
 
   const currentCandidate = React.useMemo(
     () => candidateArray.find((candidate) => candidate._id === session.currentCandidateId) || null,
@@ -56,6 +58,10 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
   const dispatchUnapproveCandidate = React.useCallback(
     () => dispatch(_voting.saveCandidate(user, { approved: false }, currentCandidate?.email)),
     [currentCandidate, dispatch, user]
+  );
+  const dispatchGetCandidateVotes = React.useCallback(
+    (sessionId: string, candidateId: string) => dispatch(_voting.getCandidateVotes(user, sessionId, candidateId)),
+    [dispatch, user]
   );
 
   const approvedCandidates = React.useMemo(
@@ -110,6 +116,20 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
       ),
     [candidateIndex, dispatch, session._id, session.candidateOrder, user]
   );
+
+  const refreshVotes = React.useCallback(() => {
+    if (!isGettingCandidateVotes && session !== null && session.currentCandidateId !== '')
+      dispatchGetCandidateVotes(session._id, session.currentCandidateId);
+
+    setVotingRefreshDate(moment());
+  }, [dispatchGetCandidateVotes, isGettingCandidateVotes, session]);
+
+  React.useEffect(() => {
+    if (session?.active === true && votingRefreshDate.isBefore(moment()) && !isGettingCandidateVotes) {
+      const t = setTimeout(refreshVotes, 2000);
+      return () => clearTimeout(t);
+    }
+  }, [isGettingCandidateVotes, refreshVotes, session, votingRefreshDate]);
 
   return (
     <View style={styles.container}>
