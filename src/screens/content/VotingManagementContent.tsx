@@ -84,7 +84,10 @@ const VotingManagementContent: React.FC<{
   );
   const dispatchOpenPresentationMode = React.useCallback(() => console.log('TODO'), []);
 
-  const refreshing = React.useMemo(() => isGettingCandidates, [isGettingCandidates]);
+  const refreshing = React.useMemo(
+    () => isGettingEvents || isGettingDirectory || isGettingCandidates || isGettingSessions || isGettingCandidateVotes,
+    [isGettingCandidateVotes, isGettingCandidates, isGettingDirectory, isGettingEvents, isGettingSessions]
+  );
 
   const [showingSessions, setShowingSessions] = React.useState<boolean>(false);
 

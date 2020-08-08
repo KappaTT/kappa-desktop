@@ -132,7 +132,7 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
 
   React.useEffect(() => {
     if (session.active === true && votingRefreshDate.isBefore(moment()) && !isGettingCandidateVotes) {
-      const t = setTimeout(refreshVotes, 2000);
+      const t = setTimeout(refreshVotes, 5000);
       return () => clearTimeout(t);
     }
   }, [isGettingCandidateVotes, refreshVotes, session.active, votingRefreshDate]);

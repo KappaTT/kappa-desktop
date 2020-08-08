@@ -59,7 +59,10 @@ const EditCandidatesContent: React.FC<{
     [dispatch, selectedCandidate, user]
   );
 
-  const refreshing = React.useMemo(() => isGettingCandidates, [isGettingCandidates]);
+  const refreshing = React.useMemo(() => isGettingEvents || isGettingCandidates, [
+    isGettingCandidates,
+    isGettingEvents
+  ]);
 
   const loadData = React.useCallback(
     (force: boolean) => {
