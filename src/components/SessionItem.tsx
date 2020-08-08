@@ -64,7 +64,7 @@ const SessionItem: React.FC<{ session: TSession }> = ({ session }) => {
                     {
                       count: session.candidateOrder.length - candidateIndex,
                       label: 'Remaining',
-                      color: theme.COLORS.BORDER
+                      color: theme.COLORS.LIGHT_BORDER
                     }
                   ]}
                 />
