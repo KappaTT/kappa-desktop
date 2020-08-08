@@ -43,7 +43,10 @@ export const ENDPOINTS: {
   UPDATE_SESSION: (config: { _id: string }) => `sessions/${config._id}`,
   DELETE_SESSION: (config: { _id: string }) => `sessions/${config._id}`,
   START_SESSION: (config: { _id: string }) => `start-session/${config._id}`,
-  STOP_SESSION: (config: { _id: string }) => `stop-session/${config._id}`
+  STOP_SESSION: (config: { _id: string }) => `stop-session/${config._id}`,
+  GET_ACTIVE_VOTES: () => 'active-candidate/votes',
+  GET_CANDIDATE_VOTES: () => 'votes',
+  SUBMIT_VOTE: () => 'vote'
 };
 
 export const METHODS: {
@@ -73,7 +76,10 @@ export const METHODS: {
   UPDATE_SESSION: M_PATCH,
   DELETE_SESSION: M_DELETE,
   START_SESSION: M_PATCH,
-  STOP_SESSION: M_PATCH
+  STOP_SESSION: M_PATCH,
+  GET_ACTIVE_VOTES: M_GET,
+  GET_CANDIDATE_VOTES: M_POST,
+  SUBMIT_VOTE: M_POST
 };
 
 export interface TResponse {

@@ -2,13 +2,14 @@ import moment from 'moment';
 
 import { setGlobalError } from '@services/kappaService';
 import { TLoadHistory } from '@backend/kappa';
-import { TCandidate, TCandidateDict, TSession } from '@backend/voting';
+import { TCandidate, TCandidateDict, TSession, TSessionToCandidateToVoteDict } from '@backend/voting';
 import {
   recomputeVotingState,
   separateByCandidateEmail,
   mergeCandidates,
   mergeSessions,
-  sortSessionByDate
+  sortSessionByDate,
+  mergeVotes
 } from '@services/votingService';
 
 export const SET_GLOBAL_ERROR_MESSAGE = 'SET_GLOBAL_ERROR_MESSAGE';
@@ -44,6 +45,12 @@ export const START_SESSION_FAILURE = 'START_SESSION_FAILURE';
 export const STOP_SESSION = 'STOP_SESSION';
 export const STOP_SESSION_SUCCESS = 'STOP_SESSION_SUCCESS';
 export const STOP_SESSION_FAILURE = 'STOP_SESSION_FAILURE';
+export const GET_ACTIVE_VOTES = 'GET_ACTIVE_VOTES';
+export const GET_ACTIVE_VOTES_SUCCESS = 'GET_ACTIVE_VOTES_SUCCESS';
+export const GET_ACTIVE_VOTES_FAILURE = 'GET_ACTIVE_VOTES_FAILURE';
+export const GET_CANDIDATE_VOTES = 'GET_CANDIDATE_VOTES';
+export const GET_CANDIDATE_VOTES_SUCCESS = 'GET_CANDIDATE_VOTES_SUCCESS';
+export const GET_CANDIDATE_VOTES_FAILURE = 'GET_CANDIDATE_VOTES_FAILURE';
 
 export const SELECT_SESSION = 'SELECT_SESSION';
 export const UNSELECT_SESSION = 'UNSELECT_SESSION';
@@ -90,6 +97,14 @@ export interface TVotingState {
   stopSessionError: boolean;
   stopSessionErrorMessage: string;
 
+  isGettingActiveVotes: boolean;
+  getActiveVotesError: boolean;
+  getActiveVotesErrorMessage: string;
+
+  isGettingCandidateVotes: boolean;
+  getCandidateVotesError: boolean;
+  getCandidateVotesErrorMessage: string;
+
   selectedSessionId: string;
   editingSessionId: string;
   currentCandidateId: string;
@@ -100,6 +115,7 @@ export interface TVotingState {
   unapprovedCandidateArray: TCandidate[];
   emailToCandidate: TCandidateDict;
   sessionArray: TSession[];
+  sessionToCandidateToVotes: TSessionToCandidateToVoteDict;
 }
 
 const initialState: TVotingState = {
@@ -142,6 +158,14 @@ const initialState: TVotingState = {
   stopSessionError: false,
   stopSessionErrorMessage: '',
 
+  isGettingActiveVotes: false,
+  getActiveVotesError: false,
+  getActiveVotesErrorMessage: '',
+
+  isGettingCandidateVotes: false,
+  getCandidateVotesError: false,
+  getCandidateVotesErrorMessage: '',
+
   selectedSessionId: '',
   editingSessionId: '',
   currentCandidateId: '',
@@ -151,7 +175,8 @@ const initialState: TVotingState = {
   approvedCandidateArray: [],
   unapprovedCandidateArray: [],
   emailToCandidate: {},
-  sessionArray: []
+  sessionArray: [],
+  sessionToCandidateToVotes: {}
 };
 
 export default (state = initialState, action: any): TVotingState => {
@@ -184,7 +209,8 @@ export default (state = initialState, action: any): TVotingState => {
           candidates: moment()
         },
         ...recomputeVotingState({
-          emailToCandidate: separateByCandidateEmail(action.candidates)
+          emailToCandidate: separateByCandidateEmail(action.candidates),
+          sessionToCandidateToVotes: state.sessionToCandidateToVotes
         })
       };
     case GET_CANDIDATES_FAILURE:
@@ -208,7 +234,8 @@ export default (state = initialState, action: any): TVotingState => {
         isSavingCandidate: false,
         editingCandidateEmail: '',
         ...recomputeVotingState({
-          emailToCandidate: mergeCandidates(state.emailToCandidate, [action.candidate])
+          emailToCandidate: mergeCandidates(state.emailToCandidate, [action.candidate]),
+          sessionToCandidateToVotes: state.sessionToCandidateToVotes
         })
       };
     case SAVE_CANDIDATE_FAILURE:
@@ -235,7 +262,8 @@ export default (state = initialState, action: any): TVotingState => {
         isDeletingCandidate: false,
         selectedCandidateEmail: '',
         ...recomputeVotingState({
-          emailToCandidate: remainingCandidates
+          emailToCandidate: remainingCandidates,
+          sessionToCandidateToVotes: state.sessionToCandidateToVotes
         })
       };
     }
@@ -369,6 +397,69 @@ export default (state = initialState, action: any): TVotingState => {
         isStoppingSession: false,
         stopSessionError: true,
         stopSessionErrorMessage: action.error.message,
+        ...setGlobalError(action.error.message, action.error.code)
+      };
+    case GET_ACTIVE_VOTES:
+      return {
+        ...state,
+        isGettingActiveVotes: true,
+        getActiveVotesError: false,
+        getActiveVotesErrorMessage: ''
+      };
+    case GET_ACTIVE_VOTES_SUCCESS:
+      if (action.session !== null && action.candidate !== null) {
+        return {
+          ...state,
+          isGettingActiveVotes: false,
+          loadHistory: {
+            ...state.loadHistory,
+            [`votes-${action.session._id}-${action.candidate._id}`]: moment()
+          },
+          sessionArray: mergeSessions(state.sessionArray, [action.session]),
+          ...recomputeVotingState({
+            emailToCandidate: mergeCandidates(state.emailToCandidate, [action.candidate]),
+            sessionToCandidateToVotes: mergeVotes(state.sessionToCandidateToVotes, action.votes)
+          })
+        };
+      } else {
+        return {
+          ...state
+        };
+      }
+    case GET_ACTIVE_VOTES_FAILURE:
+      return {
+        ...state,
+        isGettingActiveVotes: false,
+        getActiveVotesError: true,
+        getActiveVotesErrorMessage: action.error.message,
+        ...setGlobalError(action.error.message, action.error.code)
+      };
+    case GET_CANDIDATE_VOTES:
+      return {
+        ...state,
+        isGettingCandidateVotes: true,
+        getCandidateVotesError: false,
+        getCandidateVotesErrorMessage: ''
+      };
+    case GET_CANDIDATE_VOTES_SUCCESS:
+      return {
+        ...state,
+        isGettingCandidateVotes: false,
+        loadHistory: {
+          ...state.loadHistory,
+          [`votes-${action.session._id}-${action.candidate._id}`]: moment()
+        },
+        ...recomputeVotingState({
+          emailToCandidate: state.emailToCandidate,
+          sessionToCandidateToVotes: mergeVotes(state.sessionToCandidateToVotes, action.votes)
+        })
+      };
+    case GET_CANDIDATE_VOTES_FAILURE:
+      return {
+        ...state,
+        isGettingCandidateVotes: false,
+        getCandidateVotesError: true,
+        getCandidateVotesErrorMessage: action.error.message,
         ...setGlobalError(action.error.message, action.error.code)
       };
     case SELECT_SESSION:

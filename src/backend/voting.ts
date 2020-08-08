@@ -39,6 +39,12 @@ export interface TVote {
   reason: string;
 }
 
+export interface TSessionToCandidateToVoteDict {
+  [sessionId: string]: {
+    [candidateId: string]: TVote;
+  };
+}
+
 export interface TGetCandidatesPayload {
   user: TUser;
 }
@@ -242,9 +248,7 @@ interface TGetSessionsRequestResponse {
 }
 
 interface TGetSessionsResponse extends TResponse {
-  data?: {
-    sessions: TSession[];
-  };
+  data?: TGetSessionsRequestResponse;
 }
 
 export const getSessions = async (payload: TGetSessionsPayload): Promise<TGetSessionsResponse> => {
@@ -287,9 +291,7 @@ interface TCreateSessionRequestResponse {
 }
 
 interface TCreateSessionResponse extends TResponse {
-  data?: {
-    session: TSession;
-  };
+  data?: TCreateSessionRequestResponse;
 }
 
 export const createSession = async (payload: TCreateSessionPayload): Promise<TCreateSessionResponse> => {
@@ -337,9 +339,7 @@ interface TUpdateSessionRequestResponse {
 }
 
 interface TUpdateSessionResponse extends TResponse {
-  data?: {
-    session: TSession;
-  };
+  data?: TUpdateSessionRequestResponse;
 }
 
 export const updateSession = async (payload: TUpdateSessionPayload): Promise<TUpdateSessionResponse> => {
@@ -388,11 +388,7 @@ interface TDeleteSessionRequestResponse {
 }
 
 interface TDeleteSessionResponse extends TResponse {
-  data?: {
-    session: {
-      _id: string;
-    };
-  };
+  data?: TDeleteSessionRequestResponse;
 }
 
 export const deleteSession = async (payload: TDeleteSessionPayload): Promise<TDeleteSessionResponse> => {
@@ -437,9 +433,7 @@ interface TStartSessionRequestResponse {
 }
 
 interface TStartSessionResponse extends TResponse {
-  data?: {
-    session: TSession;
-  };
+  data?: TStartSessionRequestResponse;
 }
 
 export const startSession = async (payload: TStartSessionPayload): Promise<TStartSessionResponse> => {
@@ -482,9 +476,7 @@ interface TStopSessionRequestResponse {
 }
 
 interface TStopSessionResponse extends TResponse {
-  data?: {
-    session: TSession;
-  };
+  data?: TStopSessionRequestResponse;
 }
 
 export const stopSession = async (payload: TStopSessionPayload): Promise<TStopSessionResponse> => {
@@ -510,6 +502,113 @@ export const stopSession = async (payload: TStopSessionPayload): Promise<TStopSe
 
     return pass({
       session: response.data.session
+    });
+  } catch (error) {
+    log(error);
+    return fail({}, "that wasn't supposed to happen", -1);
+  }
+};
+
+export interface TGetActiveVotesPayload {
+  user: TUser;
+}
+
+interface TGetActiveVotesRequestResponse {
+  session: TSession;
+  candidate: TCandidate;
+  votes: TVote[];
+}
+
+interface TGetActiveVotesResponse extends TResponse {
+  data?: TGetActiveVotesRequestResponse;
+}
+
+export const getActiveVotes = async (payload: TGetActiveVotesPayload): Promise<TGetActiveVotesResponse> => {
+  try {
+    const response = await makeAuthorizedRequest<TGetActiveVotesRequestResponse>(
+      ENDPOINTS.GET_ACTIVE_VOTES(),
+      METHODS.GET_ACTIVE_VOTES,
+      {},
+      payload.user.sessionToken
+    );
+
+    log('Get active votes response', response.code);
+
+    if (!response.success) {
+      return fail({}, 'issue connecting to the server', 500);
+    } else if (response.code !== 200) {
+      if (response.code === 401) {
+        return fail({}, 'your credentials were invalid or have expired', response.code);
+      }
+
+      return fail({}, response.error?.message, response.code);
+    }
+
+    return pass({
+      session: response.data.session,
+      candidate: response.data.candidate,
+      votes: response.data.votes
+    });
+  } catch (error) {
+    log(error);
+    return fail({}, "that wasn't supposed to happen", -1);
+  }
+};
+
+export interface TGetCandidateVotesPayload {
+  user: TUser;
+  sessionId: string;
+  candidateId: string;
+}
+
+interface TGetCandidateVotesRequestResponse {
+  session: {
+    _id: string;
+  };
+  candidate: {
+    _id: string;
+  };
+  votes: TVote[];
+}
+
+interface TGetCandidateVotesResponse extends TResponse {
+  data?: TGetActiveVotesRequestResponse;
+}
+
+export const getCandidateVotes = async (payload: TGetCandidateVotesPayload): Promise<TGetCandidateVotesResponse> => {
+  try {
+    const response = await makeAuthorizedRequest<TGetCandidateVotesRequestResponse>(
+      ENDPOINTS.GET_CANDIDATE_VOTES(),
+      METHODS.GET_CANDIDATE_VOTES,
+      {
+        body: {
+          session: {
+            _id: payload.sessionId
+          },
+          candidate: {
+            _id: payload.candidateId
+          }
+        }
+      },
+      payload.user.sessionToken
+    );
+
+    log('Get candidate votes response', response.code);
+
+    if (!response.success) {
+      return fail({}, 'issue connecting to the server', 500);
+    } else if (response.code !== 200) {
+      if (response.code === 401) {
+        return fail({}, 'your credentials were invalid or have expired', response.code);
+      }
+
+      return fail({}, response.error?.message, response.code);
+    }
+
+    return pass({
+      session: response.data.session,
+      candidate: response.data.candidate,
+      votes: response.data.votes
     });
   } catch (error) {
     log(error);

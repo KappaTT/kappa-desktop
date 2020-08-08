@@ -33,7 +33,13 @@ import {
   SAVE_SESSION_SUCCESS,
   SAVE_SESSION_FAILURE,
   DELETE_SESSION_SUCCESS,
-  DELETE_SESSION_FAILURE
+  DELETE_SESSION_FAILURE,
+  GET_ACTIVE_VOTES,
+  GET_ACTIVE_VOTES_SUCCESS,
+  GET_ACTIVE_VOTES_FAILURE,
+  GET_CANDIDATE_VOTES,
+  GET_CANDIDATE_VOTES_SUCCESS,
+  GET_CANDIDATE_VOTES_FAILURE
 } from '@reducers/voting';
 import { atan } from 'react-native-reanimated';
 
@@ -350,6 +356,78 @@ export const stopSession = (user: TUser, session: TSession) => {
         dispatch(stopSessionSuccess(res.data));
       } else {
         dispatch(stopSessionFailure(res.error));
+      }
+    });
+  };
+};
+
+const gettingActiveVotes = () => {
+  return {
+    type: GET_ACTIVE_VOTES
+  };
+};
+
+const getActiveVotesSuccess = (data) => {
+  return {
+    type: GET_ACTIVE_VOTES_SUCCESS,
+    session: data.session,
+    candidate: data.candidate,
+    votes: data.votes
+  };
+};
+
+const getActiveVotesFailure = (error) => {
+  return {
+    type: GET_ACTIVE_VOTES_FAILURE,
+    error
+  };
+};
+
+export const getActiveVotes = (user: TUser) => {
+  return (dispatch) => {
+    dispatch(gettingActiveVotes());
+
+    Voting.getActiveVotes({ user }).then((res) => {
+      if (res.success) {
+        dispatch(getActiveVotesSuccess(res.data));
+      } else {
+        dispatch(getActiveVotesFailure(res.error));
+      }
+    });
+  };
+};
+
+const gettingCandidateVotes = () => {
+  return {
+    type: GET_CANDIDATE_VOTES
+  };
+};
+
+const getCandidateVotesSuccess = (data) => {
+  return {
+    type: GET_CANDIDATE_VOTES_SUCCESS,
+    session: data.session,
+    candidate: data.candidate,
+    votes: data.votes
+  };
+};
+
+const getCandidateVotesFailure = (error) => {
+  return {
+    type: GET_CANDIDATE_VOTES_FAILURE,
+    error
+  };
+};
+
+export const getCandidateVotes = (user: TUser, sessionId: string, candidateId: string) => {
+  return (dispatch) => {
+    dispatch(gettingCandidateVotes());
+
+    Voting.getCandidateVotes({ user, sessionId, candidateId }).then((res) => {
+      if (res.success) {
+        dispatch(getCandidateVotesSuccess(res.data));
+      } else {
+        dispatch(getCandidateVotesFailure(res.error));
       }
     });
   };
