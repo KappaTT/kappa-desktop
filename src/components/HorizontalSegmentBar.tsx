@@ -52,12 +52,18 @@ const HorizontalSegmentBar: React.FC<{
     color: string;
   }[];
   borderColor?: string;
+  hideAllLabels?: boolean;
   showAllLabels?: boolean;
-}> = ({ data, borderColor = theme.COLORS.WHITE, showAllLabels = false }) => {
-  let totalCount = 0;
-  data.map((section: { count: number; label: string; color: string }) => {
-    totalCount += section.count;
-  });
+}> = ({ data, borderColor = theme.COLORS.WHITE, hideAllLabels = false, showAllLabels = false }) => {
+  const totalCount = React.useMemo(() => {
+    let total = 0;
+
+    for (const section of data) {
+      total += section.count;
+    }
+
+    return total;
+  }, [data]);
 
   const renderLabels = () => {
     return data.map(
@@ -122,7 +128,7 @@ const HorizontalSegmentBar: React.FC<{
 
   return (
     <View style={styles.wrapper}>
-      <View style={styles.labelsWrapper}>{renderLabels()}</View>
+      {!hideAllLabels && <View style={styles.labelsWrapper}>{renderLabels()}</View>}
       <View style={styles.barsWrapper}>{renderBars()}</View>
     </View>
   );

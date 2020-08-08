@@ -8,14 +8,20 @@ import { _auth, _kappa, _ui, _voting } from '@reducers/actions';
 import { theme } from '@constants';
 import { TSession } from '@backend/voting';
 import Icon from '@components/Icon';
+import HorizontalSegmentBar from '@components/HorizontalSegmentBar';
 
 const SessionItem: React.FC<{ session: TSession }> = ({ session }) => {
   const selectedSessionId = useSelector((state: TRedux) => state.voting.selectedSessionId);
 
   const dispatch = useDispatch();
-  const dispatchSelectSession = React.useCallback(() => dispatch(_voting.selectSession(session)), [dispatch]);
+  const dispatchSelectSession = React.useCallback(() => dispatch(_voting.selectSession(session)), [dispatch, session]);
 
   const isSelected = React.useMemo(() => selectedSessionId === session._id, [selectedSessionId, session._id]);
+
+  const candidateIndex = React.useMemo(
+    () => session.candidateOrder.findIndex((candidateId) => candidateId === session.currentCandidateId),
+    [session.candidateOrder, session.currentCandidateId]
+  );
 
   const onPressSelect = React.useCallback(() => {
     dispatchSelectSession();
@@ -38,18 +44,42 @@ const SessionItem: React.FC<{ session: TSession }> = ({ session }) => {
               {session.active && <Text style={styles.activeText}>ACTIVE</Text>}
             </View>
 
-            <Text style={styles.classification}>
-              <Text style={styles.subText}>
-                {session.startDate && moment(session.startDate).format('ddd LL h:mm A')}
+            <View style={styles.contentBottom}>
+              <Text style={styles.classification}>
+                <Text style={styles.subText}>
+                  {session.startDate && moment(session.startDate).format('MM/DD/YY h:mm A')}
+                </Text>
               </Text>
-            </Text>
+
+              <View style={styles.barContainer}>
+                <HorizontalSegmentBar
+                  hideAllLabels={true}
+                  borderColor={isSelected ? theme.COLORS.PRIMARY_LIGHT : theme.COLORS.WHITE}
+                  data={[
+                    {
+                      count: candidateIndex,
+                      label: 'Complete',
+                      color: theme.COLORS.PRIMARY
+                    },
+                    {
+                      count: session.candidateOrder.length - candidateIndex,
+                      label: 'Remaining',
+                      color: theme.COLORS.BORDER
+                    }
+                  ]}
+                />
+              </View>
+            </View>
           </View>
 
-          {isSelected && (
-            <View style={styles.selectIconContainer}>
-              <Icon family="MaterialIcons" name="keyboard-arrow-right" size={36} color={theme.COLORS.PRIMARY} />
-            </View>
-          )}
+          <View style={styles.selectIconContainer}>
+            <Icon
+              family="MaterialIcons"
+              name="keyboard-arrow-right"
+              size={36}
+              color={isSelected ? theme.COLORS.PRIMARY : theme.COLORS.WHITE}
+            />
+          </View>
         </View>
       </TouchableOpacity>
     </View>
@@ -84,6 +114,9 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: theme.COLORS.PRIMARY
   },
+  contentBottom: {
+    flexDirection: 'row'
+  },
   classification: {
     marginTop: 4,
     fontFamily: 'OpenSans',
@@ -91,6 +124,10 @@ const styles = StyleSheet.create({
   },
   subText: {
     color: theme.COLORS.DARK_GRAY
+  },
+  barContainer: {
+    marginLeft: 8,
+    flex: 1
   },
   selectIconContainer: {}
 });
