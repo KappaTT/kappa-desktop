@@ -220,13 +220,8 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
               <Text style={styles.description}>
                 Once you have collected votes, you can review the negative votes for valid reasons. If a candidate has
                 no valid rejections, click the "approve" button. If the candidate should not be approved, click the
-                arrow to advance to the next candidate.
-              </Text>
-              <Text style={styles.description}>
-                The candidates who have been approved will appear in the list below. Once you finish a session (which
-                will correspond to a single round of voting), you can create a new session from the remaining unapproved
-                candidates and start the next session. Candidates will automatically be ordered by votes. If any
-                candidates were not voted on, they will automatically be prioritized in their current order.
+                arrow to advance to the next candidate. The candidates who have been approved will appear in the list
+                below.
               </Text>
             </View>
 
@@ -293,7 +288,31 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
               </View>
             </View>
 
-            <View style={styles.dangerZone} />
+            <View
+              style={[
+                styles.dangerZone,
+                session.active && {
+                  opacity: 0.5
+                }
+              ]}
+              pointerEvents={session.active ? 'none' : 'auto'}
+            >
+              <View style={styles.editZone}>
+                <View style={styles.warning}>
+                  <Text style={styles.zoneLabel}>Create next round</Text>
+                  <Text style={[styles.description, { marginTop: 2 }]}>
+                    Once you finish a session (which will correspond to a single round of voting), you can create a new
+                    session from the remaining unapproved candidates and start the next session. Candidates will
+                    automatically be ordered by votes. If any candidates were not voted on, they will automatically be
+                    prioritized in their current order. You must end the session before creating a new one.
+                  </Text>
+                </View>
+
+                <TouchableOpacity disabled={false} onPress={() => console.log('TODO')}>
+                  <Icon style={styles.zoneIcon} family="Feather" name="upload" size={32} color={theme.COLORS.PRIMARY} />
+                </TouchableOpacity>
+              </View>
+            </View>
           </View>
         </ScrollView>
       </View>
@@ -527,7 +546,30 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans',
     fontSize: 12
   },
-  dangerZone: {},
+  dangerZone: {
+    marginTop: 16,
+    marginHorizontal: 16,
+    padding: 16,
+    borderRadius: 8,
+    backgroundColor: theme.COLORS.INPUT_ERROR_LIGHT
+  },
+  editZone: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  warning: {
+    flex: 1,
+    marginRight: 8
+  },
+  zoneLabel: {
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 14
+  },
+  zoneIcon: {
+    width: 32
+  },
   instructions: {
     marginHorizontal: 16
   }
