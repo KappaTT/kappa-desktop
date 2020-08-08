@@ -19,7 +19,7 @@ const RoundButton: React.FC<{
 }> = ({
   color = theme.COLORS.PRIMARY,
   textColor = theme.COLORS.WHITE,
-  bgColor = theme.COLORS.PRIMARY,
+  bgColor,
   label,
   icon = null,
   loading = false,
