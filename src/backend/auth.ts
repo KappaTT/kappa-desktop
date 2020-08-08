@@ -174,7 +174,7 @@ export const updateUser = async (payload: TUpdateUserPayload): Promise<TUpdateUs
       return fail({}, response.error?.message || 'issue connecting to the server');
     } else if (response.code !== 200) {
       if (response.code === 401) {
-        return fail({}, 'your credentials were invalid');
+        return fail({}, 'your credentials were invalid or have expired');
       } else if (response.code === 404) {
         return fail({}, 'your target user was invalid');
       }

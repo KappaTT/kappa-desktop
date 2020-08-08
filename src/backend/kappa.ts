@@ -131,7 +131,7 @@ export const getEvents = async (payload: TGetEventsPayload): Promise<TGetEventsR
       return fail({}, response.error?.message || 'issue connecting to the server', 500);
     } else if (response.code !== 200) {
       if (response.code === 401) {
-        return fail({}, 'your credentials were invalid', response.code);
+        return fail({}, 'your credentials were invalid or have expired', response.code);
       }
 
       return fail({}, response.error?.message, response.code);
@@ -180,7 +180,7 @@ export const createEvent = async (payload: TCreateEventPayload): Promise<TCreate
       return fail({}, response.error?.message || 'issue connecting to the server', 500);
     } else if (response.code !== 200) {
       if (response.code === 401) {
-        return fail({}, 'your credentials were invalid', response.code);
+        return fail({}, 'your credentials were invalid or have expired', response.code);
       }
 
       return fail({}, response.error?.message, response.code);
@@ -230,7 +230,7 @@ export const updateEvent = async (payload: TUpdateEventPayload): Promise<TUpdate
       return fail({}, response.error?.message || 'issue connecting to the server', 500);
     } else if (response.code !== 200) {
       if (response.code === 401) {
-        return fail({}, 'your credentials were invalid', response.code);
+        return fail({}, 'your credentials were invalid or have expired', response.code);
       }
 
       return fail({}, response.error?.message, response.code);
@@ -279,7 +279,7 @@ export const deleteEvent = async (payload: TDeleteEventPayload): Promise<TDelete
       return fail({}, response.error?.message || 'issue connecting to the server', 500);
     } else if (response.code !== 200) {
       if (response.code === 401) {
-        return fail({}, 'your credentials were invalid', response.code);
+        return fail({}, 'your credentials were invalid or have expired', response.code);
       }
 
       return fail({}, response.error?.message, response.code);
@@ -325,7 +325,7 @@ export const getUsers = async (payload: TGetUsersPayload): Promise<TGetUsersResp
       return fail({}, response.error?.message || 'issue connecting to the server', 500);
     } else if (response.code !== 200) {
       if (response.code === 401) {
-        return fail({}, 'your credentials were invalid', response.code);
+        return fail({}, 'your credentials were invalid or have expired', response.code);
       }
 
       return fail({}, response.error?.message, response.code);
@@ -372,7 +372,7 @@ export const getAttendanceByUser = async (payload: TGetAttendancePayload): Promi
       return fail({}, response.error?.message || 'issue connecting to the server', 500);
     } else if (response.code !== 200) {
       if (response.code === 401) {
-        return fail({}, 'your credentials were invalid', response.code);
+        return fail({}, 'your credentials were invalid or have expired', response.code);
       }
 
       return fail({}, response.error?.message, response.code);
@@ -403,7 +403,7 @@ export const getAttendanceByEvent = async (payload: TGetAttendancePayload): Prom
       return fail({}, response.error?.message || 'issue connecting to the server', 500);
     } else if (response.code !== 200) {
       if (response.code === 401) {
-        return fail({}, 'your credentials were invalid', response.code);
+        return fail({}, 'your credentials were invalid or have expired', response.code);
       }
 
       return fail({}, response.error?.message, response.code);
@@ -455,7 +455,7 @@ export const createAttendance = async (payload: TCreateAttendancePayload): Promi
       return fail({}, response.error?.message || 'issue connecting to the server', 500);
     } else if (response.code !== 200) {
       if (response.code === 401) {
-        return fail({}, 'your credentials were invalid', response.code);
+        return fail({}, 'your credentials were invalid or have expired', response.code);
       }
 
       return fail({}, response.error?.message, response.code);
@@ -499,7 +499,7 @@ export const getPendingExcuses = async (payload: TGetPendingExcusesPayload): Pro
       return fail({}, response.error?.message || 'issue connecting to the server', 500);
     } else if (response.code !== 200) {
       if (response.code === 401) {
-        return fail({}, 'your credentials were invalid', response.code);
+        return fail({}, 'your credentials were invalid or have expired', response.code);
       }
 
       return fail({}, response.error?.message, response.code);
@@ -556,7 +556,7 @@ export const createExcuse = async (payload: TCreateExcusePayload): Promise<TCrea
       return fail({}, response.error?.message || 'issue connecting to the server', 500);
     } else if (response.code !== 200) {
       if (response.code === 401) {
-        return fail({}, 'your credentials were invalid', response.code);
+        return fail({}, 'your credentials were invalid or have expired', response.code);
       }
 
       return fail({}, response.error?.message, response.code);
@@ -617,7 +617,7 @@ export const updateExcuse = async (payload: TUpdateExcusePayload): Promise<TUpda
       return fail({}, response.error?.message || 'issue connecting to the server', 500);
     } else if (response.code !== 200) {
       if (response.code === 401) {
-        return fail({}, 'your credentials were invalid', response.code);
+        return fail({}, 'your credentials were invalid or have expired', response.code);
       }
 
       return fail({}, response.error?.message, response.code);
@@ -662,7 +662,7 @@ export const getPointsByUser = async (payload: TGetPointsByUserPayload): Promise
       return fail({}, response.error?.message || 'issue connecting to the server', 500);
     } else if (response.code !== 200) {
       if (response.code === 401) {
-        return fail({}, 'your credentials were invalid', response.code);
+        return fail({}, 'your credentials were invalid or have expired', response.code);
       }
 
       return fail({}, response.error?.message, response.code);
@@ -713,7 +713,7 @@ export const getEventSearchResults = async (
       return fail({}, response.error?.message || 'issue connecting to the server', 500);
     } else if (response.code !== 200) {
       if (response.code === 401) {
-        return fail({}, 'your credentials were invalid', response.code);
+        return fail({}, 'your credentials were invalid or have expired', response.code);
       }
 
       return fail({}, response.error?.message, response.code);
