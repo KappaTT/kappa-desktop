@@ -35,15 +35,30 @@ const VotingManagementContent: React.FC<{
   const selectedSessionId = useSelector((state: TRedux) => state.voting.selectedSessionId);
   const isGettingEvents = useSelector((state: TRedux) => state.kappa.isGettingEvents);
   const getEventsError = useSelector((state: TRedux) => state.kappa.getEventsError);
+  const isGettingDirectory = useSelector((state: TRedux) => state.kappa.isGettingDirectory);
+  const getDirectoryError = useSelector((state: TRedux) => state.kappa.getDirectoryError);
   const isGettingCandidates = useSelector((state: TRedux) => state.voting.isGettingCandidates);
   const getCandidatesError = useSelector((state: TRedux) => state.voting.getCandidatesError);
   const isGettingSessions = useSelector((state: TRedux) => state.voting.isGettingSessions);
   const getSessionsError = useSelector((state: TRedux) => state.voting.getSessionsError);
   const isStartingSession = useSelector((state: TRedux) => state.voting.isStartingSession);
   const isStoppingSession = useSelector((state: TRedux) => state.voting.isStoppingSession);
+  const isGettingCandidateVotes = useSelector((state: TRedux) => state.voting.isGettingCandidateVotes);
+  const getCandidateVotesError = useSelector((state: TRedux) => state.voting.getCandidateVotesError);
+
+  const selectedSession = React.useMemo(() => {
+    const index = sessionArray.findIndex((session) => session._id === selectedSessionId);
+
+    if (index >= 0) {
+      return sessionArray[index];
+    }
+
+    return null;
+  }, [selectedSessionId, sessionArray]);
 
   const dispatch = useDispatch();
   const dispatchGetEvents = React.useCallback(() => dispatch(_kappa.getEvents(user)), [dispatch, user]);
+  const dispatchGetDirectory = React.useCallback(() => dispatch(_kappa.getDirectory(user)), [dispatch, user]);
   const dispatchGetCandidates = React.useCallback(() => dispatch(_voting.getCandidates(user)), [dispatch, user]);
   const dispatchGetSessions = React.useCallback(() => dispatch(_voting.getSessions(user)), [dispatch, user]);
   const dispatchSelectSession = React.useCallback((session: TSession) => dispatch(_voting.selectSession(session)), [
@@ -63,21 +78,15 @@ const VotingManagementContent: React.FC<{
     selectedSessionId
   ]);
   const dispatchNewSession = React.useCallback(() => dispatch(_voting.editSession()), [dispatch]);
+  const dispatchGetCandidateVotes = React.useCallback(
+    (sessionId: string, candidateId: string) => dispatch(_voting.getCandidateVotes(user, sessionId, candidateId, true)),
+    [dispatch, user]
+  );
   const dispatchOpenPresentationMode = React.useCallback(() => console.log('TODO'), []);
 
   const refreshing = React.useMemo(() => isGettingCandidates, [isGettingCandidates]);
 
   const [showingSessions, setShowingSessions] = React.useState<boolean>(false);
-
-  const selectedSession = React.useMemo(() => {
-    const index = sessionArray.findIndex((session) => session._id === selectedSessionId);
-
-    if (index >= 0) {
-      return sessionArray[index];
-    }
-
-    return null;
-  }, [selectedSessionId, sessionArray]);
 
   const candidatesInSession = React.useMemo(() => {
     if (selectedSession === null) {
@@ -101,6 +110,8 @@ const VotingManagementContent: React.FC<{
     (force: boolean) => {
       if (!isGettingEvents && (force || (!getEventsError && shouldLoad(kappaLoadHistory, 'events'))))
         dispatchGetEvents();
+      if (!isGettingDirectory && (force || (!getDirectoryError && shouldLoad(kappaLoadHistory, 'directory'))))
+        dispatchGetDirectory();
       if (!isGettingCandidates && (force || (!getCandidatesError && shouldLoad(votingLoadHistory, 'candidates'))))
         dispatchGetCandidates();
       if (!isGettingSessions && (force || (!getSessionsError && shouldLoad(votingLoadHistory, 'sessions'))))
@@ -108,17 +119,36 @@ const VotingManagementContent: React.FC<{
     },
     [
       dispatchGetCandidates,
+      dispatchGetDirectory,
       dispatchGetEvents,
       dispatchGetSessions,
       getCandidatesError,
+      getDirectoryError,
       getEventsError,
       getSessionsError,
       isGettingCandidates,
+      isGettingDirectory,
       isGettingEvents,
       isGettingSessions,
       kappaLoadHistory,
       votingLoadHistory
     ]
+  );
+
+  const loadVotes = React.useCallback(
+    (force: boolean) => {
+      if (
+        !isGettingCandidateVotes &&
+        (force ||
+          (!getCandidateVotesError &&
+            selectedSession !== null &&
+            selectedSession.currentCandidateId !== '' &&
+            selectedSession.active !== true &&
+            shouldLoad(votingLoadHistory, `votes-${selectedSession._id}-${selectedSession.currentCandidateId}`)))
+      )
+        dispatchGetCandidateVotes(selectedSession._id, selectedSession.currentCandidateId);
+    },
+    [dispatchGetCandidateVotes, getCandidateVotesError, isGettingCandidateVotes, selectedSession, votingLoadHistory]
   );
 
   const onSubtitlePress = React.useCallback(() => {
@@ -139,7 +169,8 @@ const VotingManagementContent: React.FC<{
 
   const onRefresh = React.useCallback(() => {
     loadData(true);
-  }, [loadData]);
+    loadVotes(true);
+  }, [loadData, loadVotes]);
 
   React.useEffect(() => {
     if (selectedSessionId === '') {
@@ -182,6 +213,12 @@ const VotingManagementContent: React.FC<{
       }
     }
   }, [dispatchSelectSession, dispatchUnselectSession, selectedSessionId, sessionArray]);
+
+  React.useEffect(() => {
+    if (isFocused && user.sessionToken) {
+      loadVotes(false);
+    }
+  }, [isFocused, loadVotes, user.sessionToken]);
 
   React.useEffect(() => {
     if (isFocused && user.sessionToken) {

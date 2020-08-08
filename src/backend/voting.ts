@@ -41,7 +41,7 @@ export interface TVote {
 
 export interface TSessionToCandidateToVoteDict {
   [sessionId: string]: {
-    [candidateId: string]: TVote;
+    [candidateId: string]: TVote[];
   };
 }
 

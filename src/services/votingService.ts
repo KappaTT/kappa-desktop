@@ -2,6 +2,7 @@ import moment from 'moment';
 
 import { TCandidateDict, TCandidate, TSession, TSessionToCandidateToVoteDict, TVote } from '@backend/voting';
 import { sortUserByName } from './kappaService';
+import { TDirectory } from '@backend/kappa';
 
 export const CLASS_YEAR_OPTIONS = [
   { id: 'FR', title: 'Freshman' },
@@ -58,20 +59,59 @@ export const sortSessionByDate = (a: { startDate: string }, b: { startDate: stri
   moment(a.startDate).isBefore(moment(b.startDate)) ? -1 : 1;
 
 export const mergeVotes = (sessionToCandidateToVotes: TSessionToCandidateToVoteDict, newVotes: TVote[]) => {
-  const mergedVotes = sessionToCandidateToVotes;
-
-  for (const vote of newVotes) {
-    const sessionId = vote.sessionId;
-    const candidateId = vote.candidateId;
-
-    if (!mergedVotes.hasOwnProperty(sessionId)) {
-      mergedVotes[sessionId] = {};
-    }
-
-    mergedVotes[sessionId][candidateId] = vote;
+  if (newVotes.length === 0) {
+    return sessionToCandidateToVotes;
   }
 
+  const mergedVotes = sessionToCandidateToVotes;
+
+  const sessionId = newVotes[0].sessionId;
+  const candidateId = newVotes[0].candidateId;
+  const votes: {
+    [_id: string]: TVote;
+  } = {};
+
+  if (!mergedVotes.hasOwnProperty(sessionId)) {
+    mergedVotes[sessionId] = {};
+  }
+
+  if (!mergedVotes[sessionId].hasOwnProperty(candidateId)) {
+    mergedVotes[sessionId][candidateId] = [];
+  }
+
+  for (const vote of mergedVotes[sessionId][candidateId]) {
+    votes[vote._id] = vote;
+  }
+
+  for (const vote of newVotes) {
+    votes[vote._id] = vote;
+  }
+
+  mergedVotes[sessionId][candidateId] = Object.values(votes);
+
   return mergedVotes;
+};
+
+export const getVotes = (
+  sessionToCandidateToVotes: TSessionToCandidateToVoteDict,
+  sessionId: string,
+  candidateId: string,
+  directory: TDirectory
+): (TVote & { userName: string })[] => {
+  if (
+    !sessionToCandidateToVotes.hasOwnProperty(sessionId) ||
+    !sessionToCandidateToVotes[sessionId].hasOwnProperty(candidateId)
+  ) {
+    return [];
+  }
+
+  return sessionToCandidateToVotes[sessionId][candidateId].map((vote) => {
+    const user = directory[vote.userEmail];
+    return {
+      ...vote,
+      userName: user ? `${user.familyName}, ${user.givenName}` : vote.userEmail
+    };
+  });
 };
 
 export const recomputeVotingState = ({ emailToCandidate }: { emailToCandidate: TCandidateDict }) => {

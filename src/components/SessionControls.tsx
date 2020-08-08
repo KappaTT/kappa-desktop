@@ -6,17 +6,17 @@ import moment from 'moment';
 import { TRedux } from '@reducers';
 import { _auth, _kappa, _ui, _voting } from '@reducers/actions';
 import { theme } from '@constants';
-import { TSession } from '@backend/voting';
+import { TSession, TVote } from '@backend/voting';
 import { TEvent } from '@backend/kappa';
+import { getVotes } from '@services/votingService';
 import RoundButton from '@components/RoundButton';
 import Icon from '@components/Icon';
 import HorizontalSegmentBar from '@components/HorizontalSegmentBar';
 
 const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
   const user = useSelector((state: TRedux) => state.auth.user);
-  const kappaLoadHistory = useSelector((state: TRedux) => state.kappa.loadHistory);
-  const votingLoadHistory = useSelector((state: TRedux) => state.voting.loadHistory);
   const eventArray = useSelector((state: TRedux) => state.kappa.eventArray);
+  const directory = useSelector((state: TRedux) => state.kappa.directory);
   const candidateArray = useSelector((state: TRedux) => state.voting.candidateArray);
   const isSavingCandidate = useSelector((state: TRedux) => state.voting.isSavingCandidate);
   const isGettingCandidateVotes = useSelector((state: TRedux) => state.voting.isGettingCandidateVotes);
@@ -27,6 +27,21 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
   const currentCandidate = React.useMemo(
     () => candidateArray.find((candidate) => candidate._id === session.currentCandidateId) || null,
     [candidateArray, session]
+  );
+
+  const dispatch = useDispatch();
+  const dispatchApproveCandidate = React.useCallback(
+    () => dispatch(_voting.saveCandidate(user, { approved: true }, currentCandidate?.email)),
+    [currentCandidate, dispatch, user]
+  );
+  const dispatchUnapproveCandidate = React.useCallback(
+    () => dispatch(_voting.saveCandidate(user, { approved: false }, currentCandidate?.email)),
+    [currentCandidate, dispatch, user]
+  );
+  const dispatchGetCandidateVotes = React.useCallback(
+    (sessionId: string, candidateId: string, useLoadHistory: boolean) =>
+      dispatch(_voting.getCandidateVotes(user, sessionId, candidateId, useLoadHistory)),
+    [dispatch, user]
   );
 
   const isSessionActive = React.useMemo(() => session.active && session.operatorEmail === user.email, [
@@ -50,20 +65,10 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
     return events;
   }, [eventArray, currentCandidate]);
 
-  const dispatch = useDispatch();
-  const dispatchApproveCandidate = React.useCallback(
-    () => dispatch(_voting.saveCandidate(user, { approved: true }, currentCandidate?.email)),
-    [currentCandidate, dispatch, user]
-  );
-  const dispatchUnapproveCandidate = React.useCallback(
-    () => dispatch(_voting.saveCandidate(user, { approved: false }, currentCandidate?.email)),
-    [currentCandidate, dispatch, user]
-  );
-  const dispatchGetCandidateVotes = React.useCallback(
-    (sessionId: string, candidateId: string, useLoadHistory: boolean) =>
-      dispatch(_voting.getCandidateVotes(user, sessionId, candidateId, useLoadHistory)),
-    [dispatch, user]
-  );
+  const votes = getVotes(sessionToCandidateToVotes, session._id, session.currentCandidateId, directory);
+
+  const approvedVotes = React.useMemo(() => votes.filter((vote) => vote.verdict === true), [votes]);
+  const rejectedVotes = React.useMemo(() => votes.filter((vote) => vote.verdict !== true), [votes]);
 
   const approvedCandidates = React.useMemo(
     () =>
@@ -119,18 +124,18 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
   );
 
   const refreshVotes = React.useCallback(() => {
-    if (!isGettingCandidateVotes && session !== null && session.currentCandidateId !== '')
+    if (!isGettingCandidateVotes && session.currentCandidateId !== '')
       dispatchGetCandidateVotes(session._id, session.currentCandidateId, false);
 
     setVotingRefreshDate(moment());
   }, [dispatchGetCandidateVotes, isGettingCandidateVotes, session]);
 
   React.useEffect(() => {
-    if (session?.active === true && votingRefreshDate.isBefore(moment()) && !isGettingCandidateVotes) {
+    if (session.active === true && votingRefreshDate.isBefore(moment()) && !isGettingCandidateVotes) {
       const t = setTimeout(refreshVotes, 2000);
       return () => clearTimeout(t);
     }
-  }, [isGettingCandidateVotes, refreshVotes, session, votingRefreshDate]);
+  }, [isGettingCandidateVotes, refreshVotes, session.active, votingRefreshDate]);
 
   return (
     <View style={styles.container}>
@@ -229,102 +234,112 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
               style={[styles.activeContent, !isSessionActive && { opacity: 0.5 }]}
               pointerEvents={isSessionActive ? 'auto' : 'none'}
             >
-              {session !== null && (
-                <View style={styles.statsArea}>
-                  <View style={styles.voteListArea}>
-                    <View style={styles.approvedCandidates}>
-                      <Text style={[styles.voteCategoryTitle, { color: theme.COLORS.PRIMARY_GREEN }]}>
-                        Approved Candidates
-                      </Text>
+              <View style={styles.statsArea}>
+                <View style={styles.voteListArea}>
+                  <View style={styles.approvedCandidates}>
+                    <Text style={[styles.voteCategoryTitle, { color: theme.COLORS.PRIMARY_GREEN }]}>
+                      Approved Candidates
+                    </Text>
 
-                      {approvedCandidates.length > 0 ? (
-                        <View>
-                          {approvedCandidates.map((candidate, index) => (
-                            <View key={`approved-${candidate._id}`} style={styles.approvedCandidateContainer}>
-                              <View>
-                                <Text style={styles.approvedCandidateName}>
-                                  {candidate.familyName}, {candidate.givenName}
-                                </Text>
-                                <Text style={styles.approvedCandidateDetails}>
-                                  {candidate.classYear} in {candidate.major}
-                                </Text>
-                              </View>
-                              <Text style={styles.approvedCandidateIndex}>{index + 1}</Text>
+                    {approvedCandidates.length > 0 ? (
+                      <View>
+                        {approvedCandidates.map((candidate, index) => (
+                          <View key={`approved-${candidate._id}`} style={styles.approvedCandidateContainer}>
+                            <View>
+                              <Text style={styles.approvedCandidateName}>
+                                {candidate.familyName}, {candidate.givenName}
+                              </Text>
+                              <Text style={styles.approvedCandidateDetails}>
+                                {candidate.classYear} in {candidate.major}
+                              </Text>
                             </View>
-                          ))}
-                        </View>
-                      ) : (
-                        <Text style={styles.noVotes}>No Candidates</Text>
-                      )}
-                    </View>
-                    <View style={styles.dividerWrapper}>
-                      <View style={styles.divider} />
-                    </View>
-                    <View style={styles.goodVotes}>
-                      <Text style={styles.voteCategoryTitle}>Voted to Approve</Text>
-                      <Text style={styles.noVotes}>No votes</Text>
-                    </View>
-                    <View style={styles.dividerWrapper}>
-                      <View style={styles.divider} />
-                    </View>
-                    <View style={styles.badVotes}>
-                      <Text style={styles.voteCategoryTitle}>Voted to Reject</Text>
-                      <Text style={styles.noVotes}>No votes</Text>
-                    </View>
+                            <Text style={styles.approvedCandidateIndex}>{index + 1}</Text>
+                          </View>
+                        ))}
+                      </View>
+                    ) : (
+                      <Text style={styles.noVotes}>No Candidates</Text>
+                    )}
+                  </View>
+                  <View style={styles.dividerWrapper}>
+                    <View style={styles.divider} />
+                  </View>
+                  <View style={styles.goodVotes}>
+                    <Text style={styles.voteCategoryTitle}>Voted to Approve</Text>
+
+                    {approvedVotes.map((vote) => (
+                      <View key={vote._id} style={styles.voteContainer}>
+                        <Text style={styles.voteTitle}>{vote.userName}</Text>
+                        <Text style={styles.voteSubtitle}>Approved</Text>
+                      </View>
+                    ))}
+                    {approvedVotes.length === 0 && <Text style={styles.noVotes}>No votes</Text>}
+                  </View>
+                  <View style={styles.dividerWrapper}>
+                    <View style={styles.divider} />
+                  </View>
+                  <View style={styles.badVotes}>
+                    <Text style={styles.voteCategoryTitle}>Voted to Reject</Text>
+
+                    {rejectedVotes.map((vote) => (
+                      <View key={vote._id} style={styles.voteContainer}>
+                        <Text style={styles.voteTitle}>{vote.userName}</Text>
+                        <Text style={styles.voteSubtitle}>{vote.reason}</Text>
+                      </View>
+                    ))}
+                    {rejectedVotes.length === 0 && <Text style={styles.noVotes}>No votes</Text>}
                   </View>
                 </View>
-              )}
+              </View>
             </View>
 
-            {session !== null && <View style={styles.dangerZone} />}
+            <View style={styles.dangerZone} />
           </View>
         </ScrollView>
       </View>
 
-      {session !== null && (
-        <View style={styles.controlsArea}>
-          <TouchableOpacity
-            style={{ opacity: canGoBackward ? 1 : 0.4 }}
-            activeOpacity={0.6}
-            disabled={!canGoBackward}
-            onPress={onPressBackward}
-          >
-            <View style={[styles.skipControl, { paddingRight: 16 }]}>
-              <Icon family="Feather" name="arrow-left-circle" size={24} color={theme.COLORS.PRIMARY} />
-            </View>
-          </TouchableOpacity>
-
-          <View style={styles.progressBar}>
-            <HorizontalSegmentBar
-              showAllLabels={true}
-              borderColor={theme.COLORS.SUPER_LIGHT_BLUE_GRAY}
-              data={[
-                {
-                  count: candidateIndex,
-                  label: 'Complete',
-                  color: theme.COLORS.PRIMARY
-                },
-                {
-                  count: session.candidateOrder.length - candidateIndex,
-                  label: 'Remaining',
-                  color: theme.COLORS.BORDER
-                }
-              ]}
-            />
+      <View style={styles.controlsArea}>
+        <TouchableOpacity
+          style={{ opacity: canGoBackward ? 1 : 0.4 }}
+          activeOpacity={0.6}
+          disabled={!canGoBackward}
+          onPress={onPressBackward}
+        >
+          <View style={[styles.skipControl, { paddingRight: 16 }]}>
+            <Icon family="Feather" name="arrow-left-circle" size={24} color={theme.COLORS.PRIMARY} />
           </View>
+        </TouchableOpacity>
 
-          <TouchableOpacity
-            style={{ opacity: canGoForward ? 1 : 0.4 }}
-            activeOpacity={0.6}
-            disabled={!canGoForward}
-            onPress={onPressForward}
-          >
-            <View style={[styles.skipControl, { paddingLeft: 16 }]}>
-              <Icon family="Feather" name="arrow-right-circle" size={24} color={theme.COLORS.PRIMARY} />
-            </View>
-          </TouchableOpacity>
+        <View style={styles.progressBar}>
+          <HorizontalSegmentBar
+            showAllLabels={true}
+            borderColor={theme.COLORS.SUPER_LIGHT_BLUE_GRAY}
+            data={[
+              {
+                count: candidateIndex,
+                label: 'Complete',
+                color: theme.COLORS.PRIMARY
+              },
+              {
+                count: session.candidateOrder.length - candidateIndex,
+                label: 'Remaining',
+                color: theme.COLORS.BORDER
+              }
+            ]}
+          />
         </View>
-      )}
+
+        <TouchableOpacity
+          style={{ opacity: canGoForward ? 1 : 0.4 }}
+          activeOpacity={0.6}
+          disabled={!canGoForward}
+          onPress={onPressForward}
+        >
+          <View style={[styles.skipControl, { paddingLeft: 16 }]}>
+            <Icon family="Feather" name="arrow-right-circle" size={24} color={theme.COLORS.PRIMARY} />
+          </View>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -477,6 +492,24 @@ const styles = StyleSheet.create({
   badVotes: {
     flex: 1,
     paddingLeft: 16
+  },
+  voteContainer: {
+    width: '100%',
+    height: 48,
+    borderBottomColor: theme.COLORS.LIGHT_GRAY,
+    borderBottomWidth: 1,
+    display: 'flex',
+    justifyContent: 'center'
+  },
+  voteTitle: {
+    fontFamily: 'OpenSans',
+    fontSize: 15,
+    color: theme.COLORS.BLACK
+  },
+  voteSubtitle: {
+    fontFamily: 'OpenSans',
+    fontSize: 12,
+    color: theme.COLORS.DARK_GRAY
   },
   dividerWrapper: {
     display: 'flex',
