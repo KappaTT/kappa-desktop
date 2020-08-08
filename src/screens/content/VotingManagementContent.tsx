@@ -1,5 +1,14 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, FlatList, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  ScrollView,
+  FlatList,
+  Text,
+  ActivityIndicator,
+  TouchableOpacity,
+  Dimensions
+} from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useIsFocused } from 'react-navigation-hooks';
 import moment from 'moment';
@@ -135,7 +144,7 @@ const VotingManagementContent: React.FC<{
   React.useEffect(() => {
     if (selectedSessionId === '') {
       setShowingSessions(true);
-    } else {
+    } else if (Dimensions.get('window').width < 1400) {
       setShowingSessions(false);
     }
   }, [selectedSessionId]);
