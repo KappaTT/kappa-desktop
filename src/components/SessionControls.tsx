@@ -60,7 +60,8 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
     [currentCandidate, dispatch, user]
   );
   const dispatchGetCandidateVotes = React.useCallback(
-    (sessionId: string, candidateId: string) => dispatch(_voting.getCandidateVotes(user, sessionId, candidateId)),
+    (sessionId: string, candidateId: string, useLoadHistory: boolean) =>
+      dispatch(_voting.getCandidateVotes(user, sessionId, candidateId, useLoadHistory)),
     [dispatch, user]
   );
 
@@ -119,7 +120,7 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
 
   const refreshVotes = React.useCallback(() => {
     if (!isGettingCandidateVotes && session !== null && session.currentCandidateId !== '')
-      dispatchGetCandidateVotes(session._id, session.currentCandidateId);
+      dispatchGetCandidateVotes(session._id, session.currentCandidateId, false);
 
     setVotingRefreshDate(moment());
   }, [dispatchGetCandidateVotes, isGettingCandidateVotes, session]);

@@ -403,12 +403,13 @@ const gettingCandidateVotes = () => {
   };
 };
 
-const getCandidateVotesSuccess = (data) => {
+const getCandidateVotesSuccess = (data, useLoadHistory: boolean) => {
   return {
     type: GET_CANDIDATE_VOTES_SUCCESS,
     session: data.session,
     candidate: data.candidate,
-    votes: data.votes
+    votes: data.votes,
+    useLoadHistory
   };
 };
 
@@ -419,13 +420,18 @@ const getCandidateVotesFailure = (error) => {
   };
 };
 
-export const getCandidateVotes = (user: TUser, sessionId: string, candidateId: string) => {
+export const getCandidateVotes = (
+  user: TUser,
+  sessionId: string,
+  candidateId: string,
+  useLoadHistory: boolean = true
+) => {
   return (dispatch) => {
     dispatch(gettingCandidateVotes());
 
     Voting.getCandidateVotes({ user, sessionId, candidateId }).then((res) => {
       if (res.success) {
-        dispatch(getCandidateVotesSuccess(res.data));
+        dispatch(getCandidateVotesSuccess(res.data, useLoadHistory));
       } else {
         dispatch(getCandidateVotesFailure(res.error));
       }

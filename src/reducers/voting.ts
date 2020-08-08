@@ -408,10 +408,6 @@ export default (state = initialState, action: any): TVotingState => {
         return {
           ...state,
           isGettingActiveVotes: false,
-          // loadHistory: {
-          //   ...state.loadHistory,
-          //   [`votes-${action.session._id}-${action.candidate._id}`]: moment()
-          // },
           sessionArray: mergeSessions(state.sessionArray, [action.session]),
           sessionToCandidateToVotes: mergeVotes(state.sessionToCandidateToVotes, action.votes),
           ...recomputeVotingState({
@@ -438,16 +434,22 @@ export default (state = initialState, action: any): TVotingState => {
         getCandidateVotesError: false,
         getCandidateVotesErrorMessage: ''
       };
-    case GET_CANDIDATE_VOTES_SUCCESS:
-      return {
+    case GET_CANDIDATE_VOTES_SUCCESS: {
+      const newState: TVotingState = {
         ...state,
         isGettingCandidateVotes: false,
-        // loadHistory: {
-        //   ...state.loadHistory,
-        //   [`votes-${action.session._id}-${action.candidate._id}`]: moment()
-        // },
         sessionToCandidateToVotes: mergeVotes(state.sessionToCandidateToVotes, action.votes)
       };
+
+      if (action.useLoadHistory) {
+        newState.loadHistory = {
+          ...state.loadHistory,
+          [`votes-${action.session._id}-${action.candidate._id}`]: moment()
+        };
+      }
+
+      return newState;
+    }
     case GET_CANDIDATE_VOTES_FAILURE:
       return {
         ...state,
