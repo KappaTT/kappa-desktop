@@ -7,6 +7,7 @@ import CheckListButton from './CheckListButton';
 import Chip from './Chip';
 import EventItem from './EventItem';
 import FormattedInput from './FormattedInput';
+import FullPageModal from './FullPageModal';
 import GeneralMeetingChart from './GeneralMeetingChart';
 import Ghost from './Ghost';
 import GoogleSignInButton from './GoogleSignInButton';
@@ -39,6 +40,7 @@ export {
   Chip,
   EventItem,
   FormattedInput,
+  FullPageModal,
   GeneralMeetingChart,
   Ghost,
   GoogleSignInButton,
