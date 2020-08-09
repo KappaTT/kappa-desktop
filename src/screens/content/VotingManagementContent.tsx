@@ -312,14 +312,7 @@ const VotingManagementContent: React.FC<{
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity
-            style={{
-              opacity: selectedSession?.operatorEmail === user.email ? 0.4 : 1
-            }}
-            activeOpacity={0.6}
-            disabled={selectedSession?.operatorEmail === user.email}
-            onPress={dispatchShowPresentationMode}
-          >
+          <TouchableOpacity activeOpacity={0.6} onPress={dispatchShowPresentationMode}>
             <Icon
               style={styles.refreshIcon}
               family="MaterialCommunityIcons"

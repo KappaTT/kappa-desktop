@@ -5,13 +5,17 @@ import moment from 'moment';
 
 import { TRedux } from '@reducers';
 import { _voting } from '@reducers/actions';
+import { TEvent } from '@backend/kappa';
+import { getVotes } from '@services/votingService';
 import { theme } from '@constants';
-import { Icon, Switch, RadioList, FormattedInput } from '@components';
+import { Icon, HorizontalSegmentBar } from '@components';
 
 const PresentationModePage: React.FC<{
   onPressCancel(): void;
 }> = ({ onPressCancel }) => {
   const user = useSelector((state: TRedux) => state.auth.user);
+  const eventArray = useSelector((state: TRedux) => state.kappa.eventArray);
+  const directorySize = useSelector((state: TRedux) => state.kappa.directorySize);
   const sessionArray = useSelector((state: TRedux) => state.voting.sessionArray);
   const candidateArray = useSelector((state: TRedux) => state.voting.candidateArray);
   const sessionToCandidateToVotes = useSelector((state: TRedux) => state.voting.sessionToCandidateToVotes);
@@ -19,6 +23,10 @@ const PresentationModePage: React.FC<{
   const isGettingActiveVotes = useSelector((state: TRedux) => state.voting.isGettingActiveVotes);
 
   const [votingRefreshDate, setVotingRefreshDate] = React.useState(moment());
+
+  const dispatch = useDispatch();
+  const dispatchGetCandidates = React.useCallback(() => dispatch(_voting.getCandidates(user)), [dispatch, user]);
+  const dispatchGetActiveVotes = React.useCallback(() => dispatch(_voting.getActiveVotes(user)), [dispatch, user]);
 
   const activeSession = React.useMemo(() => sessionArray.find((session) => session.active) || null, [sessionArray]);
 
@@ -36,9 +44,44 @@ const PresentationModePage: React.FC<{
     [candidateArray, activeSession]
   );
 
-  const dispatch = useDispatch();
-  const dispatchGetCandidates = React.useCallback(() => dispatch(_voting.getCandidates(user)), [dispatch, user]);
-  const dispatchGetActiveVotes = React.useCallback(() => dispatch(_voting.getActiveVotes(user)), [dispatch, user]);
+  const currentCandidate = React.useMemo(
+    () => candidateArray.find((candidate) => candidate._id === activeSession?.currentCandidateId) || null,
+    [activeSession, candidateArray]
+  );
+
+  const attendedEvents = React.useMemo(() => {
+    if (!currentCandidate) return [];
+
+    const events = [];
+
+    for (const eventId of currentCandidate.events) {
+      const event = eventArray.find((event) => event._id === eventId);
+
+      if (event) {
+        events.push(event);
+      }
+    }
+
+    return events;
+  }, [eventArray, currentCandidate]);
+
+  const votes = getVotes(sessionToCandidateToVotes, activeSession?._id, activeSession?.currentCandidateId, {});
+
+  const candidateApprovalData = React.useMemo(
+    () => [
+      {
+        count: votes.length,
+        label: 'Voted',
+        color: theme.COLORS.PRIMARY
+      },
+      {
+        count: directorySize - votes.length,
+        label: 'Abstained',
+        color: theme.COLORS.BORDER
+      }
+    ],
+    [directorySize, votes.length]
+  );
 
   const refreshVotes = React.useCallback(() => {
     if (!isGettingActiveVotes) dispatchGetActiveVotes();
@@ -82,11 +125,13 @@ const PresentationModePage: React.FC<{
         <ScrollView>
           <View style={styles.scrollContent}>
             <View style={styles.propertyHeaderContainer}>
-              <Text style={[styles.propertyHeader, { color: theme.COLORS.PRIMARY_GREEN }]}>Approved Candidates</Text>
+              <Text style={[styles.propertyHeader, { marginTop: 0, color: theme.COLORS.PRIMARY_GREEN }]}>
+                Approved Candidates
+              </Text>
             </View>
 
             {approvedCandidates.length > 0 ? (
-              <View>
+              <View style={styles.approvedCandidatesList}>
                 {approvedCandidates.map((candidate, index) => (
                   <View key={`approved-${candidate._id}`} style={styles.approvedCandidateContainer}>
                     <View>
@@ -116,7 +161,63 @@ const PresentationModePage: React.FC<{
         <ScrollView>
           <View style={styles.scrollContent}>
             <View style={styles.propertyHeaderContainer}>
-              <Text style={styles.propertyHeader}>Current Candidate</Text>
+              <Text style={[styles.propertyHeader, { marginTop: 0 }]}>Current Candidate</Text>
+            </View>
+
+            <View style={[styles.activeContent, activeSession !== null && { opacity: 0.5 }]}>
+              {currentCandidate !== null && (
+                <View style={styles.candidateArea}>
+                  <View style={styles.candidateHeader}>
+                    <View style={styles.candidateName}>
+                      <Text style={styles.name}>
+                        {currentCandidate.familyName}, {currentCandidate.givenName}
+                      </Text>
+
+                      {currentCandidate.approved && (
+                        <Icon
+                          style={styles.approvedIcon}
+                          family="Feather"
+                          name="check"
+                          size={24}
+                          color={theme.COLORS.PRIMARY_GREEN}
+                        />
+                      )}
+                    </View>
+                  </View>
+
+                  <View style={styles.splitPropertyRow}>
+                    <View style={styles.splitProperty}>
+                      <Text style={styles.propertyHeader}>Year</Text>
+                      <Text style={styles.propertyValue}>{currentCandidate.classYear}</Text>
+                    </View>
+                    <View style={styles.splitProperty}>
+                      <Text style={styles.propertyHeader}>Major</Text>
+                      <Text style={styles.propertyValue}>{currentCandidate.major}</Text>
+                    </View>
+                    <View style={styles.splitProperty}>
+                      <Text style={styles.propertyHeader}>2nd Time Rush</Text>
+                      <Text style={styles.propertyValue}>{currentCandidate.secondTimeRush ? 'Yes' : 'No'}</Text>
+                    </View>
+                  </View>
+
+                  <Text style={styles.propertyHeader}>Attended Events</Text>
+                  {attendedEvents.map((event: TEvent) => (
+                    <View key={event._id} style={styles.eventContainer}>
+                      <Text style={styles.eventTitle}>{event.title}</Text>
+                      <Text style={styles.eventDate}>{moment(event.start).format('ddd LLL')}</Text>
+                    </View>
+                  ))}
+                  {attendedEvents.length === 0 && <Text style={styles.noEvents}>No events</Text>}
+
+                  <View style={[styles.progressBar, { marginTop: 16 }]}>
+                    <HorizontalSegmentBar
+                      showAllLabels={true}
+                      borderColor={theme.COLORS.SUPER_LIGHT_BLUE_GRAY}
+                      data={candidateApprovalData}
+                    />
+                  </View>
+                </View>
+              )}
             </View>
           </View>
         </ScrollView>
@@ -203,8 +304,7 @@ const styles = StyleSheet.create({
   content: {
     marginTop: 44,
     flex: 1,
-    flexDirection: 'row',
-    paddingHorizontal: 8
+    flexDirection: 'row'
   },
   section: {
     flex: 1
@@ -217,22 +317,16 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    bottom: 0,
-    paddingHorizontal: 8
+    bottom: 0
   },
   scrollContent: {
     paddingBottom: 16
   },
   propertyHeaderContainer: {
     marginTop: 16,
+    marginHorizontal: 16,
     display: 'flex',
     flexDirection: 'row'
-  },
-  propertyHeader: {
-    fontFamily: 'OpenSans-SemiBold',
-    fontSize: 13,
-    textTransform: 'uppercase',
-    color: theme.COLORS.GRAY
   },
   propertyHeaderRequired: {
     marginLeft: 2,
@@ -259,6 +353,9 @@ const styles = StyleSheet.create({
   },
   dividerIcon: {
     marginVertical: 8
+  },
+  approvedCandidatesList: {
+    marginHorizontal: 16
   },
   approvedCandidateContainer: {
     width: '100%',
@@ -289,6 +386,78 @@ const styles = StyleSheet.create({
   noVotes: {
     fontFamily: 'OpenSans',
     fontSize: 15
+  },
+  activeContent: {},
+  candidateArea: {
+    marginTop: 16,
+    marginHorizontal: 16,
+    padding: 16,
+    borderRadius: 8,
+    backgroundColor: theme.COLORS.SUPER_LIGHT_BLUE_GRAY
+  },
+  candidateHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  candidateName: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  name: {
+    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 16
+  },
+  approvedIcon: {
+    marginLeft: 8
+  },
+  splitPropertyRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap'
+  },
+  splitProperty: {
+    marginRight: 24
+  },
+  propertyHeader: {
+    marginTop: 16,
+    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 13,
+    textTransform: 'uppercase',
+    color: theme.COLORS.GRAY
+  },
+  propertyValue: {
+    marginTop: 4,
+    fontFamily: 'OpenSans',
+    fontSize: 15
+  },
+  propertyLoader: {
+    alignSelf: 'flex-start'
+  },
+  eventContainer: {
+    height: 48,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.COLORS.LIGHT_BORDER,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  eventTitle: {
+    fontFamily: 'OpenSans',
+    fontSize: 16
+  },
+  eventDate: {
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 13,
+    color: theme.COLORS.GRAY,
+    textTransform: 'uppercase'
+  },
+  noEvents: {
+    fontFamily: 'OpenSans',
+    fontSize: 15
+  },
+  progressBar: {
+    flex: 1
   }
 });
 
