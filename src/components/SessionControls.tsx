@@ -293,7 +293,6 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
 
                   <View style={[styles.progressBar, { marginTop: 16 }]}>
                     <HorizontalSegmentBar
-                      showAllLabels={true}
                       borderColor={theme.COLORS.SUPER_LIGHT_BLUE_GRAY}
                       data={candidateApprovalData}
                     />
