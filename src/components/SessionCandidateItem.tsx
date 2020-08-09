@@ -10,7 +10,7 @@ import Icon from '@components/Icon';
 
 const SessionCandidateItem: React.FC<{ candidate: TCandidate }> = ({ candidate }) => {
   const user = useSelector((state: TRedux) => state.auth.user);
-  const currentCandidateId = useSelector((state: TRedux) => state.voting.currentCandidateId);
+  const sessionArray = useSelector((state: TRedux) => state.voting.sessionArray);
   const selectedSessionId = useSelector((state: TRedux) => state.voting.selectedSessionId);
 
   const dispatch = useDispatch();
@@ -28,7 +28,20 @@ const SessionCandidateItem: React.FC<{ candidate: TCandidate }> = ({ candidate }
     [candidate._id, dispatch, selectedSessionId, user]
   );
 
-  const isSelected = React.useMemo(() => currentCandidateId === candidate._id, [candidate._id, currentCandidateId]);
+  const selectedSession = React.useMemo(() => {
+    const index = sessionArray.findIndex((session) => session._id === selectedSessionId);
+
+    if (index >= 0) {
+      return sessionArray[index];
+    }
+
+    return null;
+  }, [selectedSessionId, sessionArray]);
+
+  const isSelected = React.useMemo(() => selectedSession?.currentCandidateId === candidate._id, [
+    candidate._id,
+    selectedSession
+  ]);
 
   const onPressSelect = React.useCallback(() => {
     dispatchSelectSessionCandidate();

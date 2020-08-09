@@ -116,7 +116,6 @@ export interface TVotingState {
 
   selectedSessionId: string;
   editingSessionId: string;
-  currentCandidateId: string;
 
   loadHistory: TLoadHistory;
   candidateArray: TCandidate[];
@@ -184,7 +183,6 @@ const initialState: TVotingState = {
 
   selectedSessionId: '',
   editingSessionId: '',
-  currentCandidateId: '',
 
   loadHistory: {},
   candidateArray: [],
@@ -501,14 +499,12 @@ export default (state = initialState, action: any): TVotingState => {
     case SELECT_SESSION:
       return {
         ...state,
-        selectedSessionId: action.session._id,
-        currentCandidateId: action.session.currentCandidateId
+        selectedSessionId: action.session._id
       };
     case UNSELECT_SESSION:
       return {
         ...state,
-        selectedSessionId: '',
-        currentCandidateId: ''
+        selectedSessionId: ''
       };
     case EDIT_SESSION:
       return {
