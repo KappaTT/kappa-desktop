@@ -18,6 +18,7 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
   const user = useSelector((state: TRedux) => state.auth.user);
   const eventArray = useSelector((state: TRedux) => state.kappa.eventArray);
   const directory = useSelector((state: TRedux) => state.kappa.directory);
+  const directorySize = useSelector((state: TRedux) => state.kappa.directorySize);
   const candidateArray = useSelector((state: TRedux) => state.voting.candidateArray);
   const sessionToCandidateToVotes = useSelector((state: TRedux) => state.voting.sessionToCandidateToVotes);
   const isSavingCandidate = useSelector((state: TRedux) => state.voting.isSavingCandidate);
@@ -85,6 +86,27 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
   const approvedVotes = React.useMemo(() => votes.filter((vote) => vote.verdict === true), [votes]);
   const rejectedVotes = React.useMemo(() => votes.filter((vote) => vote.verdict !== true), [votes]);
 
+  const candidateApprovalData = React.useMemo(
+    () => [
+      {
+        count: approvedVotes.length,
+        label: 'Approved',
+        color: theme.COLORS.PRIMARY
+      },
+      {
+        count: rejectedVotes.length,
+        label: 'Rejected',
+        color: theme.COLORS.BLACK
+      },
+      {
+        count: directorySize - approvedVotes.length - rejectedVotes.length,
+        label: 'Abstained',
+        color: theme.COLORS.BORDER
+      }
+    ],
+    [approvedVotes.length, directorySize, rejectedVotes.length]
+  );
+
   const approvedCandidates = React.useMemo(
     () =>
       candidateArray
@@ -99,6 +121,22 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
   const candidateIndex = React.useMemo(
     () => session.candidateOrder.findIndex((candidateId) => candidateId === session.currentCandidateId),
     [session.candidateOrder, session.currentCandidateId]
+  );
+
+  const sessionProgressData = React.useMemo(
+    () => [
+      {
+        count: candidateIndex,
+        label: 'Complete',
+        color: theme.COLORS.PRIMARY
+      },
+      {
+        count: session.candidateOrder.length - candidateIndex,
+        label: 'Remaining',
+        color: theme.COLORS.BORDER
+      }
+    ],
+    [candidateIndex, session.candidateOrder.length]
   );
 
   const canGoBackward = React.useMemo(() => candidateIndex > 0, [candidateIndex]);
@@ -252,6 +290,14 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
                     </View>
                   ))}
                   {attendedEvents.length === 0 && <Text style={styles.noEvents}>No events</Text>}
+
+                  <View style={[styles.progressBar, { marginTop: 16 }]}>
+                    <HorizontalSegmentBar
+                      showAllLabels={true}
+                      borderColor={theme.COLORS.SUPER_LIGHT_BLUE_GRAY}
+                      data={candidateApprovalData}
+                    />
+                  </View>
                 </View>
               )}
             </View>
@@ -388,18 +434,7 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
           <HorizontalSegmentBar
             showAllLabels={true}
             borderColor={theme.COLORS.SUPER_LIGHT_BLUE_GRAY}
-            data={[
-              {
-                count: candidateIndex,
-                label: 'Complete',
-                color: theme.COLORS.PRIMARY
-              },
-              {
-                count: session.candidateOrder.length - candidateIndex,
-                label: 'Remaining',
-                color: theme.COLORS.BORDER
-              }
-            ]}
+            data={sessionProgressData}
           />
         </View>
 
