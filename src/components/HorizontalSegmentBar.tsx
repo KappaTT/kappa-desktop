@@ -1,22 +1,15 @@
 import React from 'react';
-import { StyleSheet, StyleProp, ViewStyle, TextStyle, View, Text } from 'react-native';
+import { StyleSheet, StyleProp, ViewStyle, View, Text } from 'react-native';
 
 import { theme } from '@constants';
 
 const HorizontalLabel: React.FC<{
-  index: number;
-  total: number;
   count: number;
   label: string;
-}> = ({ index, total, count, label }) => {
+}> = ({ count, label }) => {
   return (
     <View style={styles.labelWrapper}>
-      <Text
-        style={[
-          styles.label,
-          index === 0 ? styles.leftLabel : index === total - 1 ? styles.rightLabel : styles.middleLabel
-        ]}
-      >
+      <Text style={styles.label}>
         {count} {label}
       </Text>
     </View>
@@ -66,48 +59,19 @@ const HorizontalSegmentBar: React.FC<{
   }, [data]);
 
   const renderLabels = () => {
-    return data.map(
-      (
-        section: {
-          count: number;
-          label: string;
-          color: string;
-        },
-        sectionIndex: number
-      ) => {
-        if (section.count === 0 && !showAllLabels) {
-          return <React.Fragment key={section.label} />;
-        }
-
-        return (
-          <HorizontalLabel
-            key={section.label}
-            index={sectionIndex}
-            total={data.length}
-            count={section.count}
-            label={section.label}
-          />
-        );
-      }
-    );
+    return data
+      .filter((section) => section.count > 0 || showAllLabels)
+      .map((section) => {
+        return <HorizontalLabel key={section.label} count={section.count} label={section.label} />;
+      });
   };
 
   const renderBars = () => {
     let count = 0;
 
-    return data.map(
-      (
-        section: {
-          count: number;
-          label: string;
-          color: string;
-        },
-        sectionIndex: number
-      ) => {
-        if (section.count === 0) {
-          return <React.Fragment key={section.label} />;
-        }
-
+    return data
+      .filter((section) => section.count > 0)
+      .map((section, sectionIndex: number) => {
         count += section.count;
 
         const leftSide = sectionIndex === 0 || count === section.count;
@@ -122,8 +86,7 @@ const HorizontalSegmentBar: React.FC<{
             wrapperStyle={[styles.barWrapper, leftSide && styles.leftBarWrapper, rightSide && styles.rightBarWrapper]}
           />
         );
-      }
-    );
+      });
   };
 
   return (
@@ -145,23 +108,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between'
   },
   labelWrapper: {
-    flexBasis: 0,
-    flexGrow: 1
+    alignSelf: 'flex-start'
   },
   label: {
     fontFamily: 'OpenSans-SemiBold',
     fontSize: 13,
     textTransform: 'uppercase',
     color: theme.COLORS.GRAY
-  },
-  leftLabel: {
-    textAlign: 'left'
-  },
-  middleLabel: {
-    textAlign: 'center'
-  },
-  rightLabel: {
-    textAlign: 'right'
   },
   barsWrapper: {
     marginTop: 8,
