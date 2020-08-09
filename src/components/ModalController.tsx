@@ -6,17 +6,19 @@ import { TRedux } from '@reducers';
 import { _auth, _kappa, _voting } from '@reducers/actions';
 import { TEvent } from '@backend/kappa';
 import { getEventById } from '@services/kappaService';
+import { incompleteUser } from '@backend/auth';
 import {
   CheckInPage,
   EditEventPage,
   EditProfilePage,
   RequestExcusePage,
   EditCandidatePage,
-  EditSessionPage
+  EditSessionPage,
+  PresentationModePage
 } from '@pages';
 import Ghost from '@components/Ghost';
 import PopupModal from '@components/PopupModal';
-import { incompleteUser } from '@backend/auth';
+import FullPageModal from '@components/FullPageModal';
 
 const ModalController: React.FC = () => {
   const authorized = useSelector((state: TRedux) => state.auth.authorized);
@@ -34,6 +36,7 @@ const ModalController: React.FC = () => {
   const editingSessionId = useSelector((state: TRedux) => state.voting.editingSessionId);
   const isSavingSession = useSelector((state: TRedux) => state.voting.isSavingSession);
   const isDeletingSession = useSelector((state: TRedux) => state.voting.isDeletingSession);
+  const isShowingPresentationMode = useSelector((state: TRedux) => state.voting.isShowingPresentationMode);
 
   const dispatch = useDispatch();
   const dispatchCancelEditEvent = React.useCallback(() => dispatch(_kappa.cancelEditEvent()), [dispatch]);
@@ -46,6 +49,7 @@ const ModalController: React.FC = () => {
   const dispatchHideOnboarding = React.useCallback(() => dispatch(_auth.hideOnboarding()), [dispatch]);
   const dispatchCancelEditCandidate = React.useCallback(() => dispatch(_voting.cancelEditCandidate()), [dispatch]);
   const dispatchCancelEditSession = React.useCallback(() => dispatch(_voting.cancelEditSession()), [dispatch]);
+  const dispatchHidePresentationMode = React.useCallback(() => dispatch(_voting.hidePresentationMode()), [dispatch]);
 
   React.useEffect(() => {
     if (!authorized || !user) {
@@ -131,6 +135,10 @@ const ModalController: React.FC = () => {
       >
         <EditSessionPage onPressCancel={dispatchCancelEditSession} />
       </PopupModal>
+
+      <FullPageModal visible={isShowingPresentationMode} onDoneClosing={dispatchHidePresentationMode}>
+        <PresentationModePage onPressCancel={dispatchHidePresentationMode} />
+      </FullPageModal>
     </Ghost>
   );
 };

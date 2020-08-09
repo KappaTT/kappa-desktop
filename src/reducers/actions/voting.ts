@@ -42,7 +42,9 @@ import {
   GET_CANDIDATE_VOTES_FAILURE,
   CREATE_NEXT_SESSION,
   CREATE_NEXT_SESSION_SUCCESS,
-  CREATE_NEXT_SESSION_FAILURE
+  CREATE_NEXT_SESSION_FAILURE,
+  SHOW_PRESENTATION_MODE,
+  HIDE_PRESENTATION_MODE
 } from '@reducers/voting';
 import { atan } from 'react-native-reanimated';
 
@@ -499,5 +501,17 @@ export const editSession = (_id: string = 'NEW') => {
 export const cancelEditSession = () => {
   return {
     type: CANCEL_EDIT_SESSION
+  };
+};
+
+export const showPresentationMode = () => {
+  return {
+    type: SHOW_PRESENTATION_MODE
+  };
+};
+
+export const hidePresentationMode = () => {
+  return {
+    type: HIDE_PRESENTATION_MODE
   };
 };

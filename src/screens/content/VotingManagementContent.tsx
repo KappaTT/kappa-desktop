@@ -82,7 +82,7 @@ const VotingManagementContent: React.FC<{
     (sessionId: string, candidateId: string) => dispatch(_voting.getCandidateVotes(user, sessionId, candidateId, true)),
     [dispatch, user]
   );
-  const dispatchOpenPresentationMode = React.useCallback(() => console.log('TODO'), []);
+  const dispatchShowPresentationMode = React.useCallback(() => dispatch(_voting.showPresentationMode()), [dispatch]);
 
   const refreshing = React.useMemo(
     () => isGettingEvents || isGettingDirectory || isGettingCandidates || isGettingSessions || isGettingCandidateVotes,
@@ -186,7 +186,6 @@ const VotingManagementContent: React.FC<{
 
         for (const session of sessionArray) {
           if (session.active) {
-            console.log('test2');
             dispatchSelectSession(session);
             return;
           }
@@ -194,7 +193,6 @@ const VotingManagementContent: React.FC<{
 
         for (const session of sessionArray) {
           if (moment(session.startDate).isSameOrAfter(now)) {
-            console.log('test2');
             dispatchSelectSession(session);
             return;
           }
@@ -320,7 +318,7 @@ const VotingManagementContent: React.FC<{
             }}
             activeOpacity={0.6}
             disabled={selectedSession?.operatorEmail === user.email}
-            onPress={dispatchOpenPresentationMode}
+            onPress={dispatchShowPresentationMode}
           >
             <Icon
               style={styles.refreshIcon}

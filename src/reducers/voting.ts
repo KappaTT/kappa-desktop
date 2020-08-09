@@ -60,6 +60,9 @@ export const UNSELECT_SESSION = 'UNSELECT_SESSION';
 export const EDIT_SESSION = 'EDIT_SESSION';
 export const CANCEL_EDIT_SESSION = 'CANCEL_EDIT_SESSION';
 
+export const SHOW_PRESENTATION_MODE = 'SHOW_PRESENTATION_MODE';
+export const HIDE_PRESENTATION_MODE = 'HIDE_PRESENTATION_MODE';
+
 export interface TVotingState {
   globalErrorMessage: string;
   globalErrorCode: number;
@@ -116,6 +119,8 @@ export interface TVotingState {
 
   selectedSessionId: string;
   editingSessionId: string;
+
+  isShowingPresentationMode: boolean;
 
   loadHistory: TLoadHistory;
   candidateArray: TCandidate[];
@@ -183,6 +188,8 @@ const initialState: TVotingState = {
 
   selectedSessionId: '',
   editingSessionId: '',
+
+  isShowingPresentationMode: false,
 
   loadHistory: {},
   candidateArray: [],
@@ -515,6 +522,16 @@ export default (state = initialState, action: any): TVotingState => {
       return {
         ...state,
         editingSessionId: ''
+      };
+    case SHOW_PRESENTATION_MODE:
+      return {
+        ...state,
+        isShowingPresentationMode: true
+      };
+    case HIDE_PRESENTATION_MODE:
+      return {
+        ...state,
+        isShowingPresentationMode: false
       };
     default:
       return state;
