@@ -62,6 +62,8 @@ export const CANCEL_EDIT_SESSION = 'CANCEL_EDIT_SESSION';
 
 export const SHOW_PRESENTATION_MODE = 'SHOW_PRESENTATION_MODE';
 export const HIDE_PRESENTATION_MODE = 'HIDE_PRESENTATION_MODE';
+export const SHOW_VOTING = 'SHOW_VOTING';
+export const HIDE_VOTING = 'HIDE_VOTING';
 
 export interface TVotingState {
   globalErrorMessage: string;
@@ -121,6 +123,7 @@ export interface TVotingState {
   editingSessionId: string;
 
   isShowingPresentationMode: boolean;
+  isShowingVoting: boolean;
 
   loadHistory: TLoadHistory;
   candidateArray: TCandidate[];
@@ -190,6 +193,7 @@ const initialState: TVotingState = {
   editingSessionId: '',
 
   isShowingPresentationMode: false,
+  isShowingVoting: false,
 
   loadHistory: {},
   candidateArray: [],
@@ -438,7 +442,8 @@ export default (state = initialState, action: any): TVotingState => {
         };
       } else {
         return {
-          ...state
+          ...state,
+          isGettingActiveVotes: false
         };
       }
     case GET_ACTIVE_VOTES_FAILURE:
@@ -532,6 +537,16 @@ export default (state = initialState, action: any): TVotingState => {
       return {
         ...state,
         isShowingPresentationMode: false
+      };
+    case SHOW_VOTING:
+      return {
+        ...state,
+        isShowingVoting: true
+      };
+    case HIDE_VOTING:
+      return {
+        ...state,
+        isShowingVoting: false
       };
     default:
       return state;

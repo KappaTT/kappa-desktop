@@ -91,16 +91,11 @@ const PresentationModePage: React.FC<{
   }, [dispatchGetActiveVotes, dispatchGetCandidates, isGettingActiveVotes, isGettingCandidates]);
 
   React.useEffect(() => {
-    if (
-      activeSession !== null &&
-      votingRefreshDate.isBefore(moment()) &&
-      !isGettingCandidates &&
-      !isGettingActiveVotes
-    ) {
+    if (votingRefreshDate.isBefore(moment()) && !isGettingCandidates && !isGettingActiveVotes) {
       const t = setTimeout(refreshVotes, 5000);
       return () => clearTimeout(t);
     }
-  }, [activeSession, isGettingActiveVotes, isGettingCandidates, refreshVotes, votingRefreshDate]);
+  }, [isGettingActiveVotes, isGettingCandidates, refreshVotes, votingRefreshDate]);
 
   const renderHeader = () => {
     return (

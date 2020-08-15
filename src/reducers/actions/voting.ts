@@ -44,7 +44,9 @@ import {
   CREATE_NEXT_SESSION_SUCCESS,
   CREATE_NEXT_SESSION_FAILURE,
   SHOW_PRESENTATION_MODE,
-  HIDE_PRESENTATION_MODE
+  HIDE_PRESENTATION_MODE,
+  SHOW_VOTING,
+  HIDE_VOTING
 } from '@reducers/voting';
 import { atan } from 'react-native-reanimated';
 
@@ -513,5 +515,17 @@ export const showPresentationMode = () => {
 export const hidePresentationMode = () => {
   return {
     type: HIDE_PRESENTATION_MODE
+  };
+};
+
+export const showVoting = () => {
+  return {
+    type: SHOW_VOTING
+  };
+};
+
+export const hideVoting = () => {
+  return {
+    type: HIDE_VOTING
   };
 };
