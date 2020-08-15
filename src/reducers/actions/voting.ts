@@ -1,6 +1,6 @@
 import { Voting } from '@backend';
 import { TUser } from '@backend/auth';
-import { TCandidate, TSession } from '@backend/voting';
+import { TCandidate, TSession, TVote } from '@backend/voting';
 import {
   GET_CANDIDATES,
   GET_CANDIDATES_SUCCESS,
@@ -46,9 +46,11 @@ import {
   SHOW_PRESENTATION_MODE,
   HIDE_PRESENTATION_MODE,
   SHOW_VOTING,
-  HIDE_VOTING
+  HIDE_VOTING,
+  SUBMIT_VOTE,
+  SUBMIT_VOTE_SUCCESS,
+  SUBMIT_VOTE_FAILURE
 } from '@reducers/voting';
-import { atan } from 'react-native-reanimated';
 
 const gettingCandidates = () => {
   return {
@@ -441,6 +443,40 @@ export const getCandidateVotes = (
         dispatch(getCandidateVotesSuccess(res.data, useLoadHistory));
       } else {
         dispatch(getCandidateVotesFailure(res.error));
+      }
+    });
+  };
+};
+
+const submittingVote = () => {
+  return {
+    type: SUBMIT_VOTE
+  };
+};
+
+const submitVoteSuccess = (data) => {
+  return {
+    type: SUBMIT_VOTE_SUCCESS,
+    votes: data.votes
+  };
+};
+
+const submitVoteFailure = (error) => {
+  return {
+    type: SUBMIT_VOTE_FAILURE,
+    error
+  };
+};
+
+export const submitVote = (user: TUser, vote: Partial<TVote>) => {
+  return (dispatch) => {
+    dispatch(submittingVote());
+
+    Voting.submitVote({ user, vote }).then((res) => {
+      if (res.success) {
+        dispatch(submitVoteSuccess(res.data));
+      } else {
+        dispatch(submitVoteFailure(res.error));
       }
     });
   };

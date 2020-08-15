@@ -54,6 +54,9 @@ export const GET_CANDIDATE_VOTES_FAILURE = 'GET_CANDIDATE_VOTES_FAILURE';
 export const CREATE_NEXT_SESSION = 'CREATE_NEXT_SESSION';
 export const CREATE_NEXT_SESSION_SUCCESS = 'CREATE_NEXT_SESSION_SUCCESS';
 export const CREATE_NEXT_SESSION_FAILURE = 'CREATE_NEXT_SESSION_FAILURE';
+export const SUBMIT_VOTE = 'SUBMIT_VOTE';
+export const SUBMIT_VOTE_SUCCESS = 'SUBMIT_VOTE_SUCCESS';
+export const SUBMIT_VOTE_FAILURE = 'SUBMIT_VOTE_FAILURE';
 
 export const SELECT_SESSION = 'SELECT_SESSION';
 export const UNSELECT_SESSION = 'UNSELECT_SESSION';
@@ -112,6 +115,10 @@ export interface TVotingState {
   isGettingCandidateVotes: boolean;
   getCandidateVotesError: boolean;
   getCandidateVotesErrorMessage: string;
+
+  isSubmittingVote: boolean;
+  submitVoteError: boolean;
+  submitVoteErrorMessage: string;
 
   isCreatingNextSession: boolean;
   createNextSessionError: boolean;
@@ -182,6 +189,10 @@ const initialState: TVotingState = {
   isGettingCandidateVotes: false,
   getCandidateVotesError: false,
   getCandidateVotesErrorMessage: '',
+
+  isSubmittingVote: false,
+  submitVoteError: false,
+  submitVoteErrorMessage: '',
 
   isCreatingNextSession: false,
   createNextSessionError: false,
@@ -483,6 +494,27 @@ export default (state = initialState, action: any): TVotingState => {
         isGettingCandidateVotes: false,
         getCandidateVotesError: true,
         getCandidateVotesErrorMessage: action.error.message,
+        ...setGlobalError(action.error.message, action.error.code)
+      };
+    case SUBMIT_VOTE:
+      return {
+        ...state,
+        isSubmittingVote: true,
+        submitVoteError: false,
+        submitVoteErrorMessage: ''
+      };
+    case SUBMIT_VOTE_SUCCESS:
+      return {
+        ...state,
+        isSubmittingVote: false,
+        sessionToCandidateToVotes: mergeVotes(state.sessionToCandidateToVotes, action.votes)
+      };
+    case SUBMIT_VOTE_FAILURE:
+      return {
+        ...state,
+        isSubmittingVote: false,
+        submitVoteError: true,
+        submitVoteErrorMessage: action.error.message,
         ...setGlobalError(action.error.message, action.error.code)
       };
     case CREATE_NEXT_SESSION:

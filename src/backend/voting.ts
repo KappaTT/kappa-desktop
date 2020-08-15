@@ -572,7 +572,7 @@ interface TGetCandidateVotesRequestResponse {
 }
 
 interface TGetCandidateVotesResponse extends TResponse {
-  data?: TGetActiveVotesRequestResponse;
+  data?: TGetCandidateVotesRequestResponse;
 }
 
 export const getCandidateVotes = async (payload: TGetCandidateVotesPayload): Promise<TGetCandidateVotesResponse> => {
@@ -608,6 +608,53 @@ export const getCandidateVotes = async (payload: TGetCandidateVotesPayload): Pro
     return pass({
       session: response.data.session,
       candidate: response.data.candidate,
+      votes: response.data.votes
+    });
+  } catch (error) {
+    log(error);
+    return fail({}, "that wasn't supposed to happen", -1);
+  }
+};
+
+export interface TSubmitVotePayload {
+  user: TUser;
+  vote: Partial<TVote>;
+}
+
+interface TSubmitVoteRequestResponse {
+  votes: TVote[];
+}
+
+interface TSubmitVoteResponse extends TResponse {
+  data?: TSubmitVoteRequestResponse;
+}
+
+export const submitVote = async (payload: TSubmitVotePayload): Promise<TSubmitVoteResponse> => {
+  try {
+    const response = await makeAuthorizedRequest<TSubmitVoteRequestResponse>(
+      ENDPOINTS.SUBMIT_VOTE(),
+      METHODS.SUBMIT_VOTE,
+      {
+        body: {
+          vote: payload.vote
+        }
+      },
+      payload.user.sessionToken
+    );
+
+    log('Submit vote response', response.code);
+
+    if (!response.success) {
+      return fail({}, 'issue connecting to the server', 500);
+    } else if (response.code !== 200) {
+      if (response.code === 401) {
+        return fail({}, 'your credentials were invalid or have expired', response.code);
+      }
+
+      return fail({}, response.error?.message, response.code);
+    }
+
+    return pass({
       votes: response.data.votes
     });
   } catch (error) {

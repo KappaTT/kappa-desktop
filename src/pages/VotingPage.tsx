@@ -19,18 +19,32 @@ const VotingPage: React.FC<{
   const candidateArray = useSelector((state: TRedux) => state.voting.candidateArray);
   const sessionToCandidateToVotes = useSelector((state: TRedux) => state.voting.sessionToCandidateToVotes);
   const isGettingActiveVotes = useSelector((state: TRedux) => state.voting.isGettingActiveVotes);
+  const isSubmittingVote = useSelector((state: TRedux) => state.voting.isSubmittingVote);
 
   const [votingRefreshDate, setVotingRefreshDate] = React.useState(moment());
   const [reason, setReason] = React.useState<string>('');
-
-  const dispatch = useDispatch();
-  const dispatchGetActiveVotes = React.useCallback(() => dispatch(_voting.getActiveVotes(user)), [dispatch, user]);
+  const [showReasonError, setShowReasonError] = React.useState<boolean>(false);
 
   const activeSession = React.useMemo(() => sessionArray.find((session) => session.active) || null, [sessionArray]);
 
   const currentCandidate = React.useMemo(
     () => candidateArray.find((candidate) => candidate._id === activeSession?.currentCandidateId) || null,
     [activeSession, candidateArray]
+  );
+
+  const dispatch = useDispatch();
+  const dispatchGetActiveVotes = React.useCallback(() => dispatch(_voting.getActiveVotes(user)), [dispatch, user]);
+  const dispatchSubmitVote = React.useCallback(
+    (verdict: boolean) =>
+      dispatch(
+        _voting.submitVote(user, {
+          sessionId: activeSession?._id,
+          candidateId: currentCandidate?._id,
+          verdict,
+          reason: verdict ? '' : reason
+        })
+      ),
+    [activeSession, currentCandidate, dispatch, reason, user]
   );
 
   const attendedEvents = React.useMemo(() => {
@@ -57,6 +71,20 @@ const VotingPage: React.FC<{
   ]);
 
   const onChangeReason = React.useCallback((text: string) => setReason(text), []);
+
+  const onPressReject = React.useCallback(() => {
+    if (reason.trim().length === 0) {
+      setShowReasonError(true);
+    } else {
+      setShowReasonError(false);
+      dispatchSubmitVote(false);
+    }
+  }, [dispatchSubmitVote, reason]);
+
+  const onPressApprove = React.useCallback(() => {
+    setShowReasonError(false);
+    dispatchSubmitVote(true);
+  }, [dispatchSubmitVote]);
 
   const refreshVotes = React.useCallback(() => {
     if (!isGettingActiveVotes) dispatchGetActiveVotes();
@@ -144,7 +172,9 @@ const VotingPage: React.FC<{
                 </View>
               ) : (
                 <View style={styles.candidateArea}>
-                  <Text style={styles.noVotes}>There is currently no candidate being voted on</Text>
+                  <Text style={styles.noVotes}>
+                    There is currently no candidate being voted on. This page will automatically update.
+                  </Text>
                 </View>
               )}
             </View>
@@ -186,7 +216,7 @@ const VotingPage: React.FC<{
                     <Text style={styles.name}>Vote to reject</Text>
                   </View>
 
-                  <RoundButton label="Reject" loading={false} onPress={() => {}} />
+                  <RoundButton label="  Reject  " loading={isSubmittingVote} onPress={onPressReject} />
                 </View>
 
                 <Text style={styles.description}>
@@ -206,6 +236,7 @@ const VotingPage: React.FC<{
                   maxLength={256}
                   multiline={true}
                   numberOfLines={6}
+                  error={showReasonError}
                   value={reason}
                   onChangeText={onChangeReason}
                 />
@@ -219,7 +250,7 @@ const VotingPage: React.FC<{
                     <Text style={styles.name}>Vote to approve</Text>
                   </View>
 
-                  <RoundButton label="Approve" loading={false} onPress={() => {}} />
+                  <RoundButton label="Approve" loading={isSubmittingVote} onPress={onPressApprove} />
                 </View>
 
                 <Text style={styles.description}>
