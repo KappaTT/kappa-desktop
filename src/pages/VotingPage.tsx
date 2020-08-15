@@ -8,7 +8,7 @@ import { _voting } from '@reducers/actions';
 import { TEvent } from '@backend/kappa';
 import { getVotes } from '@services/votingService';
 import { theme } from '@constants';
-import { Icon } from '@components';
+import { Icon, RoundButton } from '@components';
 
 const VotingPage: React.FC<{
   onPressCancel(): void;
@@ -50,6 +50,11 @@ const VotingPage: React.FC<{
 
   const votes = getVotes(sessionToCandidateToVotes, activeSession?._id, activeSession?.currentCandidateId, {});
 
+  const currentVote = React.useMemo(() => votes.find((vote) => vote.userEmail === user.email) || null, [
+    user.email,
+    votes
+  ]);
+
   const refreshVotes = React.useCallback(() => {
     if (!isGettingActiveVotes) dispatchGetActiveVotes();
 
@@ -89,7 +94,7 @@ const VotingPage: React.FC<{
               <Text style={[styles.propertyHeader, { marginTop: 0 }]}>Current Candidate</Text>
             </View>
 
-            <View style={[styles.activeContent, activeSession !== null && { opacity: 0.5 }]}>
+            <View style={styles.activeContent}>
               {currentCandidate !== null && (
                 <View style={styles.candidateArea}>
                   <View style={styles.candidateHeader}>
@@ -136,6 +141,58 @@ const VotingPage: React.FC<{
                 </View>
               )}
             </View>
+
+            <View style={styles.propertyHeaderContainer}>
+              <Text style={[styles.propertyHeader, { marginTop: 0 }]}>Your Vote</Text>
+            </View>
+
+            <View style={styles.currentVoteContainer}>
+              {currentVote !== null ? (
+                <React.Fragment>
+                  <View style={styles.splitPropertyRow}>
+                    <View style={styles.splitProperty}>
+                      <Text style={[styles.propertyHeader, { marginTop: 0 }]}>Verdict</Text>
+                      <Text style={styles.propertyValue}>
+                        {currentVote?.verdict === true ? 'Approved' : 'Rejected'}
+                      </Text>
+                    </View>
+                  </View>
+
+                  <View style={styles.splitPropertyRow}>
+                    <View style={styles.splitProperty}>
+                      <Text style={styles.propertyHeader}>Reason</Text>
+                      <Text style={styles.propertyValue}>
+                        {currentVote?.verdict === false ? currentVote.reason : 'N/A'}
+                      </Text>
+                    </View>
+                  </View>
+                </React.Fragment>
+              ) : (
+                <Text style={styles.noVotes}>No vote submitted</Text>
+              )}
+
+              <View style={styles.votingContainer}>
+                <View style={[styles.section, { marginHorizontal: 16 }]}>
+                  <RoundButton
+                    size="medium"
+                    bgColor={theme.COLORS.SUPER_LIGHT_BLUE_GRAY}
+                    label="Reject"
+                    alt={currentVote?.verdict !== false}
+                  />
+                </View>
+
+                {renderDivider()}
+
+                <View style={[styles.section, { marginHorizontal: 16 }]}>
+                  <RoundButton
+                    size="medium"
+                    bgColor={theme.COLORS.SUPER_LIGHT_BLUE_GRAY}
+                    label="Approve"
+                    alt={currentVote?.verdict !== true}
+                  />
+                </View>
+              </View>
+            </View>
           </View>
         </ScrollView>
       </View>
@@ -154,10 +211,11 @@ const VotingPage: React.FC<{
     <View style={styles.container}>
       <View style={styles.header}>{renderHeader()}</View>
 
-      <View style={styles.content}>
+      <View
+        style={[styles.content, activeSession === null && { opacity: 0.5 }]}
+        pointerEvents={activeSession !== null ? 'auto' : 'none'}
+      >
         <View style={styles.section}>{renderCurrentCandidateSection()}</View>
-
-        {renderDivider()}
       </View>
     </View>
   );
@@ -373,6 +431,17 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     flex: 1
+  },
+  currentVoteContainer: {
+    marginTop: 16,
+    marginHorizontal: 16,
+    padding: 16,
+    borderRadius: 8,
+    backgroundColor: theme.COLORS.SUPER_LIGHT_BLUE_GRAY
+  },
+  votingContainer: {
+    marginTop: 16,
+    flexDirection: 'row'
   }
 });
 

@@ -159,7 +159,7 @@ const PresentationModePage: React.FC<{
               <Text style={[styles.propertyHeader, { marginTop: 0 }]}>Current Candidate</Text>
             </View>
 
-            <View style={[styles.activeContent, activeSession !== null && { opacity: 0.5 }]}>
+            <View style={[styles.activeContent, activeSession === null && { opacity: 0.5 }]}>
               {currentCandidate !== null && (
                 <View style={styles.candidateArea}>
                   <View style={styles.candidateHeader}>
