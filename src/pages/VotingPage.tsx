@@ -18,12 +18,12 @@ const VotingPage: React.FC<{
   const sessionArray = useSelector((state: TRedux) => state.voting.sessionArray);
   const candidateArray = useSelector((state: TRedux) => state.voting.candidateArray);
   const sessionToCandidateToVotes = useSelector((state: TRedux) => state.voting.sessionToCandidateToVotes);
-  const isGettingActiveCandidate = useSelector((state: TRedux) => state.voting.isGettingActiveVotes);
+  const isGettingActiveVotes = useSelector((state: TRedux) => state.voting.isGettingActiveVotes);
 
   const [votingRefreshDate, setVotingRefreshDate] = React.useState(moment());
 
   const dispatch = useDispatch();
-  const dispatchGetActiveCandidate = React.useCallback(() => dispatch(_voting.getActiveVotes(user)), [dispatch, user]);
+  const dispatchGetActiveVotes = React.useCallback(() => dispatch(_voting.getActiveVotes(user)), [dispatch, user]);
 
   const activeSession = React.useMemo(() => sessionArray.find((session) => session.active) || null, [sessionArray]);
 
@@ -51,17 +51,17 @@ const VotingPage: React.FC<{
   const votes = getVotes(sessionToCandidateToVotes, activeSession?._id, activeSession?.currentCandidateId, {});
 
   const refreshVotes = React.useCallback(() => {
-    if (!isGettingActiveCandidate) dispatchGetActiveCandidate();
+    if (!isGettingActiveVotes) dispatchGetActiveVotes();
 
     setVotingRefreshDate(moment());
-  }, [dispatchGetActiveCandidate, isGettingActiveCandidate]);
+  }, [dispatchGetActiveVotes, isGettingActiveVotes]);
 
   React.useEffect(() => {
-    if (activeSession !== null && votingRefreshDate.isBefore(moment()) && !isGettingActiveCandidate) {
+    if (activeSession !== null && votingRefreshDate.isBefore(moment()) && !isGettingActiveVotes) {
       const t = setTimeout(refreshVotes, 5000);
       return () => clearTimeout(t);
     }
-  }, [activeSession, isGettingActiveCandidate, refreshVotes, votingRefreshDate]);
+  }, [activeSession, isGettingActiveVotes, refreshVotes, votingRefreshDate]);
 
   const renderHeader = () => {
     return (
