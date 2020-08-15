@@ -160,7 +160,7 @@ const PresentationModePage: React.FC<{
             </View>
 
             <View style={[styles.activeContent, activeSession === null && { opacity: 0.5 }]}>
-              {currentCandidate !== null && (
+              {currentCandidate !== null ? (
                 <View style={styles.candidateArea}>
                   <View style={styles.candidateHeader}>
                     <View style={styles.candidateName}>
@@ -211,6 +211,12 @@ const PresentationModePage: React.FC<{
                       data={candidateApprovalData}
                     />
                   </View>
+                </View>
+              ) : (
+                <View style={styles.candidateArea}>
+                  <Text style={styles.noVotes}>
+                    There is currently no candidate being voted on. This page will automatically update.
+                  </Text>
                 </View>
               )}
             </View>
