@@ -14,7 +14,8 @@ import {
   RequestExcusePage,
   EditCandidatePage,
   EditSessionPage,
-  PresentationModePage
+  PresentationModePage,
+  VotingPage
 } from '@pages';
 import Ghost from '@components/Ghost';
 import PopupModal from '@components/PopupModal';
@@ -37,6 +38,7 @@ const ModalController: React.FC = () => {
   const isSavingSession = useSelector((state: TRedux) => state.voting.isSavingSession);
   const isDeletingSession = useSelector((state: TRedux) => state.voting.isDeletingSession);
   const isShowingPresentationMode = useSelector((state: TRedux) => state.voting.isShowingPresentationMode);
+  const isShowingVoting = useSelector((state: TRedux) => state.voting.isShowingVoting);
 
   const dispatch = useDispatch();
   const dispatchCancelEditEvent = React.useCallback(() => dispatch(_kappa.cancelEditEvent()), [dispatch]);
@@ -50,6 +52,7 @@ const ModalController: React.FC = () => {
   const dispatchCancelEditCandidate = React.useCallback(() => dispatch(_voting.cancelEditCandidate()), [dispatch]);
   const dispatchCancelEditSession = React.useCallback(() => dispatch(_voting.cancelEditSession()), [dispatch]);
   const dispatchHidePresentationMode = React.useCallback(() => dispatch(_voting.hidePresentationMode()), [dispatch]);
+  const dispatchHideVoting = React.useCallback(() => dispatch(_voting.hideVoting()), [dispatch]);
 
   React.useEffect(() => {
     if (!authorized || !user) {
@@ -138,6 +141,10 @@ const ModalController: React.FC = () => {
 
       <FullPageModal visible={isShowingPresentationMode} onDoneClosing={dispatchHidePresentationMode}>
         <PresentationModePage onPressCancel={dispatchHidePresentationMode} />
+      </FullPageModal>
+
+      <FullPageModal visible={isShowingVoting} onDoneClosing={dispatchHideVoting}>
+        <VotingPage onPressCancel={dispatchHideVoting} />
       </FullPageModal>
     </Ghost>
   );

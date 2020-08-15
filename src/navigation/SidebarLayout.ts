@@ -25,7 +25,7 @@ const Nav = (label: string, target: string, privileged: boolean = false): TSideb
 });
 
 const SidebarLayout: TSidebarElement[] = [
-  Header('Chapter', [Nav('Events', 'EventsStack'), Nav('Brothers', 'DirectoryStack'), Nav('Voting', 'VotingStack')]),
+  Header('Chapter', [Nav('Events', 'EventsStack'), Nav('Brothers', 'DirectoryStack'), Nav('Voting', '')]),
   Header('Attendance', [Nav('Check In', ''), Nav('Request Excuse', '')]),
   Header(
     'Admin',

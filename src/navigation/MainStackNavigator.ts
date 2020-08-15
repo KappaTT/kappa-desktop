@@ -12,8 +12,7 @@ import {
   MessagesScreen,
   ProfileScreen,
   StudyAbroadScreen,
-  VotingManagementScreen,
-  VotingScreen
+  VotingManagementScreen
 } from '@screens';
 
 const LoginStack = createStackNavigator(
@@ -77,25 +76,6 @@ const DirectoryStack = createStackNavigator(
   {
     Directory: {
       screen: DirectoryScreen,
-      navigationOptions: ({ navigation }) => ({
-        header: null,
-        headerStyle: {
-          height: 0
-        }
-      })
-    }
-  },
-  {
-    navigationOptions: ({ navigation }) => ({
-      tabBarVisible: false
-    })
-  }
-);
-
-const VotingStack = createStackNavigator(
-  {
-    Voting: {
-      screen: VotingScreen,
       navigationOptions: ({ navigation }) => ({
         header: null,
         headerStyle: {
@@ -249,7 +229,6 @@ export default createBottomTabNavigator({
   MessagesStack,
   EventsStack,
   DirectoryStack,
-  VotingStack,
   EventTemplatesStack,
   StudyAbroadStack,
   BrotherRequirementsStack,

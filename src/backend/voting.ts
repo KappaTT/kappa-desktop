@@ -509,6 +509,52 @@ export const stopSession = async (payload: TStopSessionPayload): Promise<TStopSe
   }
 };
 
+export interface TGetActiveCandidatePayload {
+  user: TUser;
+}
+
+interface TGetActiveCandidateRequestResponse {
+  session: TSession;
+  candidate: TCandidate;
+  votes: TVote[];
+}
+
+interface TGetActiveCandidateResponse extends TResponse {
+  data?: TGetActiveCandidateRequestResponse;
+}
+
+export const getActiveCandidate = async (payload: TGetActiveCandidatePayload): Promise<TGetActiveCandidateResponse> => {
+  try {
+    const response = await makeAuthorizedRequest<TGetActiveCandidateRequestResponse>(
+      ENDPOINTS.GET_ACTIVE_CANDIDATE(),
+      METHODS.GET_ACTIVE_CANDIDATE,
+      {},
+      payload.user.sessionToken
+    );
+
+    log('Get active candidate response', response.code);
+
+    if (!response.success) {
+      return fail({}, 'issue connecting to the server', 500);
+    } else if (response.code !== 200) {
+      if (response.code === 401) {
+        return fail({}, 'your credentials were invalid or have expired', response.code);
+      }
+
+      return fail({}, response.error?.message, response.code);
+    }
+
+    return pass({
+      session: response.data.session,
+      candidate: response.data.candidate,
+      votes: response.data.votes
+    });
+  } catch (error) {
+    log(error);
+    return fail({}, "that wasn't supposed to happen", -1);
+  }
+};
+
 export interface TGetActiveVotesPayload {
   user: TUser;
 }

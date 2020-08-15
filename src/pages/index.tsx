@@ -5,6 +5,7 @@ import EditProfilePage from './EditProfilePage';
 import EditSessionPage from './EditSessionPage';
 import PresentationModePage from './PresentationModePage';
 import RequestExcusePage from './RequestExcusePage';
+import VotingPage from './VotingPage';
 
 export {
   CheckInPage,
@@ -13,5 +14,6 @@ export {
   EditProfilePage,
   EditSessionPage,
   PresentationModePage,
-  RequestExcusePage
+  RequestExcusePage,
+  VotingPage
 };

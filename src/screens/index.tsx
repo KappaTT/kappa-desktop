@@ -9,7 +9,6 @@ import BrotherRequirementsScreen from './BrotherRequirementsScreen';
 import ProfileScreen from './ProfileScreen';
 import StudyAbroadScreen from './StudyAbroadScreen';
 import VotingManagementScreen from './VotingManagementScreen';
-import VotingScreen from './VotingScreen';
 
 export {
   ChapterSettingsScreen,
@@ -22,6 +21,5 @@ export {
   BrotherRequirementsScreen,
   ProfileScreen,
   StudyAbroadScreen,
-  VotingManagementScreen,
-  VotingScreen
+  VotingManagementScreen
 };

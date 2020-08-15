@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { TRedux } from '@reducers';
-import { _auth, _kappa, _nav } from '@reducers/actions';
+import { _auth, _kappa, _voting, _nav } from '@reducers/actions';
 import { theme } from '@constants';
 import { navigate } from '@navigation/NavigationService';
 import SidebarLayout, { TSidebarElement } from '@navigation/SidebarLayout';
@@ -33,6 +33,7 @@ const Sidebar: React.FC = () => {
   ]);
   const dispatchOpenCheckIn = React.useCallback(() => dispatch(_kappa.setCheckInEvent('NONE', false)), [dispatch]);
   const dispatchOpenRequestExcuse = React.useCallback(() => dispatch(_kappa.setCheckInEvent('NONE', true)), [dispatch]);
+  const dispatchShowVoting = React.useCallback(() => dispatch(_voting.showVoting()), [dispatch]);
   const dispatchSignOut = React.useCallback(() => dispatch(_auth.signOut()), [dispatch]);
 
   const unreadMessages = React.useMemo(() => {
@@ -66,13 +67,23 @@ const Sidebar: React.FC = () => {
           case 'Request Excuse':
             dispatchOpenRequestExcuse();
             break;
+          case 'Voting':
+            dispatchShowVoting();
+            break;
           case 'Sign Out':
             dispatchSignOut();
             break;
         }
       }
     },
-    [dispatchOpenCheckIn, dispatchOpenRequestExcuse, dispatchSetSelectedPage, dispatchSignOut, sidebarNav]
+    [
+      dispatchOpenCheckIn,
+      dispatchOpenRequestExcuse,
+      dispatchSetSelectedPage,
+      dispatchShowVoting,
+      dispatchSignOut,
+      sidebarNav
+    ]
   );
 
   const onPressMessages = React.useCallback(() => {
