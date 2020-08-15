@@ -8,7 +8,7 @@ import { _voting } from '@reducers/actions';
 import { TEvent } from '@backend/kappa';
 import { getVotes } from '@services/votingService';
 import { theme } from '@constants';
-import { Icon, RoundButton } from '@components';
+import { Icon, RoundButton, FormattedInput } from '@components';
 
 const VotingPage: React.FC<{
   onPressCancel(): void;
@@ -21,6 +21,7 @@ const VotingPage: React.FC<{
   const isGettingActiveVotes = useSelector((state: TRedux) => state.voting.isGettingActiveVotes);
 
   const [votingRefreshDate, setVotingRefreshDate] = React.useState(moment());
+  const [reason, setReason] = React.useState<string>('');
 
   const dispatch = useDispatch();
   const dispatchGetActiveVotes = React.useCallback(() => dispatch(_voting.getActiveVotes(user)), [dispatch, user]);
@@ -54,6 +55,8 @@ const VotingPage: React.FC<{
     user.email,
     votes
   ]);
+
+  const onChangeReason = React.useCallback((text: string) => setReason(text), []);
 
   const refreshVotes = React.useCallback(() => {
     if (!isGettingActiveVotes) dispatchGetActiveVotes();
@@ -95,7 +98,7 @@ const VotingPage: React.FC<{
             </View>
 
             <View style={styles.activeContent}>
-              {currentCandidate !== null && (
+              {currentCandidate !== null ? (
                 <View style={styles.candidateArea}>
                   <View style={styles.candidateHeader}>
                     <View style={styles.candidateName}>
@@ -139,6 +142,10 @@ const VotingPage: React.FC<{
                   ))}
                   {attendedEvents.length === 0 && <Text style={styles.noEvents}>No events</Text>}
                 </View>
+              ) : (
+                <View style={styles.candidateArea}>
+                  <Text style={styles.noVotes}>There is currently no candidate being voted on</Text>
+                </View>
               )}
             </View>
 
@@ -168,29 +175,59 @@ const VotingPage: React.FC<{
                   </View>
                 </React.Fragment>
               ) : (
-                <Text style={styles.noVotes}>No vote submitted</Text>
+                <Text style={styles.noVotes}>You have not submitted a vote</Text>
               )}
+            </View>
 
-              <View style={styles.votingContainer}>
-                <View style={[styles.section, { marginHorizontal: 16 }]}>
-                  <RoundButton
-                    size="medium"
-                    bgColor={theme.COLORS.SUPER_LIGHT_BLUE_GRAY}
-                    label="Reject"
-                    alt={currentVote?.verdict !== false}
-                  />
+            <View style={styles.votingContainer}>
+              <View style={[styles.section, { marginRight: 16 }]}>
+                <View style={styles.candidateHeader}>
+                  <View style={styles.candidateName}>
+                    <Text style={styles.name}>Vote to reject</Text>
+                  </View>
+
+                  <RoundButton label="Reject" loading={false} onPress={() => {}} />
                 </View>
 
-                {renderDivider()}
+                <Text style={styles.description}>
+                  When you vote to reject a candidate, you are saying you do not believe this candidate would make a
+                  good addition to the fraternity. You must provide a reason for why you are rejecting which represents
+                  why they are not fit for brotherhood. An example of this would be if you witnessed them having bad
+                  interactions with other rushes. Votes that do not have valid reasons will be dismissed.
+                </Text>
 
-                <View style={[styles.section, { marginHorizontal: 16 }]}>
-                  <RoundButton
-                    size="medium"
-                    bgColor={theme.COLORS.SUPER_LIGHT_BLUE_GRAY}
-                    label="Approve"
-                    alt={currentVote?.verdict !== true}
-                  />
+                <View style={[styles.propertyHeaderContainer, { marginHorizontal: 0, marginTop: 0 }]}>
+                  <Text style={styles.propertyHeader}>Reason</Text>
                 </View>
+
+                <FormattedInput
+                  style={styles.multilineInput}
+                  placeholderText="Why are you against this candidate?"
+                  maxLength={256}
+                  multiline={true}
+                  numberOfLines={6}
+                  value={reason}
+                  onChangeText={onChangeReason}
+                />
+              </View>
+
+              {renderDivider()}
+
+              <View style={[styles.section, { marginLeft: 16 }]}>
+                <View style={styles.candidateHeader}>
+                  <View style={styles.candidateName}>
+                    <Text style={styles.name}>Vote to approve</Text>
+                  </View>
+
+                  <RoundButton label="Approve" loading={false} onPress={() => {}} />
+                </View>
+
+                <Text style={styles.description}>
+                  When you vote to approve a candidate, you are saying you believe they represent and uphold the ideals
+                  and pillars of the fraternity. If you have not had enough interaction with the candidate to feel
+                  comfortable vouching for their character, make your decision based on the fraternity discussion. Note:
+                  if you change your mind, you can switch your vote up until the voting moves to the next candidate.
+                </Text>
               </View>
             </View>
           </View>
@@ -441,7 +478,11 @@ const styles = StyleSheet.create({
   },
   votingContainer: {
     marginTop: 16,
+    marginHorizontal: 16,
     flexDirection: 'row'
+  },
+  multilineInput: {
+    height: 128
   }
 });
 
