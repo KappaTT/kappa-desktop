@@ -91,7 +91,7 @@ const PresentationModePage: React.FC<{
   }, [dispatchGetActiveVotes, dispatchGetCandidates, isGettingActiveVotes, isGettingCandidates]);
 
   React.useEffect(() => {
-    if (votingRefreshDate.isBefore(moment()) && !isGettingCandidates && !isGettingActiveVotes) {
+    if (!isGettingCandidates && !isGettingActiveVotes && votingRefreshDate.isBefore(moment())) {
       const t = setTimeout(refreshVotes, 5000);
       return () => clearTimeout(t);
     }

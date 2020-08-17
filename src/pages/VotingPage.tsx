@@ -93,7 +93,7 @@ const VotingPage: React.FC<{
   }, [dispatchGetActiveVotes, isGettingActiveVotes]);
 
   React.useEffect(() => {
-    if (activeSession !== null && votingRefreshDate.isBefore(moment()) && !isGettingActiveVotes) {
+    if (activeSession !== null && !isGettingActiveVotes && votingRefreshDate.isBefore(moment())) {
       const t = setTimeout(refreshVotes, 5000);
       return () => clearTimeout(t);
     }
