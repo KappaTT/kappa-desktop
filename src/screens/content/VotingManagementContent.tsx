@@ -46,15 +46,10 @@ const VotingManagementContent: React.FC<{
   const isGettingCandidateVotes = useSelector((state: TRedux) => state.voting.isGettingCandidateVotes);
   const getCandidateVotesError = useSelector((state: TRedux) => state.voting.getCandidateVotesError);
 
-  const selectedSession = React.useMemo(() => {
-    const index = sessionArray.findIndex((session) => session._id === selectedSessionId);
-
-    if (index >= 0) {
-      return sessionArray[index];
-    }
-
-    return null;
-  }, [selectedSessionId, sessionArray]);
+  const selectedSession = React.useMemo(
+    () => sessionArray.find((session) => session._id === selectedSessionId) || null,
+    [selectedSessionId, sessionArray]
+  );
 
   const dispatch = useDispatch();
   const dispatchGetEvents = React.useCallback(() => dispatch(_kappa.getEvents(user)), [dispatch, user]);

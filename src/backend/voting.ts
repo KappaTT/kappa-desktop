@@ -514,7 +514,7 @@ export interface TGetActiveVotesPayload {
 }
 
 interface TGetActiveVotesRequestResponse {
-  session: TSession;
+  sessions: TSession[];
   candidate: TCandidate;
   votes: TVote[];
 }
@@ -545,7 +545,7 @@ export const getActiveVotes = async (payload: TGetActiveVotesPayload): Promise<T
     }
 
     return pass({
-      session: response.data.session,
+      sessions: response.data.sessions,
       candidate: response.data.candidate,
       votes: response.data.votes
     });

@@ -441,11 +441,11 @@ export default (state = initialState, action: any): TVotingState => {
         getActiveVotesErrorMessage: ''
       };
     case GET_ACTIVE_VOTES_SUCCESS:
-      if (action.session !== null && action.candidate !== null) {
+      if (action.sessions.length > 0 && action.candidate !== null) {
         return {
           ...state,
           isGettingActiveVotes: false,
-          sessionArray: mergeSessions(state.sessionArray, [action.session]),
+          sessionArray: mergeSessions(state.sessionArray, action.sessions),
           sessionToCandidateToVotes: mergeVotes(state.sessionToCandidateToVotes, action.votes),
           ...recomputeVotingState({
             emailToCandidate: mergeCandidates(state.emailToCandidate, [action.candidate])

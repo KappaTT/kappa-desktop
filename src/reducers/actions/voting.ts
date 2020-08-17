@@ -379,7 +379,7 @@ const gettingActiveVotes = () => {
 const getActiveVotesSuccess = (data) => {
   return {
     type: GET_ACTIVE_VOTES_SUCCESS,
-    session: data.session,
+    sessions: data.sessions,
     candidate: data.candidate,
     votes: data.votes
   };
