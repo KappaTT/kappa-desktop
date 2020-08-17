@@ -4,9 +4,8 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { TRedux } from '@reducers';
 import { TToast } from '@reducers/ui';
-import { _auth, _kappa, _ui } from '@reducers/actions';
+import { _auth, _kappa, _voting, _ui } from '@reducers/actions';
 import { theme } from '@constants';
-import { log } from '@services/logService';
 
 import Ghost from '@components/Ghost';
 import Toast from '@components/Toast';
@@ -26,16 +25,18 @@ const ToastController: React.FC = () => {
   const dispatchShowToast = React.useCallback((toast: Partial<TToast>) => dispatch(_ui.showToast(toast)), [dispatch]);
   const dispatchHideToast = React.useCallback(() => dispatch(_ui.hideToast()), [dispatch]);
   const dispatchDoneHidingToast = React.useCallback(() => dispatch(_ui.doneHidingToast()), [dispatch]);
-  const dispatchClearError = React.useCallback(() => dispatch(_kappa.clearGlobalError()), [dispatch]);
+  const dispatchClearKappaError = React.useCallback(() => dispatch(_kappa.clearGlobalError()), [dispatch]);
+  const dispatchClearVotingError = React.useCallback(() => dispatch(_voting.clearGlobalError()), [dispatch]);
   const dispatchSignOut = React.useCallback(() => dispatch(_auth.signOut()), [dispatch]);
 
   const onDoneClosing = React.useCallback(() => {
     dispatchDoneHidingToast();
 
     if (toast.code > 0) {
-      dispatchClearError();
+      dispatchClearKappaError();
+      dispatchClearVotingError();
     }
-  }, [dispatchClearError, dispatchDoneHidingToast, toast.code]);
+  }, [dispatchClearKappaError, dispatchClearVotingError, dispatchDoneHidingToast, toast.code]);
 
   const onPressSignOut = React.useCallback(() => {
     dispatchHideToast();
@@ -43,7 +44,7 @@ const ToastController: React.FC = () => {
   }, [dispatchHideToast, dispatchSignOut]);
 
   React.useEffect(() => {
-    if (kappaGlobalErrorMessage !== '') {
+    if (kappaGlobalErrorMessage !== '' && kappaGlobalErrorDate !== null) {
       dispatchShowToast({
         title: 'Error',
         message: kappaGlobalErrorMessage,
@@ -58,7 +59,7 @@ const ToastController: React.FC = () => {
   }, [kappaGlobalErrorMessage, kappaGlobalErrorCode, kappaGlobalErrorDate, dispatchShowToast]);
 
   React.useEffect(() => {
-    if (votingGlobalErrorMessage !== '') {
+    if (votingGlobalErrorMessage !== '' && votingGlobalErrorDate !== null) {
       dispatchShowToast({
         title: 'Error',
         message: votingGlobalErrorMessage,

@@ -19,7 +19,7 @@ export interface TUIState {
   toast: TToast;
 }
 
-const initialToast = {
+const initialToast: TToast = {
   title: '',
   message: '',
   allowClose: true,

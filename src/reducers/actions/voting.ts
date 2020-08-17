@@ -49,8 +49,24 @@ import {
   HIDE_VOTING,
   SUBMIT_VOTE,
   SUBMIT_VOTE_SUCCESS,
-  SUBMIT_VOTE_FAILURE
+  SUBMIT_VOTE_FAILURE,
+  SET_GLOBAL_ERROR_MESSAGE,
+  CLEAR_GLOBAL_ERROR_MESSAGE
 } from '@reducers/voting';
+
+export const setGlobalError = (data) => {
+  return {
+    type: SET_GLOBAL_ERROR_MESSAGE,
+    message: data.message,
+    code: data.code
+  };
+};
+
+export const clearGlobalError = () => {
+  return {
+    type: CLEAR_GLOBAL_ERROR_MESSAGE
+  };
+};
 
 const gettingCandidates = () => {
   return {

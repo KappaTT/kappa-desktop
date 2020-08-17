@@ -71,7 +71,7 @@ export const getCandidates = async (payload: TGetCandidatesPayload): Promise<TGe
     log('Get candidates response', response.code);
 
     if (!response.success) {
-      return fail({}, 'issue connecting to the server', 500);
+      return fail({}, response.error?.message || 'issue connecting to the server', 500);
     } else if (response.code !== 200) {
       if (response.code === 401) {
         return fail({}, 'your credentials were invalid or have expired', response.code);
@@ -263,7 +263,7 @@ export const getSessions = async (payload: TGetSessionsPayload): Promise<TGetSes
     log('Get sessions response', response.code);
 
     if (!response.success) {
-      return fail({}, 'issue connecting to the server', 500);
+      return fail({}, response.error?.message || 'issue connecting to the server', 500);
     } else if (response.code !== 200) {
       if (response.code === 401) {
         return fail({}, 'your credentials were invalid or have expired', response.code);
@@ -535,7 +535,7 @@ export const getActiveVotes = async (payload: TGetActiveVotesPayload): Promise<T
     log('Get active votes response', response.code);
 
     if (!response.success) {
-      return fail({}, 'issue connecting to the server', 500);
+      return fail({}, response.error?.message || 'issue connecting to the server', 500);
     } else if (response.code !== 200) {
       if (response.code === 401) {
         return fail({}, 'your credentials were invalid or have expired', response.code);
@@ -596,7 +596,7 @@ export const getCandidateVotes = async (payload: TGetCandidateVotesPayload): Pro
     log('Get candidate votes response', response.code);
 
     if (!response.success) {
-      return fail({}, 'issue connecting to the server', 500);
+      return fail({}, response.error?.message || 'issue connecting to the server', 500);
     } else if (response.code !== 200) {
       if (response.code === 401) {
         return fail({}, 'your credentials were invalid or have expired', response.code);
@@ -645,7 +645,7 @@ export const submitVote = async (payload: TSubmitVotePayload): Promise<TSubmitVo
     log('Submit vote response', response.code);
 
     if (!response.success) {
-      return fail({}, 'issue connecting to the server', 500);
+      return fail({}, response.error?.message || 'issue connecting to the server', 500);
     } else if (response.code !== 200) {
       if (response.code === 401) {
         return fail({}, 'your credentials were invalid or have expired', response.code);
@@ -694,7 +694,7 @@ export const createNextSession = async (payload: TCreateNextSessionPayload): Pro
     log('Get create next session response', response.code);
 
     if (!response.success) {
-      return fail({}, 'issue connecting to the server', 500);
+      return fail({}, response.error?.message || 'issue connecting to the server', 500);
     } else if (response.code !== 200) {
       if (response.code === 401) {
         return fail({}, 'your credentials were invalid or have expired', response.code);
