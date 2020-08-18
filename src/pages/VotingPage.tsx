@@ -21,7 +21,7 @@ const VotingPage: React.FC<{
   const isGettingActiveVotes = useSelector((state: TRedux) => state.voting.isGettingActiveVotes);
   const isSubmittingVote = useSelector((state: TRedux) => state.voting.isSubmittingVote);
 
-  const [votingRefreshDate, setVotingRefreshDate] = React.useState(moment());
+  const [votingRefreshDate, setVotingRefreshDate] = React.useState(null);
   const [reason, setReason] = React.useState<string>('');
   const [showReasonError, setShowReasonError] = React.useState<boolean>(false);
 
@@ -93,8 +93,12 @@ const VotingPage: React.FC<{
   }, [dispatchGetActiveVotes, isGettingActiveVotes]);
 
   React.useEffect(() => {
-    if (activeSession !== null && !isGettingActiveVotes && votingRefreshDate.isBefore(moment())) {
-      const t = setTimeout(refreshVotes, 5000);
+    if (
+      activeSession !== null &&
+      !isGettingActiveVotes &&
+      (votingRefreshDate === null || votingRefreshDate.isBefore(moment()))
+    ) {
+      const t = setTimeout(refreshVotes, votingRefreshDate === null ? 0 : 5000);
       return () => clearTimeout(t);
     }
   }, [activeSession, isGettingActiveVotes, refreshVotes, votingRefreshDate]);

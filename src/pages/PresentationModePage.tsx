@@ -22,7 +22,7 @@ const PresentationModePage: React.FC<{
   const isGettingCandidates = useSelector((state: TRedux) => state.voting.isGettingCandidates);
   const isGettingActiveVotes = useSelector((state: TRedux) => state.voting.isGettingActiveVotes);
 
-  const [votingRefreshDate, setVotingRefreshDate] = React.useState(moment());
+  const [votingRefreshDate, setVotingRefreshDate] = React.useState(null);
 
   const dispatch = useDispatch();
   const dispatchGetCandidates = React.useCallback(() => dispatch(_voting.getCandidates(user)), [dispatch, user]);
@@ -91,8 +91,12 @@ const PresentationModePage: React.FC<{
   }, [dispatchGetActiveVotes, dispatchGetCandidates, isGettingActiveVotes, isGettingCandidates]);
 
   React.useEffect(() => {
-    if (!isGettingCandidates && !isGettingActiveVotes && votingRefreshDate.isBefore(moment())) {
-      const t = setTimeout(refreshVotes, 5000);
+    if (
+      !isGettingCandidates &&
+      !isGettingActiveVotes &&
+      (votingRefreshDate === null || votingRefreshDate.isBefore(moment()))
+    ) {
+      const t = setTimeout(refreshVotes, votingRefreshDate === null ? 0 : 5000);
       return () => clearTimeout(t);
     }
   }, [isGettingActiveVotes, isGettingCandidates, refreshVotes, votingRefreshDate]);

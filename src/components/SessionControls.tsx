@@ -28,7 +28,7 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
   const createNextSessionSession = useSelector((state: TRedux) => state.voting.createNextSessionSession);
 
   const [createNextSessionRequestDate, setCreateNextSessionRequestDate] = React.useState(moment());
-  const [votingRefreshDate, setVotingRefreshDate] = React.useState(moment());
+  const [votingRefreshDate, setVotingRefreshDate] = React.useState(null);
 
   const currentCandidate = React.useMemo(
     () => candidateArray.find((candidate) => candidate._id === session.currentCandidateId) || null,
@@ -214,8 +214,12 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
   ]);
 
   React.useEffect(() => {
-    if (session.active === true && !isGettingCandidateVotes && votingRefreshDate.isBefore(moment())) {
-      const t = setTimeout(refreshVotes, 5000);
+    if (
+      session.active === true &&
+      !isGettingCandidateVotes &&
+      (votingRefreshDate === null || votingRefreshDate.isBefore(moment()))
+    ) {
+      const t = setTimeout(refreshVotes, votingRefreshDate === null ? 0 : 5000);
       return () => clearTimeout(t);
     }
   }, [isGettingCandidateVotes, refreshVotes, session.active, votingRefreshDate]);
