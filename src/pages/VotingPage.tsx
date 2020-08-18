@@ -354,9 +354,6 @@ const styles = StyleSheet.create({
   section: {
     flex: 1
   },
-  approvedListSection: {
-    width: 300
-  },
   sectionContent: {
     position: 'absolute',
     top: 0,
@@ -398,35 +395,6 @@ const styles = StyleSheet.create({
   },
   dividerIcon: {
     marginVertical: 8
-  },
-  approvedCandidatesList: {
-    marginHorizontal: 16
-  },
-  approvedCandidateContainer: {
-    width: '100%',
-    height: 48,
-    borderBottomColor: theme.COLORS.LIGHT_GRAY,
-    borderBottomWidth: 1,
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between'
-  },
-  approvedCandidateIndex: {
-    marginRight: 8,
-    fontFamily: 'OpenSans-SemiBold',
-    fontSize: 17,
-    color: theme.COLORS.PRIMARY_GREEN
-  },
-  approvedCandidateName: {
-    fontFamily: 'OpenSans',
-    fontSize: 15,
-    color: theme.COLORS.BLACK
-  },
-  approvedCandidateDetails: {
-    fontFamily: 'OpenSans',
-    fontSize: 12,
-    color: theme.COLORS.DARK_GRAY
   },
   noVotes: {
     fontFamily: 'OpenSans',
