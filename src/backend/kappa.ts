@@ -102,6 +102,103 @@ export interface TEventSearchResult extends TEvent {
   pending?: boolean;
 }
 
+export interface TCreateUserPayload {
+  user: TUser;
+  newUser: Partial<TUser>;
+}
+
+interface TCreateUserRequestResponse {
+  user: TUser;
+}
+
+interface TCreateUserResponse extends TResponse {
+  data?: TCreateUserRequestResponse;
+}
+
+export const createUser = async (payload: TCreateUserPayload): Promise<TCreateUserResponse> => {
+  try {
+    const response = await makeAuthorizedRequest<TCreateUserRequestResponse>(
+      ENDPOINTS.CREATE_USER(),
+      METHODS.CREATE_USER,
+      {
+        body: {
+          user: payload.newUser
+        }
+      },
+      payload.user.sessionToken
+    );
+
+    log('Create user response', response);
+
+    if (!response.success) {
+      return fail({}, response.error?.message || 'issue connecting to the server', 500);
+    } else if (response.code !== 200) {
+      if (response.code === 401) {
+        return fail({}, 'your credentials were invalid or have expired', response.code);
+      }
+
+      return fail({}, response.error?.message, response.code);
+    }
+
+    return pass({
+      user: response.data.user
+    });
+  } catch (error) {
+    log(error);
+    return fail({}, "that wasn't supposed to happen", -1);
+  }
+};
+
+export interface TUpdateUserPayload {
+  user: TUser;
+  target: string;
+  changes: Partial<TUser>;
+}
+
+interface TUpdateUserRequestResponse {
+  user: TUser;
+}
+
+interface TUpdateUserResponse extends TResponse {
+  data?: TUpdateUserRequestResponse;
+}
+
+export const updateUser = async (payload: TUpdateUserPayload): Promise<TUpdateUserResponse> => {
+  try {
+    const response = await makeAuthorizedRequest<TUpdateUserRequestResponse>(
+      ENDPOINTS.UPDATE_USER({
+        email: payload.target
+      }),
+      METHODS.UPDATE_USER,
+      {
+        body: {
+          changes: payload.changes
+        }
+      },
+      payload.user.sessionToken
+    );
+
+    log('Update user response', response);
+
+    if (!response.success) {
+      return fail({}, response.error?.message || 'issue connecting to the server', 500);
+    } else if (response.code !== 200) {
+      if (response.code === 401) {
+        return fail({}, 'your credentials were invalid or have expired', response.code);
+      }
+
+      return fail({}, response.error?.message, response.code);
+    }
+
+    return pass({
+      user: response.data.user
+    });
+  } catch (error) {
+    log(error);
+    return fail({}, "that wasn't supposed to happen", -1);
+  }
+};
+
 export interface TGetEventsPayload {
   user: TUser;
 }

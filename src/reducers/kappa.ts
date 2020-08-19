@@ -21,13 +21,21 @@ import {
   mergeEvents,
   recomputeKappaState,
   setGlobalError,
-  excludeFromHistory
+  excludeFromHistory,
+  mergeDirectory
 } from '@services/kappaService';
 import { TUser } from '@backend/auth';
 import moment from 'moment';
 
 export const SET_GLOBAL_ERROR_MESSAGE = 'SET_GLOBAL_ERROR_MESSAGE';
 export const CLEAR_GLOBAL_ERROR_MESSAGE = 'CLEAR_GLOBAL_ERROR_MESSAGE';
+
+export const EDIT_USER = 'EDIT_USER';
+export const CANCEL_EDIT_USER = 'CANCEL_EDIT_USER';
+
+export const UPDATE_USER = 'UPDATE_USER';
+export const UPDATE_USER_SUCCESS = 'UPDATE_USER_SUCCESS';
+export const UPDATE_USER_FAILURE = 'UPDATE_USER_FAILURE';
 
 export const GET_EVENTS = 'GET_EVENTS';
 export const GET_EVENTS_SUCCESS = 'GET_EVENTS_SUCCESS';
@@ -88,6 +96,11 @@ export interface TKappaState {
   globalErrorMessage: string;
   globalErrorCode: number;
   globalErrorDate: Date;
+
+  editingUserEmail: string;
+  isUpdatingUser: boolean;
+  updateUserError: boolean;
+  updateUserErrorMessage: string;
 
   isGettingEvents: boolean;
   getEventsError: boolean;
@@ -184,6 +197,11 @@ const initialState: TKappaState = {
   globalErrorMessage: '',
   globalErrorCode: 0,
   globalErrorDate: null,
+
+  editingUserEmail: '',
+  isUpdatingUser: false,
+  updateUserError: false,
+  updateUserErrorMessage: '',
 
   isGettingEvents: false,
   getEventsError: false,
@@ -286,6 +304,42 @@ export default (state = initialState, action: any): TKappaState => {
         globalErrorMessage: '',
         globalErrorCode: 0,
         globalErrorDate: null
+      };
+    case EDIT_USER:
+      return {
+        ...state,
+        editingUserEmail: action.email
+      };
+    case CANCEL_EDIT_USER:
+      return {
+        ...state,
+        editingUserEmail: ''
+      };
+    case UPDATE_USER:
+      return {
+        ...state,
+        isUpdatingUser: true,
+        updateUserError: false,
+        updateUserErrorMessage: ''
+      };
+    case UPDATE_USER_SUCCESS:
+      return {
+        ...state,
+        isUpdatingUser: false,
+        editingUserEmail: '',
+        ...recomputeKappaState({
+          events: state.events,
+          records: state.records,
+          directory: mergeDirectory(state.directory, [action.user])
+        })
+      };
+    case UPDATE_USER_FAILURE:
+      return {
+        ...state,
+        isUpdatingUser: false,
+        updateUserError: true,
+        updateUserErrorMessage: action.error.message,
+        ...setGlobalError(action.error.message, action.error.code)
       };
     case GET_EVENTS:
       return {

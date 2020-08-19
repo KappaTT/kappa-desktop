@@ -1,8 +1,6 @@
 import { Auth } from '@backend';
 
 import {
-  SHOW_ONBOARDING,
-  HIDE_ONBOARDING,
   SHOW_MODAL,
   HIDE_MODAL,
   LOADED_USER,
@@ -12,27 +10,11 @@ import {
   SIGN_IN_FAILURE,
   SIGN_OUT,
   SHOW_SIGN_IN,
-  UPDATE_USER,
-  UPDATE_USER_SUCCESS,
-  UPDATE_USER_FAILURE,
   MODIFY_USER
 } from '@reducers/auth';
 import { TUser, initialUser, purge } from '@backend/auth';
 import { getBatch, setBatch } from '@services/asyncStorage';
 import { log } from '@services/logService';
-
-export const showOnboarding = (editing: boolean = false) => {
-  return {
-    type: SHOW_ONBOARDING,
-    editing
-  };
-};
-
-export const hideOnboarding = () => {
-  return {
-    type: HIDE_ONBOARDING
-  };
-};
 
 export const showModal = () => {
   return {
@@ -66,10 +48,10 @@ export const setUser = (user: TUser, authorized: boolean = true) => {
   };
 };
 
-export const modifyUser = (changes: Partial<TUser>) => {
+export const modifyUser = (user: TUser) => {
   return {
     type: MODIFY_USER,
-    changes
+    user
   };
 };
 
@@ -134,41 +116,5 @@ export const authenticate = (email: string, idToken: string) => {
 export const signInWithGoogle = (data: { email: string; idToken: string }) => {
   return (dispatch) => {
     dispatch(authenticate(data.email, data.idToken));
-  };
-};
-
-const updatingUser = () => {
-  return {
-    type: UPDATE_USER
-  };
-};
-
-const updateUserSuccess = () => {
-  return {
-    type: UPDATE_USER_SUCCESS
-  };
-};
-
-const updateUserFailure = (err) => {
-  return {
-    type: UPDATE_USER_FAILURE,
-    error: err
-  };
-};
-
-export const updateUser = (user: TUser, changes: Partial<TUser>) => {
-  return (dispatch) => {
-    dispatch(updatingUser());
-
-    Auth.updateUser({ user, changes }).then((res) => {
-      if (res.success) {
-        dispatch(modifyUser(res.data.changes));
-        dispatch(updateUserSuccess());
-
-        setBatch('user', res.data.changes);
-      } else {
-        dispatch(updateUserFailure(res.error));
-      }
-    });
   };
 };

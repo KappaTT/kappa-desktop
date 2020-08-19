@@ -6,7 +6,7 @@ import { GoogleLoginResponse } from 'react-google-login';
 
 import { ParamType } from '@navigation/NavigationTypes';
 import { TRedux } from '@reducers';
-import { _auth } from '@reducers/actions';
+import { _auth, _nav } from '@reducers/actions';
 import { theme, Images } from '@constants';
 import { GoogleSignInButton } from '@components';
 
@@ -24,6 +24,9 @@ const LoginContent: React.FC<{
     (data: { email: string; idToken: string }) => dispatch(_auth.signInWithGoogle(data)),
     [dispatch]
   );
+  const dispatchSetSelectedPage = React.useCallback((label: string) => dispatch(_nav.setSelectedPage(label)), [
+    dispatch
+  ]);
 
   const onGoogleSuccess = React.useCallback(
     (data: GoogleLoginResponse) => {
@@ -42,8 +45,9 @@ const LoginContent: React.FC<{
   React.useEffect(() => {
     if (authorized) {
       navigation.navigate('EventsStack');
+      dispatchSetSelectedPage('Events');
     }
-  }, [authorized, navigation]);
+  }, [authorized, dispatchSetSelectedPage, navigation]);
 
   React.useEffect(() => {
     if (signInErrorMessage) {

@@ -20,6 +20,7 @@ export const ENDPOINTS: {
   [key: string]: (config?: any) => string;
 } = {
   SIGN_IN: () => 'users/login',
+  CREATE_USER: () => 'users',
   UPDATE_USER: (config: { email: string }) => `users/${config.email}`,
   GET_EVENTS: () => 'events',
   GET_USERS: () => 'users',
@@ -54,6 +55,7 @@ export const METHODS: {
   [key: string]: TMethod;
 } = {
   SIGN_IN: M_POST,
+  CREATE_USER: M_POST,
   UPDATE_USER: M_PATCH,
   GET_EVENTS: M_GET,
   GET_USERS: M_GET,

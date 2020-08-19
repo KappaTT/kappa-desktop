@@ -45,10 +45,17 @@ import {
   REJECT_EXCUSE_FAILURE,
   GET_EVENT_SEARCH_RESULTS,
   GET_EVENT_SEARCH_RESULTS_SUCCESS,
-  GET_EVENT_SEARCH_RESULTS_FAILURE
+  GET_EVENT_SEARCH_RESULTS_FAILURE,
+  UPDATE_USER,
+  UPDATE_USER_SUCCESS,
+  UPDATE_USER_FAILURE,
+  EDIT_USER,
+  CANCEL_EDIT_USER
 } from '@reducers/kappa';
 import { TUser } from '@backend/auth';
 import { TEvent, TExcuse, TEventSearch } from '@backend/kappa';
+import { modifyUser } from './auth';
+import { setBatch } from '@services/asyncStorage';
 
 export const setGlobalError = (data) => {
   return {
@@ -61,6 +68,58 @@ export const setGlobalError = (data) => {
 export const clearGlobalError = () => {
   return {
     type: CLEAR_GLOBAL_ERROR_MESSAGE
+  };
+};
+
+export const editUser = (email: string) => {
+  return {
+    type: EDIT_USER,
+    email
+  };
+};
+
+export const cancelEditUser = () => {
+  return {
+    type: CANCEL_EDIT_USER
+  };
+};
+
+const updatingUser = () => {
+  return {
+    type: UPDATE_USER
+  };
+};
+
+const updateUserSuccess = (data) => {
+  return {
+    type: UPDATE_USER_SUCCESS,
+    user: data.user
+  };
+};
+
+const updateUserFailure = (error) => {
+  return {
+    type: UPDATE_USER_FAILURE,
+    error
+  };
+};
+
+export const updateUser = (user: TUser, target: string, changes: Partial<TUser>) => {
+  return (dispatch) => {
+    dispatch(updatingUser());
+
+    Kappa.updateUser({ user, target, changes }).then((res) => {
+      if (res.success) {
+        if (user.email === res.data.user.email) {
+          dispatch(modifyUser(res.data.user));
+          setBatch('user', changes);
+        }
+
+        dispatch(updateUserSuccess(res.data));
+      } else {
+        dispatch(updateUserFailure(res.error));
+      }
+    });
   };
 };
 

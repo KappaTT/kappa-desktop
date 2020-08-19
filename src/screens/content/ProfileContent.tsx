@@ -44,7 +44,7 @@ const ProfileContent: React.FC<{
   const gmCounts = getTypeCounts(events, attended, excused, 'GM');
 
   const dispatch = useDispatch();
-  const dispatchEdit = React.useCallback(() => dispatch(_auth.showOnboarding(true)), [dispatch]);
+  const dispatchEditUser = React.useCallback(() => dispatch(_kappa.editUser(user.email)), [dispatch, user.email]);
   const dispatchGetEvents = React.useCallback(() => dispatch(_kappa.getEvents(user)), [dispatch, user]);
   const dispatchGetMyAttendance = React.useCallback(
     (overwrite: boolean = false) => dispatch(_kappa.getMyAttendance(user, overwrite)),
@@ -122,7 +122,7 @@ const ProfileContent: React.FC<{
           <Text style={styles.roleText}>{user.role}</Text>
 
           <View style={styles.headerButtonContainer}>
-            <TouchableOpacity activeOpacity={0.6} onPress={dispatchEdit}>
+            <TouchableOpacity activeOpacity={0.6} onPress={dispatchEditUser}>
               <Text style={styles.headerButtonText}>Edit Profile</Text>
             </TouchableOpacity>
           </View>

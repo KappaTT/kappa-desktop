@@ -1,9 +1,6 @@
 import { TBlame } from '@backend/backend';
 import { TUser, initialUser } from '@backend/auth';
 
-export const SHOW_ONBOARDING = 'SHOW_ONBOARDING';
-export const HIDE_ONBOARDING = 'HIDE_ONBOARDING';
-
 export const SHOW_MODAL = 'SHOW_MODAL';
 export const HIDE_MODAL = 'HIDE_MODAL';
 
@@ -18,14 +15,8 @@ export const SIGN_OUT = 'SIGN_OUT';
 
 export const SHOW_SIGN_IN = 'SHOW_SIGN_IN';
 
-export const UPDATE_USER = 'UPDATE_USER';
-export const UPDATE_USER_SUCCESS = 'UPDATE_USER_SUCCESS';
-export const UPDATE_USER_FAILURE = 'UPDATE_USER_FAILURE';
-
 export interface TAuthState {
   visible: boolean;
-  isEditingUser: boolean;
-  onboardingVisible: boolean;
 
   isAuthenticating: boolean;
   loadedUser: boolean;
@@ -35,16 +26,10 @@ export interface TAuthState {
   signInErrorMessage: string;
 
   signInVisible: boolean;
-
-  isUpdatingUser: boolean;
-  updateUserError: boolean;
-  updateErrorMessage: string;
 }
 
 const initialState: TAuthState = {
   visible: false,
-  isEditingUser: false,
-  onboardingVisible: false,
 
   isAuthenticating: false,
   loadedUser: false,
@@ -53,27 +38,11 @@ const initialState: TAuthState = {
   signInError: false,
   signInErrorMessage: '',
 
-  signInVisible: true,
-
-  isUpdatingUser: false,
-  updateUserError: false,
-  updateErrorMessage: ''
+  signInVisible: true
 };
 
 export default (state = initialState, action: any): TAuthState => {
   switch (action.type) {
-    case SHOW_ONBOARDING:
-      return {
-        ...state,
-        onboardingVisible: true,
-        isEditingUser: action.editing
-      };
-    case HIDE_ONBOARDING:
-      return {
-        ...state,
-        onboardingVisible: false,
-        isEditingUser: false
-      };
     case SHOW_MODAL:
       return {
         ...state,
@@ -107,7 +76,7 @@ export default (state = initialState, action: any): TAuthState => {
         ...state,
         user: {
           ...state.user,
-          ...action.changes
+          ...action.user
         }
       };
     case SIGN_IN:
@@ -131,26 +100,6 @@ export default (state = initialState, action: any): TAuthState => {
         signInErrorMessage: action.error.message,
         authorized: false,
         user: initialUser
-      };
-    case UPDATE_USER:
-      return {
-        ...state,
-        isUpdatingUser: true,
-        updateUserError: false,
-        updateErrorMessage: ''
-      };
-    case UPDATE_USER_SUCCESS:
-      return {
-        ...state,
-        isUpdatingUser: false,
-        isEditingUser: false
-      };
-    case UPDATE_USER_FAILURE:
-      return {
-        ...state,
-        isUpdatingUser: false,
-        updateUserError: true,
-        updateErrorMessage: action.error.message
       };
     case SIGN_OUT:
       return {

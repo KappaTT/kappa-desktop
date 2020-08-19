@@ -76,6 +76,16 @@ export const getUserByEmail = (directory: TDirectory, email: string) => {
   return null;
 };
 
+export const mergeDirectory = (directory: TDirectory, newUsers: TUser[]) => {
+  const mergedDirectory = directory;
+
+  for (const user of newUsers) {
+    mergedDirectory[user.email] = user;
+  }
+
+  return mergedDirectory;
+};
+
 export const mergeEvents = (events: TEventDict, newEvents: TEvent[]) => {
   const mergedEvents = events;
 

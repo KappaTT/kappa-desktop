@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, ScrollView, TouchableOpacity, ActivityIndicator
 import { useSelector, useDispatch } from 'react-redux';
 
 import { TRedux } from '@reducers';
-import { _auth } from '@reducers/actions';
+import { _auth, _kappa } from '@reducers/actions';
 import { theme } from '@constants';
 import { prettyPhone } from '@services/kappaService';
 import { Icon, Switch, RadioList, FormattedInput } from '@components';
@@ -45,19 +45,16 @@ const EditProfilePage: React.FC<{
   onPressCancel(): void;
 }> = ({ onPressCancel }) => {
   const user = useSelector((state: TRedux) => state.auth.user);
-  const isEditingUser = useSelector((state: TRedux) => state.auth.isEditingUser);
-  const isUpdatingUser = useSelector((state: TRedux) => state.auth.isUpdatingUser);
+  const isUpdatingUser = useSelector((state: TRedux) => state.kappa.isUpdatingUser);
 
   const [phone, setPhone] = React.useState<string>(user.phone || '');
   const [gradYear, setGradYear] = React.useState<string>(user.gradYear || '');
 
   const dispatch = useDispatch();
-  const dispatchUpdateUser = React.useCallback(() => dispatch(_auth.updateUser(user, { phone, gradYear })), [
-    dispatch,
-    user,
-    phone,
-    gradYear
-  ]);
+  const dispatchUpdateUser = React.useCallback(
+    () => dispatch(_kappa.updateUser(user, user.email, { phone, gradYear })),
+    [dispatch, user, phone, gradYear]
+  );
 
   const prettyPhoneValue = React.useMemo(() => prettyPhone(phone), [phone]);
   const gradYearOptions = React.useMemo(() => getGradYearOptions(), []);
@@ -79,7 +76,7 @@ const EditProfilePage: React.FC<{
     return (
       <React.Fragment>
         <View style={styles.cancelWrapper}>
-          <TouchableOpacity activeOpacity={0.6} disabled={isUpdatingUser || !isEditingUser} onPress={onPressCancel}>
+          <TouchableOpacity activeOpacity={0.6} disabled={isUpdatingUser} onPress={onPressCancel}>
             <Text style={styles.cancelText}>Cancel</Text>
           </TouchableOpacity>
         </View>

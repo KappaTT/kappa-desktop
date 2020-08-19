@@ -30,8 +30,8 @@ const ModalController: React.FC = () => {
   const checkInEventId = useSelector((state: TRedux) => state.kappa.checkInEventId);
   const checkInExcuse = useSelector((state: TRedux) => state.kappa.checkInExcuse);
   const isCheckingIn = useSelector((state: TRedux) => state.kappa.isCheckingIn);
-  const onboardingVisible = useSelector((state: TRedux) => state.auth.onboardingVisible);
-  const isEditingUser = useSelector((state: TRedux) => state.auth.isEditingUser);
+  const editingUserEmail = useSelector((state: TRedux) => state.kappa.editingUserEmail);
+  const isUpdatingUser = useSelector((state: TRedux) => state.kappa.isUpdatingUser);
   const editingCandidateEmail = useSelector((state: TRedux) => state.voting.editingCandidateEmail);
   const isSavingCandidate = useSelector((state: TRedux) => state.voting.isSavingCandidate);
   const editingSessionId = useSelector((state: TRedux) => state.voting.editingSessionId);
@@ -47,25 +47,14 @@ const ModalController: React.FC = () => {
     [dispatch, user]
   );
   const dispatchCancelCheckInEvent = React.useCallback(() => dispatch(_kappa.setCheckInEvent('', false)), [dispatch]);
-  const dispatchShowOnboarding = React.useCallback(() => dispatch(_auth.showOnboarding()), [dispatch]);
-  const dispatchHideOnboarding = React.useCallback(() => dispatch(_auth.hideOnboarding()), [dispatch]);
+  const dispatchCancelEditUser = React.useCallback(() => dispatch(_kappa.cancelEditUser()), [dispatch]);
   const dispatchCancelEditCandidate = React.useCallback(() => dispatch(_voting.cancelEditCandidate()), [dispatch]);
   const dispatchCancelEditSession = React.useCallback(() => dispatch(_voting.cancelEditSession()), [dispatch]);
   const dispatchHidePresentationMode = React.useCallback(() => dispatch(_voting.hidePresentationMode()), [dispatch]);
   const dispatchHideVoting = React.useCallback(() => dispatch(_voting.hideVoting()), [dispatch]);
 
-  React.useEffect(() => {
-    if (!authorized || !user) {
-      if (onboardingVisible) {
-        dispatchHideOnboarding();
-      }
-
-      return;
-    }
-
-    if (isEditingUser) {
-      return;
-    }
+  const userIsIncomplete = React.useMemo(() => {
+    if (!authorized || !user) return false;
 
     let incomplete = false;
 
@@ -76,12 +65,8 @@ const ModalController: React.FC = () => {
       }
     }
 
-    if (incomplete && !onboardingVisible) {
-      dispatchShowOnboarding();
-    } else if (!incomplete && onboardingVisible) {
-      dispatchHideOnboarding();
-    }
-  }, [authorized, user, onboardingVisible, isEditingUser, dispatchHideOnboarding, dispatchShowOnboarding]);
+    return incomplete;
+  }, [authorized, user]);
 
   return (
     <Ghost style={styles.container}>
@@ -116,11 +101,11 @@ const ModalController: React.FC = () => {
       </PopupModal>
 
       <PopupModal
-        visible={onboardingVisible || isEditingUser}
-        allowClose={isEditingUser}
-        onDoneClosing={dispatchHideOnboarding}
+        visible={userIsIncomplete || (authorized && editingUserEmail === user.email)}
+        allowClose={isUpdatingUser}
+        onDoneClosing={dispatchCancelEditUser}
       >
-        <EditProfilePage onPressCancel={dispatchHideOnboarding} />
+        <EditProfilePage onPressCancel={dispatchCancelEditUser} />
       </PopupModal>
 
       <PopupModal

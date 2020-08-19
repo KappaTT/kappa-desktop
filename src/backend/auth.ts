@@ -117,13 +117,13 @@ export const signIn = async (payload: TSignInPayload): Promise<TSignInResponse> 
     log('Sign in response', response);
 
     if (!response.success) {
-      return fail({}, response.error?.message || 'issue connecting to the server');
+      return fail({}, response.error?.message || 'issue connecting to the server', 500);
     } else if (response.code !== 200) {
       if (response.code === 401) {
-        return fail({}, 'your netid was not recognized');
+        return fail({}, 'your netid was not recognized', response.code);
       }
 
-      return fail({}, '');
+      return fail({}, response.error?.message, response.code);
     }
 
     return pass({
@@ -134,59 +134,6 @@ export const signIn = async (payload: TSignInPayload): Promise<TSignInResponse> 
     });
   } catch (error) {
     log(error);
-    return fail({}, "that wasn't supposed to happen");
-  }
-};
-
-export interface TUpdateUserPayload {
-  user: TUser;
-  changes: Partial<TUser>;
-}
-
-interface TUpdateUserRequestResponse {
-  changes: Partial<TUser>;
-}
-
-interface TUpdateUserResponse extends TResponse {
-  data?: {
-    changes: Partial<TUser>;
-  };
-}
-
-export const updateUser = async (payload: TUpdateUserPayload): Promise<TUpdateUserResponse> => {
-  try {
-    const response = await makeAuthorizedRequest<TUpdateUserRequestResponse>(
-      ENDPOINTS.UPDATE_USER({
-        email: payload.user.email
-      }),
-      METHODS.UPDATE_USER,
-      {
-        body: {
-          changes: payload.changes
-        }
-      },
-      payload.user.sessionToken
-    );
-
-    log('Update user response', response);
-
-    if (!response.success) {
-      return fail({}, response.error?.message || 'issue connecting to the server');
-    } else if (response.code !== 200) {
-      if (response.code === 401) {
-        return fail({}, 'your credentials were invalid or have expired');
-      } else if (response.code === 404) {
-        return fail({}, 'your target user was invalid');
-      }
-
-      return fail({}, '');
-    }
-
-    return pass({
-      changes: response.data.changes
-    });
-  } catch (error) {
-    log(error);
-    return fail({}, "that wasn't supposed to happen");
+    return fail({}, "that wasn't supposed to happen", -1);
   }
 };
