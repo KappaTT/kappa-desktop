@@ -13,6 +13,7 @@ import { getVotes } from '@services/votingService';
 import RoundButton from '@components/RoundButton';
 import Icon from '@components/Icon';
 import HorizontalSegmentBar from '@components/HorizontalSegmentBar';
+import Switch from '@components/Switch';
 
 const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
   const user = useSelector((state: TRedux) => state.auth.user);
@@ -27,6 +28,7 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
   const createNextSessionDate = useSelector((state: TRedux) => state.voting.createNextSessionDate);
   const createNextSessionSession = useSelector((state: TRedux) => state.voting.createNextSessionSession);
 
+  const [readyToCreate, setReadyToCreate] = React.useState<boolean>(false);
   const [createNextSessionRequestDate, setCreateNextSessionRequestDate] = React.useState(moment());
   const [votingRefreshDate, setVotingRefreshDate] = React.useState(null);
 
@@ -175,6 +177,10 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
       ),
     [candidateIndex, dispatch, session._id, session.candidateOrder, user]
   );
+
+  const onChangeReadyToCreate = React.useCallback((newValue: boolean) => {
+    setReadyToCreate(newValue);
+  }, []);
 
   const onPressCreateNextRound = React.useCallback(() => {
     dispatchCreateNextSession();
@@ -405,7 +411,11 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
                 {isCreatingNextSession ? (
                   <ActivityIndicator style={styles.zoneIcon} color={theme.COLORS.PRIMARY} />
                 ) : (
-                  <TouchableOpacity onPress={onPressCreateNextRound}>
+                  <TouchableOpacity
+                    style={!readyToCreate && styles.disabledButton}
+                    disabled={!readyToCreate}
+                    onPress={onPressCreateNextRound}
+                  >
                     <Icon
                       style={styles.zoneIcon}
                       family="Feather"
@@ -415,6 +425,11 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
                     />
                   </TouchableOpacity>
                 )}
+              </View>
+
+              <View style={styles.enableCreateContainer}>
+                <Switch value={readyToCreate} onValueChange={onChangeReadyToCreate} />
+                <Text style={styles.readyToCreate}>I am ready to create the next session</Text>
               </View>
             </View>
           </View>
@@ -662,6 +677,21 @@ const styles = StyleSheet.create({
   },
   zoneIcon: {
     width: 32
+  },
+  disabledButton: {
+    opacity: 0.6
+  },
+  enableCreateContainer: {
+    marginTop: 8,
+    marginLeft: 16,
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  readyToCreate: {
+    marginLeft: 8,
+    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 13
   },
   instructions: {
     marginHorizontal: 16
