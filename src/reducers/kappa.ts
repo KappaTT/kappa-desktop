@@ -10,7 +10,8 @@ import {
   TLoadHistory,
   TPointsUserDict,
   TExcuse,
-  TPendingExcuse
+  TPendingExcuse,
+  TAttendance
 } from '@backend/kappa';
 import {
   getEventById,
@@ -22,7 +23,9 @@ import {
   recomputeKappaState,
   setGlobalError,
   excludeFromHistory,
-  mergeDirectory
+  mergeDirectory,
+  excludeUserFromRecords,
+  excludeEventFromRecords
 } from '@services/kappaService';
 import { TUser } from '@backend/auth';
 import moment from 'moment';
@@ -31,6 +34,7 @@ export const SET_GLOBAL_ERROR_MESSAGE = 'SET_GLOBAL_ERROR_MESSAGE';
 export const CLEAR_GLOBAL_ERROR_MESSAGE = 'CLEAR_GLOBAL_ERROR_MESSAGE';
 
 export const EDIT_USER = 'EDIT_USER';
+export const EDIT_NEW_USER = 'EDIT_NEW_USER';
 export const CANCEL_EDIT_USER = 'CANCEL_EDIT_USER';
 
 export const UPDATE_USER = 'UPDATE_USER';
@@ -310,6 +314,11 @@ export default (state = initialState, action: any): TKappaState => {
         ...state,
         editingUserEmail: action.email
       };
+    case EDIT_NEW_USER:
+      return {
+        ...state,
+        editingUserEmail: 'NEW'
+      };
     case CANCEL_EDIT_USER:
       return {
         ...state,
@@ -407,35 +416,23 @@ export default (state = initialState, action: any): TKappaState => {
         getAttendanceErrorMessage: ''
       };
     case GET_ATTENDANCE_SUCCESS: {
-      let newLoadHistory = {};
-
-      if (action.overwrite) {
-        newLoadHistory = excludeFromHistory(
-          state.loadHistory,
-          (key: string) => key.startsWith('user-') || key.startsWith('event-')
-        );
-
-        newLoadHistory[action.loadKey] = moment();
-      } else {
-        newLoadHistory = {
-          ...state.loadHistory,
-          [action.loadKey]: moment()
-        };
-      }
-
       return {
         ...state,
         isGettingAttendance: false,
-        loadHistory: newLoadHistory,
+        loadHistory: {
+          ...state.loadHistory,
+          [action.loadKey]: moment()
+        },
         ...recomputeKappaState({
           events: state.events,
           records: mergeRecords(
-            state.records,
+            action.loadKey.startsWith('user-')
+              ? excludeUserFromRecords(state.records, action.target)
+              : excludeEventFromRecords(state.records, action.target),
             {
               attended: action.attended,
               excused: action.excused
-            },
-            action.overwrite
+            }
           ),
           directory: state.directory
         })

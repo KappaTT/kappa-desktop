@@ -112,20 +112,42 @@ export const mergeEventDates = (eventDateDict: TEventDateDict, newEvents: TEvent
   return separated;
 };
 
+export const excludeUserFromRecords = (records: TRecords, target: string) => {
+  const newRecords = records;
+
+  newRecords.attended[target] = undefined;
+  delete newRecords.attended[target];
+
+  newRecords.excused[target] = undefined;
+  delete newRecords.excused[target];
+
+  return newRecords;
+};
+
+export const excludeEventFromRecords = (records: TRecords, target: string) => {
+  const newRecords = records;
+
+  for (const email of Object.keys(records.attended)) {
+    newRecords.attended[email][target] = undefined;
+    delete newRecords.attended[email][target];
+  }
+
+  for (const email of Object.keys(records.excused)) {
+    newRecords.excused[email][target] = undefined;
+    delete newRecords.excused[email][target];
+  }
+
+  return newRecords;
+};
+
 export const mergeRecords = (
   records: TRecords,
   newRecords: {
     attended: TAttendance[];
     excused: TExcuse[];
-  },
-  overwrite: boolean = false
+  }
 ) => {
-  const mergedRecords = overwrite
-    ? {
-        attended: {},
-        excused: {}
-      }
-    : records;
+  const mergedRecords = records;
 
   for (const attend of newRecords.attended) {
     const email = attend.email;
@@ -472,12 +494,12 @@ export const setGlobalError = (message: string, code: number) => {
 export const excludeFromHistory = (loadHistory: TLoadHistory, exclude?: (key: string) => boolean) => {
   const newLoadHistory = {};
 
-  for (const [key, value] of Object.entries(loadHistory)) {
+  for (const key of Object.keys(loadHistory)) {
     if (exclude(key)) {
       continue;
     }
 
-    newLoadHistory[key] = value;
+    newLoadHistory[key] = loadHistory[key];
   }
 
   return newLoadHistory;

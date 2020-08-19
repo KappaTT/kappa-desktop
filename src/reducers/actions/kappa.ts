@@ -50,7 +50,8 @@ import {
   UPDATE_USER_SUCCESS,
   UPDATE_USER_FAILURE,
   EDIT_USER,
-  CANCEL_EDIT_USER
+  CANCEL_EDIT_USER,
+  EDIT_NEW_USER
 } from '@reducers/kappa';
 import { TUser } from '@backend/auth';
 import { TEvent, TExcuse, TEventSearch } from '@backend/kappa';
@@ -75,6 +76,12 @@ export const editUser = (email: string) => {
   return {
     type: EDIT_USER,
     email
+  };
+};
+
+export const editNewUser = () => {
+  return {
+    type: EDIT_NEW_USER
   };
 };
 
@@ -197,12 +204,13 @@ const gettingAttendance = () => {
   };
 };
 
-const getAttendanceSuccess = (data, loadKey?: string, overwrite: boolean = false) => {
+const getAttendanceSuccess = (data, loadKey?: string, target?: string, overwrite: boolean = false) => {
   return {
     type: GET_ATTENDANCE_SUCCESS,
     attended: data.attended,
     excused: data.excused,
     loadKey,
+    target,
     overwrite
   };
 };
@@ -224,7 +232,7 @@ export const getUserAttendance = (user: TUser, target: string, overwrite: boolea
 
     Kappa.getAttendanceByUser({ user, target }).then((res) => {
       if (res.success) {
-        dispatch(getAttendanceSuccess(res.data, `user-${target}`, overwrite));
+        dispatch(getAttendanceSuccess(res.data, `user-${target}`, target, overwrite));
       } else {
         dispatch(getAttendanceFailure(res.error));
       }
@@ -238,7 +246,7 @@ export const getEventAttendance = (user: TUser, target: string, overwrite: boole
 
     Kappa.getAttendanceByEvent({ user, target }).then((res) => {
       if (res.success) {
-        dispatch(getAttendanceSuccess(res.data, `event-${target}`, overwrite));
+        dispatch(getAttendanceSuccess(res.data, `event-${target}`, target, overwrite));
       } else {
         dispatch(getAttendanceFailure(res.error));
       }
