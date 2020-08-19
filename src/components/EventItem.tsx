@@ -13,7 +13,8 @@ import {
   getMissedMandatoryByEvent,
   sortUserByName,
   prettyPoints,
-  shouldLoad
+  shouldLoad,
+  canCheckIn
 } from '@services/kappaService';
 import { theme } from '@constants';
 import { TUser } from '@backend/auth';
@@ -132,8 +133,8 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
   }, [attended, excused]);
 
   const checkInDisabled = React.useMemo(() => {
-    return attended !== undefined || !moment(event.start).isSame(moment(), 'day');
-  }, [attended, event.start]);
+    return attended !== undefined || !canCheckIn(event);
+  }, [attended, event]);
 
   React.useEffect(() => {
     if (expanded) {

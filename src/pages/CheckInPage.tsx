@@ -8,7 +8,7 @@ import { TEvent } from '@backend/kappa';
 import { TToast } from '@reducers/ui';
 import { _kappa, _ui } from '@reducers/actions';
 import { theme } from '@constants';
-import { hasValidCheckIn, sortEventByDate, shouldLoad } from '@services/kappaService';
+import { hasValidCheckIn, sortEventByDate, shouldLoad, canCheckIn } from '@services/kappaService';
 import { Icon, RadioList, FormattedInput } from '@components';
 
 const numberFormatter = (text: string) => {
@@ -79,9 +79,7 @@ const CheckInPage: React.FC<{
 
   const eventOptions = React.useMemo(() => {
     return futureEventArray
-      .filter(
-        (event) => !hasValidCheckIn(records, user.email, event._id, true) && moment(event.start).isSame(openDate, 'day')
-      )
+      .filter((event) => !hasValidCheckIn(records, user.email, event._id, true) && canCheckIn(event, openDate))
       .sort(sortEventByDate)
       .map((event) => ({
         id: event._id,

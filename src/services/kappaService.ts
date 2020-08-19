@@ -17,6 +17,13 @@ import {
 import { TUser } from '@backend/auth';
 import { log } from '@services/logService';
 
+export const canCheckIn = (event: TEvent, now: moment.Moment = moment()) => {
+  return (
+    moment(event.start).isSame(now, 'day') ||
+    moment(event.start).add(event.duration, 'minutes').isSameOrAfter(now, 'day')
+  );
+};
+
 export const separateByEventId = (events: TEvent[]) => {
   const separated = {};
 
@@ -492,7 +499,9 @@ export const recomputeKappaState = ({
 }) => {
   const eventArray = Object.values(events);
   const now = moment();
-  const futureEventArray = eventArray.filter((event) => moment(event.start).isSameOrAfter(now, 'day'));
+  const futureEventArray = eventArray.filter(
+    (event) => moment(event.start).isSameOrAfter(now, 'day') || canCheckIn(event, now)
+  );
   const futureEvents = separateByEventId(futureEventArray);
   const eventsSize = Object.keys(events).length;
   const directorySize = Object.keys(directory).length;

@@ -288,7 +288,7 @@ const EditEventPage: React.FC<{
 
             <FormattedInput
               placeholderText="ex: 60"
-              maxLength={4}
+              maxLength={10}
               error={showErrors && (duration === '' || duration === '0')}
               value={duration}
               formatter={numberFormatter}
