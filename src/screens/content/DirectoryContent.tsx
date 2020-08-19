@@ -39,7 +39,7 @@ const DirectoryContent: React.FC<{
   );
   const dispatchGetDirectory = React.useCallback(() => dispatch(_kappa.getDirectory(user)), [dispatch, user]);
   const dispatchGetExcuses = React.useCallback(() => dispatch(_kappa.getExcuses(user)), [dispatch, user]);
-  const dispatchSelectUser = React.useCallback((email: string) => dispatch(_kappa.selectUser(email)), [dispatch]);
+  const dispatchEditNewUser = React.useCallback(() => dispatch(_kappa.editNewUser()), [dispatch]);
 
   const scrollRef = React.useRef(undefined);
 
@@ -101,6 +101,14 @@ const DirectoryContent: React.FC<{
     <View style={styles.container}>
       <Header title="Brothers">
         <View style={styles.headerChildren}>
+          {user.privileged && (
+            <View style={styles.headerButtonContainer}>
+              <TouchableOpacity activeOpacity={0.6} onPress={dispatchEditNewUser}>
+                <Text style={styles.headerButtonText}>New Brother</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
           <View style={styles.refreshContainer}>
             {refreshing ? (
               <ActivityIndicator style={styles.refreshIcon} color={theme.COLORS.PRIMARY} />

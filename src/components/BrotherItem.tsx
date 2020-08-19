@@ -21,6 +21,7 @@ import { TEvent } from '@backend/kappa';
 import { isEmpty } from '@services/utils';
 import HorizontalSegmentBar from '@components/HorizontalSegmentBar';
 import Icon from '@components/Icon';
+import Switch from '@components/Switch';
 
 const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
   const user = useSelector((state: TRedux) => state.auth.user);
@@ -34,8 +35,10 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
   const getPointsError = useSelector((state: TRedux) => state.kappa.getPointsError);
   const isGettingAttendance = useSelector((state: TRedux) => state.kappa.isGettingAttendance);
   const getAttendanceError = useSelector((state: TRedux) => state.kappa.getAttendanceError);
+  const isDeletingUser = false;
 
   const [expanded, setExpanded] = React.useState<boolean>(false);
+  const [readyToDelete, setReadyToDelete] = React.useState<boolean>(false);
 
   const attended = getAttendedEvents(records, brother.email);
   const excused = getExcusedEvents(records, brother.email);
@@ -51,7 +54,8 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
     user,
     brother.email
   ]);
-
+  const dispatchEditUser = React.useCallback(() => dispatch(_kappa.editUser(brother.email)), [brother.email, dispatch]);
+  const dispatchDeleteUser = React.useCallback(() => console.log('TODO'), []);
   const dispatchShowToast = React.useCallback((toast: Partial<TToast>) => dispatch(_ui.showToast(toast)), [dispatch]);
 
   const loadData = React.useCallback(
@@ -64,6 +68,8 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
           dispatchGetAttendance(force);
         if (!isGettingPoints && (force || (!getPointsError && shouldLoad(loadHistory, `points-${brother.email}`))))
           dispatchGetPoints();
+
+        setReadyToDelete(false);
       }
     },
     [
@@ -81,6 +87,7 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
 
   const onPressExpand = React.useCallback(() => {
     setExpanded(!expanded);
+    setReadyToDelete(false);
   }, [expanded]);
 
   const chartData = React.useMemo(() => {
@@ -131,6 +138,10 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
       showBackdrop: false
     });
   }, [brother.phone, dispatchShowToast]);
+
+  const onChangeReadyToDelete = React.useCallback((newValue: boolean) => {
+    setReadyToDelete(newValue);
+  }, []);
 
   React.useEffect(() => {
     if (expanded) {
@@ -221,6 +232,59 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
               <View style={styles.chartArea}>
                 <HorizontalSegmentBar data={chartData} />
               </View>
+            </View>
+
+            <View style={styles.dangerZone}>
+              <View style={styles.editZone}>
+                <View style={styles.warning}>
+                  <Text style={styles.zoneLabel}>Edit this user</Text>
+                  <Text style={styles.description}>
+                    Edits to this user will only show up when users refresh. Please make sure you have refreshed the
+                    latest user details before editing.
+                  </Text>
+                </View>
+
+                <TouchableOpacity disabled={isDeletingUser} onPress={dispatchEditUser}>
+                  <Icon style={styles.zoneIcon} family="Feather" name="edit" size={32} color={theme.COLORS.PRIMARY} />
+                </TouchableOpacity>
+              </View>
+              <View style={styles.deleteZone}>
+                <View style={styles.warning}>
+                  <Text style={styles.zoneLabel}>Delete this user</Text>
+                  {brother.email === user.email ? (
+                    <Text style={styles.description}>You cannot delete yourself!</Text>
+                  ) : (
+                    <Text style={styles.description}>
+                      Deleting a user will delete all associated points, attendance and excuse records. Please double
+                      check and be certain this is the user you want to delete.
+                    </Text>
+                  )}
+                </View>
+
+                {isDeletingUser ? (
+                  <ActivityIndicator style={styles.zoneIcon} color={theme.COLORS.PRIMARY} />
+                ) : (
+                  <TouchableOpacity
+                    style={!readyToDelete && styles.disabledButton}
+                    disabled={!readyToDelete || brother.email === user.email}
+                    onPress={dispatchDeleteUser}
+                  >
+                    <Icon
+                      style={styles.zoneIcon}
+                      family="Feather"
+                      name="trash-2"
+                      size={32}
+                      color={theme.COLORS.PRIMARY}
+                    />
+                  </TouchableOpacity>
+                )}
+              </View>
+              {brother.email !== user.email && (
+                <View style={styles.enableDeleteContainer}>
+                  <Switch value={readyToDelete} onValueChange={onChangeReadyToDelete} />
+                  <Text style={styles.readyToDelete}>I am ready to delete this user</Text>
+                </View>
+              )}
             </View>
 
             {!isGettingAttendance && mandatory.length > 0 && (
@@ -386,6 +450,48 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: theme.COLORS.GRAY,
     textTransform: 'uppercase'
+  },
+  dangerZone: {
+    marginTop: 16,
+    padding: 16,
+    borderRadius: 8,
+    backgroundColor: theme.COLORS.INPUT_ERROR_LIGHT
+  },
+  editZone: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  deleteZone: {
+    marginTop: 16,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  warning: {
+    flex: 1,
+    marginRight: 8
+  },
+  zoneLabel: {
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 14
+  },
+  zoneIcon: {
+    width: 32
+  },
+  enableDeleteContainer: {
+    marginTop: 8,
+    marginLeft: 16,
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  readyToDelete: {
+    marginLeft: 8,
+    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 13
   }
 });
 

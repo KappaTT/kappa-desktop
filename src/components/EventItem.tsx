@@ -89,6 +89,7 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
 
   const onPressExpand = React.useCallback(() => {
     setExpanded(!expanded);
+    setReadyToDelete(false);
   }, [expanded]);
 
   const onPressCheckIn = React.useCallback(() => {

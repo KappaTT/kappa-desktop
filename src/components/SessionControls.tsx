@@ -679,7 +679,7 @@ const styles = StyleSheet.create({
     width: 32
   },
   disabledButton: {
-    opacity: 0.6
+    opacity: 0.4
   },
   enableCreateContainer: {
     marginTop: 8,
