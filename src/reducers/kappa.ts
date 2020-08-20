@@ -41,6 +41,10 @@ export const UPDATE_USER = 'UPDATE_USER';
 export const UPDATE_USER_SUCCESS = 'UPDATE_USER_SUCCESS';
 export const UPDATE_USER_FAILURE = 'UPDATE_USER_FAILURE';
 
+export const DELETE_USER = 'DELETE_USER';
+export const DELETE_USER_SUCCESS = 'DELETE_USER_SUCCESS';
+export const DELETE_USER_FAILURE = 'DELETE_USER_FAILURE';
+
 export const GET_EVENTS = 'GET_EVENTS';
 export const GET_EVENTS_SUCCESS = 'GET_EVENTS_SUCCESS';
 export const GET_EVENTS_FAILURE = 'GET_EVENTS_FAILURE';
@@ -105,6 +109,10 @@ export interface TKappaState {
   isUpdatingUser: boolean;
   updateUserError: boolean;
   updateUserErrorMessage: string;
+
+  isDeletingUser: boolean;
+  deleteUserError: boolean;
+  deleteUserErrorMessage: string;
 
   isGettingEvents: boolean;
   getEventsError: boolean;
@@ -207,6 +215,10 @@ const initialState: TKappaState = {
   isUpdatingUser: false,
   updateUserError: false,
   updateUserErrorMessage: '',
+
+  isDeletingUser: false,
+  deleteUserError: false,
+  deleteUserErrorMessage: '',
 
   isGettingEvents: false,
   getEventsError: false,
@@ -350,6 +362,35 @@ export default (state = initialState, action: any): TKappaState => {
         isUpdatingUser: false,
         updateUserError: true,
         updateUserErrorMessage: action.error.message,
+        ...setGlobalError(action.error.message, action.error.code)
+      };
+    case DELETE_USER:
+      return {
+        ...state,
+        isDeletingUser: true,
+        deleteUserError: false,
+        deleteUserErrorMessage: ''
+      };
+    case DELETE_USER_SUCCESS: {
+      const remainingUsers = state.directory;
+      delete remainingUsers[action.user.email];
+
+      return {
+        ...state,
+        isDeletingUser: false,
+        ...recomputeKappaState({
+          events: state.events,
+          records: excludeUserFromRecords(state.records, action.user.email),
+          directory: remainingUsers
+        })
+      };
+    }
+    case DELETE_USER_FAILURE:
+      return {
+        ...state,
+        isDeletingUser: false,
+        deleteUserError: true,
+        deleteUserErrorMessage: action.error.message,
         ...setGlobalError(action.error.message, action.error.code)
       };
     case GET_EVENTS:
@@ -564,7 +605,7 @@ export default (state = initialState, action: any): TKappaState => {
         loadHistory: excludeFromHistory(state.loadHistory, (key: string) => key.startsWith('points-')),
         ...recomputeKappaState({
           events: remainingEvents,
-          records: state.records,
+          records: excludeEventFromRecords(state.records, action.event._id),
           directory: state.directory
         })
       };

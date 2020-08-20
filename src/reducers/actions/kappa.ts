@@ -51,7 +51,10 @@ import {
   UPDATE_USER_FAILURE,
   EDIT_USER,
   CANCEL_EDIT_USER,
-  EDIT_NEW_USER
+  EDIT_NEW_USER,
+  DELETE_USER,
+  DELETE_USER_SUCCESS,
+  DELETE_USER_FAILURE
 } from '@reducers/kappa';
 import { TUser } from '@backend/auth';
 import { TEvent, TExcuse, TEventSearch } from '@backend/kappa';
@@ -137,6 +140,40 @@ export const updateUser = (user: TUser, target: string, changes: Partial<TUser>)
         }
       });
     }
+  };
+};
+
+const deletingUser = () => {
+  return {
+    type: DELETE_USER
+  };
+};
+
+const deleteUserSuccess = (data) => {
+  return {
+    type: DELETE_USER_SUCCESS,
+    user: data.user
+  };
+};
+
+const deleteUserFailure = (error) => {
+  return {
+    type: DELETE_USER_FAILURE,
+    error
+  };
+};
+
+export const deleteUser = (user: TUser, email: string) => {
+  return (dispatch) => {
+    dispatch(deletingUser());
+
+    Kappa.deleteUser({ user, target: email }).then((res) => {
+      if (res.success) {
+        dispatch(deleteUserSuccess(res.data));
+      } else {
+        dispatch(deleteUserFailure(res.error));
+      }
+    });
   };
 };
 

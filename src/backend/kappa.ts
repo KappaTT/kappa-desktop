@@ -128,7 +128,7 @@ export const createUser = async (payload: TCreateUserPayload): Promise<TCreateUs
       payload.user.sessionToken
     );
 
-    log('Create user response', response);
+    log('Create user response', response.code);
 
     if (!response.success) {
       return fail({}, response.error?.message || 'issue connecting to the server', 500);
@@ -178,7 +178,54 @@ export const updateUser = async (payload: TUpdateUserPayload): Promise<TUpdateUs
       payload.user.sessionToken
     );
 
-    log('Update user response', response);
+    log('Update user response', response.code);
+
+    if (!response.success) {
+      return fail({}, response.error?.message || 'issue connecting to the server', 500);
+    } else if (response.code !== 200) {
+      if (response.code === 401) {
+        return fail({}, 'your credentials were invalid or have expired', response.code);
+      }
+
+      return fail({}, response.error?.message, response.code);
+    }
+
+    return pass({
+      user: response.data.user
+    });
+  } catch (error) {
+    log(error);
+    return fail({}, "that wasn't supposed to happen", -1);
+  }
+};
+
+export interface TDeleteUserPayload {
+  user: TUser;
+  target: string;
+}
+
+interface TDeleteUserRequestResponse {
+  user: {
+    email: string;
+  };
+}
+
+interface TDeleteUserResponse extends TResponse {
+  data?: TDeleteUserRequestResponse;
+}
+
+export const deleteUser = async (payload: TDeleteUserPayload): Promise<TDeleteUserResponse> => {
+  try {
+    const response = await makeAuthorizedRequest<TDeleteUserRequestResponse>(
+      ENDPOINTS.DELETE_USER({
+        email: payload.target
+      }),
+      METHODS.DELETE_USER,
+      {},
+      payload.user.sessionToken
+    );
+
+    log('Delete user response', response.code);
 
     if (!response.success) {
       return fail({}, response.error?.message || 'issue connecting to the server', 500);

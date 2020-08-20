@@ -35,7 +35,7 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
   const getPointsError = useSelector((state: TRedux) => state.kappa.getPointsError);
   const isGettingAttendance = useSelector((state: TRedux) => state.kappa.isGettingAttendance);
   const getAttendanceError = useSelector((state: TRedux) => state.kappa.getAttendanceError);
-  const isDeletingUser = false;
+  const isDeletingUser = useSelector((state: TRedux) => state.kappa.isDeletingUser);
 
   const [expanded, setExpanded] = React.useState<boolean>(false);
   const [readyToDelete, setReadyToDelete] = React.useState<boolean>(false);
@@ -57,7 +57,11 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
     brother.email
   ]);
   const dispatchEditUser = React.useCallback(() => dispatch(_kappa.editUser(brother.email)), [brother.email, dispatch]);
-  const dispatchDeleteUser = React.useCallback(() => console.log('TODO'), []);
+  const dispatchDeleteUser = React.useCallback(() => dispatch(_kappa.deleteUser(user, brother.email)), [
+    dispatch,
+    brother.email,
+    user
+  ]);
   const dispatchShowToast = React.useCallback((toast: Partial<TToast>) => dispatch(_ui.showToast(toast)), [dispatch]);
 
   const loadData = React.useCallback(
