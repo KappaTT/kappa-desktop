@@ -24,7 +24,6 @@ import FullPageModal from '@components/FullPageModal';
 const ModalController: React.FC = () => {
   const authorized = useSelector((state: TRedux) => state.auth.authorized);
   const user = useSelector((state: TRedux) => state.auth.user);
-  const events = useSelector((state: TRedux) => state.kappa.events);
   const editingEventId = useSelector((state: TRedux) => state.kappa.editingEventId);
   const isSavingEvent = useSelector((state: TRedux) => state.kappa.isSavingEvent);
   const checkInEventId = useSelector((state: TRedux) => state.kappa.checkInEventId);
@@ -75,10 +74,7 @@ const ModalController: React.FC = () => {
         allowClose={!isCheckingIn}
         onDoneClosing={dispatchCancelCheckInEvent}
       >
-        <CheckInPage
-          initialEvent={checkInEventId === 'NONE' ? null : getEventById(events, checkInEventId)}
-          onPressCancel={dispatchCancelCheckInEvent}
-        />
+        <CheckInPage onPressCancel={dispatchCancelCheckInEvent} />
       </PopupModal>
 
       <PopupModal
@@ -86,23 +82,16 @@ const ModalController: React.FC = () => {
         allowClose={!isCheckingIn}
         onDoneClosing={dispatchCancelCheckInEvent}
       >
-        <RequestExcusePage
-          initialEvent={checkInEventId === 'NONE' ? null : getEventById(events, checkInEventId)}
-          onPressCancel={dispatchCancelCheckInEvent}
-        />
+        <RequestExcusePage onPressCancel={dispatchCancelCheckInEvent} />
       </PopupModal>
 
       <PopupModal visible={editingEventId !== ''} allowClose={!isSavingEvent} onDoneClosing={dispatchCancelEditEvent}>
-        <EditEventPage
-          initialEvent={editingEventId === 'NEW' ? null : getEventById(events, editingEventId)}
-          onPressCancel={dispatchCancelEditEvent}
-          onPressSave={dispatchSaveEditEvent}
-        />
+        <EditEventPage onPressCancel={dispatchCancelEditEvent} onPressSave={dispatchSaveEditEvent} />
       </PopupModal>
 
       <PopupModal
-        visible={userIsIncomplete || (authorized && editingUserEmail === user.email)}
-        allowClose={isUpdatingUser}
+        visible={userIsIncomplete || (authorized && editingUserEmail !== '')}
+        allowClose={!userIsIncomplete && !isUpdatingUser}
         onDoneClosing={dispatchCancelEditUser}
       >
         <EditProfilePage onPressCancel={dispatchCancelEditUser} />

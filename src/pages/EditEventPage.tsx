@@ -7,20 +7,23 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 import { TRedux } from '@reducers';
 import { TEvent, TPointsDict } from '@backend/kappa';
+import { extractPoints, getEventById } from '@services/kappaService';
 import { theme } from '@constants';
 import { Icon, Switch, RadioList, FormattedInput } from '@components';
-import { extractPoints } from '@services/kappaService';
 
 const numberFormatter = (text: string) => {
   return text !== undefined ? text.replace(/\D/g, '') : '';
 };
 
 const EditEventPage: React.FC<{
-  initialEvent: TEvent;
   onPressCancel(): void;
   onPressSave(event: Partial<TEvent>, eventId?: string): void;
-}> = ({ initialEvent, onPressCancel, onPressSave }) => {
+}> = ({ onPressCancel, onPressSave }) => {
+  const events = useSelector((state: TRedux) => state.kappa.events);
+  const editingEventId = useSelector((state: TRedux) => state.kappa.editingEventId);
   const isSavingEvent = useSelector((state: TRedux) => state.kappa.isSavingEvent);
+
+  const initialEvent = editingEventId === 'NEW' ? null : getEventById(events, editingEventId);
 
   const [type, setType] = React.useState<string>(initialEvent ? initialEvent.eventType : '');
   const [showErrors, setShowErrors] = React.useState<boolean>(false);

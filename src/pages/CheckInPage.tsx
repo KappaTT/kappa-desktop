@@ -8,7 +8,7 @@ import { TEvent } from '@backend/kappa';
 import { TToast } from '@reducers/ui';
 import { _kappa, _ui } from '@reducers/actions';
 import { theme } from '@constants';
-import { hasValidCheckIn, sortEventByDate, shouldLoad, canCheckIn } from '@services/kappaService';
+import { hasValidCheckIn, sortEventByDate, shouldLoad, canCheckIn, getEventById } from '@services/kappaService';
 import { Icon, RadioList, FormattedInput } from '@components';
 
 const numberFormatter = (text: string) => {
@@ -16,13 +16,14 @@ const numberFormatter = (text: string) => {
 };
 
 const CheckInPage: React.FC<{
-  initialEvent: TEvent;
   onPressCancel(): void;
-}> = ({ initialEvent, onPressCancel }) => {
+}> = ({ onPressCancel }) => {
   const user = useSelector((state: TRedux) => state.auth.user);
   const loadHistory = useSelector((state: TRedux) => state.kappa.loadHistory);
   const records = useSelector((state: TRedux) => state.kappa.records);
+  const events = useSelector((state: TRedux) => state.kappa.events);
   const futureEventArray = useSelector((state: TRedux) => state.kappa.futureEventArray);
+  const checkInEventId = useSelector((state: TRedux) => state.kappa.checkInEventId);
   const isGettingEvents = useSelector((state: TRedux) => state.kappa.isGettingEvents);
   const getEventsError = useSelector((state: TRedux) => state.kappa.getEventsError);
   const isGettingAttendance = useSelector((state: TRedux) => state.kappa.isGettingAttendance);
@@ -30,6 +31,8 @@ const CheckInPage: React.FC<{
   const isCheckingIn = useSelector((state: TRedux) => state.kappa.isCheckingIn);
   const checkInRequestDate = useSelector((state: TRedux) => state.kappa.checkInRequestDate);
   const checkInSuccessDate = useSelector((state: TRedux) => state.kappa.checkInSuccessDate);
+
+  const initialEvent = checkInEventId === 'NONE' ? null : getEventById(events, checkInEventId);
 
   const [openDate, setOpenDate] = React.useState<moment.Moment>(moment());
   const [eventId, setEventId] = React.useState<string>(initialEvent ? initialEvent._id : '');

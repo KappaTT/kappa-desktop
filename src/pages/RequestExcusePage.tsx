@@ -12,14 +12,14 @@ import { getEventById, hasValidCheckIn, sortEventByDate, shouldLoad } from '@ser
 import { Icon, RadioList, FormattedInput } from '@components';
 
 const RequestExcusePage: React.FC<{
-  initialEvent: TEvent;
   onPressCancel(): void;
-}> = ({ initialEvent, onPressCancel }) => {
+}> = ({ onPressCancel }) => {
   const user = useSelector((state: TRedux) => state.auth.user);
   const loadHistory = useSelector((state: TRedux) => state.kappa.loadHistory);
   const records = useSelector((state: TRedux) => state.kappa.records);
   const eventArray = useSelector((state: TRedux) => state.kappa.eventArray);
   const events = useSelector((state: TRedux) => state.kappa.events);
+  const checkInEventId = useSelector((state: TRedux) => state.kappa.checkInEventId);
   const isGettingEvents = useSelector((state: TRedux) => state.kappa.isGettingEvents);
   const getEventsError = useSelector((state: TRedux) => state.kappa.getEventsError);
   const isGettingAttendance = useSelector((state: TRedux) => state.kappa.isGettingAttendance);
@@ -27,6 +27,8 @@ const RequestExcusePage: React.FC<{
   const isCreatingExcuse = useSelector((state: TRedux) => state.kappa.isCreatingExcuse);
   const createExcuseRequestDate = useSelector((state: TRedux) => state.kappa.createExcuseRequestDate);
   const createExcuseSuccessDate = useSelector((state: TRedux) => state.kappa.createExcuseSuccessDate);
+
+  const initialEvent = checkInEventId === 'NONE' ? null : getEventById(events, checkInEventId);
 
   const [openDate, setOpenDate] = React.useState<moment.Moment>(moment());
   const [reason, setReason] = React.useState<string>('');
