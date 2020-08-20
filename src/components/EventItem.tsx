@@ -235,7 +235,7 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
 
                 <View style={styles.mandatoryContainer}>
                   {mandatory.map((missed: TUser) => (
-                    <Text style={styles.mandatoryUser}>
+                    <Text key={missed._id} style={styles.mandatoryUser}>
                       {missed.familyName}, {missed.givenName}
                     </Text>
                   ))}
