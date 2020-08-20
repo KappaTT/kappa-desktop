@@ -303,6 +303,12 @@ const EditProfilePage: React.FC<{
             <Text style={styles.description}>
               This phone number will be shared with brothers and used if anyone needs to contact you.
             </Text>
+
+            {!canEditPrivileged && (
+              <Text style={styles.description}>
+                Some records can only be updated by exec. Please contact a member of exec to update them for you!
+              </Text>
+            )}
           </View>
         </ScrollView>
       </View>
