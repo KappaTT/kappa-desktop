@@ -44,6 +44,8 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
   const excused = getExcusedEvents(records, brother.email);
   const gmCounts = getTypeCounts(events, attended, excused, 'GM');
 
+  const isWebChair = React.useMemo(() => user.role?.toLowerCase() === 'web', [user.role]);
+
   const dispatch = useDispatch();
   const dispatchGetAttendance = React.useCallback(
     (overwrite: boolean = false) => dispatch(_kappa.getUserAttendance(user, brother.email, overwrite)),
@@ -251,10 +253,8 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
               <View style={styles.deleteZone}>
                 <View style={styles.warning}>
                   <Text style={styles.zoneLabel}>Delete this user</Text>
-                  {brother.email === user.email ? (
-                    <Text style={styles.description}>You cannot delete yourself!</Text>
-                  ) : brother.privileged && user.role !== 'Web' ? (
-                    <Text style={styles.description}>You cannot delete a privileged user! Contact the web chair.</Text>
+                  {!isWebChair ? (
+                    <Text style={styles.description}>Contact the web chair to delete users!</Text>
                   ) : (
                     <Text style={styles.description}>
                       Deleting a user will delete all associated points, attendance and excuse records. Please double
@@ -268,9 +268,7 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
                 ) : (
                   <TouchableOpacity
                     style={!readyToDelete && styles.disabledButton}
-                    disabled={
-                      !readyToDelete || brother.email === user.email || (brother.privileged && user.role !== 'Web')
-                    }
+                    disabled={!readyToDelete || !isWebChair}
                     onPress={dispatchDeleteUser}
                   >
                     <Icon
@@ -283,7 +281,7 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
                   </TouchableOpacity>
                 )}
               </View>
-              {brother.email !== user.email && (
+              {isWebChair && (
                 <View style={styles.enableDeleteContainer}>
                   <Switch value={readyToDelete} onValueChange={onChangeReadyToDelete} />
                   <Text style={styles.readyToDelete}>I am ready to delete this user</Text>
