@@ -135,6 +135,7 @@ export interface TKappaState {
   mandatoryEvents: TEventDict;
   missedMandatory: TUserEventDict;
   records: TRecords;
+  directoryArray: TUser[];
   directory: TDirectory;
   points: TPointsUserDict;
   pendingExcusesArray: TPendingExcuse[];
@@ -239,6 +240,7 @@ const initialState: TKappaState = {
     attended: {},
     excused: {}
   },
+  directoryArray: [],
   directory: {},
   points: {},
   pendingExcusesArray: [],

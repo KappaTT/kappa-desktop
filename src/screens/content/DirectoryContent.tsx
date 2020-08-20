@@ -20,7 +20,7 @@ const DirectoryContent: React.FC<{
 
   const user = useSelector((state: TRedux) => state.auth.user);
   const loadHistory = useSelector((state: TRedux) => state.kappa.loadHistory);
-  const directory = useSelector((state: TRedux) => state.kappa.directory);
+  const directoryArray = useSelector((state: TRedux) => state.kappa.directoryArray);
   const isGettingEvents = useSelector((state: TRedux) => state.kappa.isGettingEvents);
   const getEventsError = useSelector((state: TRedux) => state.kappa.getEventsError);
   const isGettingDirectory = useSelector((state: TRedux) => state.kappa.isGettingDirectory);
@@ -101,7 +101,7 @@ const DirectoryContent: React.FC<{
     <View style={styles.container}>
       <Header title="Brothers">
         <View style={styles.headerChildren}>
-          {user.privileged && (
+          {user.role.toLowerCase() === 'web' && (
             <View style={styles.headerButtonContainer}>
               <TouchableOpacity activeOpacity={0.6} onPress={dispatchEditNewUser}>
                 <Text style={styles.headerButtonText}>New Brother</Text>
@@ -130,7 +130,7 @@ const DirectoryContent: React.FC<{
       <View style={styles.content}>
         <FlatList
           ref={(ref) => (scrollRef.current = ref)}
-          data={Object.values(directory).sort(sortUserByName)}
+          data={directoryArray.sort(sortUserByName)}
           keyExtractor={keyExtractor}
           renderItem={renderItem}
           ListEmptyComponent={

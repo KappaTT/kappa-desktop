@@ -115,18 +115,28 @@ export const updateUser = (user: TUser, target: string, changes: Partial<TUser>)
   return (dispatch) => {
     dispatch(updatingUser());
 
-    Kappa.updateUser({ user, target, changes }).then((res) => {
-      if (res.success) {
-        if (user.email === res.data.user.email) {
-          dispatch(modifyUser(res.data.user));
-          setBatch('user', changes);
-        }
+    if (target) {
+      Kappa.updateUser({ user, target, changes }).then((res) => {
+        if (res.success) {
+          if (user.email === res.data.user.email) {
+            dispatch(modifyUser(res.data.user));
+            setBatch('user', changes);
+          }
 
-        dispatch(updateUserSuccess(res.data));
-      } else {
-        dispatch(updateUserFailure(res.error));
-      }
-    });
+          dispatch(updateUserSuccess(res.data));
+        } else {
+          dispatch(updateUserFailure(res.error));
+        }
+      });
+    } else {
+      Kappa.createUser({ user, newUser: changes }).then((res) => {
+        if (res.success) {
+          dispatch(updateUserSuccess(res.data));
+        } else {
+          dispatch(updateUserFailure(res.error));
+        }
+      });
+    }
   };
 };
 

@@ -253,6 +253,8 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
                   <Text style={styles.zoneLabel}>Delete this user</Text>
                   {brother.email === user.email ? (
                     <Text style={styles.description}>You cannot delete yourself!</Text>
+                  ) : brother.privileged && user.role !== 'Web' ? (
+                    <Text style={styles.description}>You cannot delete a privileged user! Contact the web chair.</Text>
                   ) : (
                     <Text style={styles.description}>
                       Deleting a user will delete all associated points, attendance and excuse records. Please double
@@ -266,7 +268,9 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
                 ) : (
                   <TouchableOpacity
                     style={!readyToDelete && styles.disabledButton}
-                    disabled={!readyToDelete || brother.email === user.email}
+                    disabled={
+                      !readyToDelete || brother.email === user.email || (brother.privileged && user.role !== 'Web')
+                    }
                     onPress={dispatchDeleteUser}
                   >
                     <Icon

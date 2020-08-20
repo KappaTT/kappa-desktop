@@ -536,7 +536,8 @@ export const recomputeKappaState = ({
   );
   const futureEvents = separateByEventId(futureEventArray);
   const eventsSize = Object.keys(events).length;
-  const directorySize = Object.keys(directory).length;
+  const directoryArray = Object.values(directory);
+  const directorySize = directoryArray.length;
   const eventsByDate = separateByDate(Object.values(events));
   const mandatoryEvents = getMandatoryEvents(events);
   const missedMandatory = getMissedMandatory(records, mandatoryEvents, directory);
@@ -554,6 +555,7 @@ export const recomputeKappaState = ({
     futureEventArray,
     futureEvents,
     records,
+    directoryArray,
     directory,
     directorySize,
     eventsByDate,

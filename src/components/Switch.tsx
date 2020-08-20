@@ -5,12 +5,14 @@ import { theme } from '@constants';
 
 const Switch: React.FC<{
   value?: boolean;
+  disabled?: boolean;
   thumbColor?: string;
   backgroundColor?: string;
   trackColor?: string;
   onValueChange?(newValue: boolean): void;
 }> = ({
   value = false,
+  disabled = false,
   thumbColor = theme.COLORS.PRIMARY,
   backgroundColor = theme.COLORS.LIGHT_BORDER,
   trackColor = theme.COLORS.PRIMARY,
@@ -18,14 +20,15 @@ const Switch: React.FC<{
 }) => {
   const onPress = React.useCallback(() => {
     // Using touchable to intercept and mimic behavior due to bug that causes focus overlay on switch if pressed
-    onValueChange(!value);
-  }, [onValueChange, value]);
+    if (!disabled) onValueChange(!value);
+  }, [disabled, onValueChange, value]);
 
   return (
-    <TouchableOpacity activeOpacity={0.8} onPress={onPress}>
+    <TouchableOpacity style={disabled && { opacity: 0.6 }} activeOpacity={0.8} onPress={onPress}>
       <NativeSwitch
         pointerEvents="none"
         value={value}
+        disabled={disabled}
         thumbColor="#FFF"
         thumbTintColor={thumbColor}
         // @ts-ignore
