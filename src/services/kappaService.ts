@@ -20,7 +20,8 @@ import { log } from '@services/logService';
 export const canCheckIn = (event: TEvent, now: moment.Moment = moment()) => {
   return (
     moment(event.start).isSame(now, 'day') ||
-    moment(event.start).add(event.duration, 'minutes').isSameOrAfter(now, 'day')
+    (moment(event.start).isBefore(now, 'day') &&
+      moment(event.start).add(event.duration, 'minutes').isSameOrAfter(now, 'day'))
   );
 };
 
