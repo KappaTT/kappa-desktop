@@ -202,15 +202,14 @@ const EditSessionPage: React.FC<{
         <ScrollView>
           <View style={styles.scrollContent}>
             <View style={styles.propertyHeaderContainer}>
-              <Text style={styles.propertyHeader}>First Name</Text>
+              <Text style={styles.propertyHeader}>Session Name</Text>
               <Text style={styles.propertyHeaderRequired}>*</Text>
             </View>
 
             <FormattedInput
               placeholderText="ex: Third Week Voting"
-              maxLength={32}
+              maxLength={64}
               value={name}
-              formatter={nameFormatter}
               onChangeText={onChangeName}
             />
 
