@@ -130,8 +130,12 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
   }, [user, missedMandatory, directory, event._id]);
 
   const excuseDisabled = React.useMemo(() => {
-    return excused !== undefined || attended !== undefined;
-  }, [attended, excused]);
+    return (
+      excused !== undefined ||
+      attended !== undefined ||
+      (event.excusable === false && moment(event.start).isAfter(moment(), 'day'))
+    );
+  }, [attended, event.excusable, event.start, excused]);
 
   const checkInDisabled = React.useMemo(() => {
     return attended !== undefined || !canCheckIn(event);

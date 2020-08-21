@@ -326,7 +326,7 @@ const EditEventPage: React.FC<{
 
             <FormattedInput
               placeholderText="ex: General Meeting"
-              maxLength={32}
+              maxLength={64}
               error={showErrors && title.trim() === ''}
               value={title}
               onChangeText={onChangeTitle}
