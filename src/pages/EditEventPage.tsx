@@ -395,7 +395,7 @@ const EditEventPage: React.FC<{
             <FormattedInput
               placeholderText="points"
               maxLength={1}
-              value={profPoints}
+              value={philPoints}
               formatter={numberFormatter}
               onChangeText={onChangePhilanthropy}
             />
@@ -407,7 +407,7 @@ const EditEventPage: React.FC<{
             <FormattedInput
               placeholderText="points"
               maxLength={1}
-              value={profPoints}
+              value={broPoints}
               formatter={numberFormatter}
               onChangeText={onChangeBrotherhood}
             />
@@ -419,7 +419,7 @@ const EditEventPage: React.FC<{
             <FormattedInput
               placeholderText="points"
               maxLength={1}
-              value={profPoints}
+              value={rushPoints}
               formatter={numberFormatter}
               onChangeText={onChangeRush}
             />
@@ -431,7 +431,7 @@ const EditEventPage: React.FC<{
             <FormattedInput
               placeholderText="points"
               maxLength={1}
-              value={profPoints}
+              value={anyPoints}
               formatter={numberFormatter}
               onChangeText={onChangeAny}
             />

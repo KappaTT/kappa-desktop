@@ -39,7 +39,7 @@ const RequestExcusePage: React.FC<{
       return false;
     }
 
-    return moment(selectedEvent.start).isBefore(openDate, 'day');
+    return selectedEvent.excusable === false || moment(selectedEvent.start).isBefore(openDate, 'day');
   }, [openDate, selectedEvent]);
 
   const dispatch = useDispatch();
