@@ -220,7 +220,9 @@ const gettingDirectory = () => {
 const getDirectorySuccess = (data) => {
   return {
     type: GET_DIRECTORY_SUCCESS,
-    users: data.users
+    users: data.users,
+    user: data.user,
+    sessionToken: data.sessionToken
   };
 };
 
@@ -237,6 +239,14 @@ export const getDirectory = (user: TUser) => {
 
     Kappa.getUsers({ user }).then((res) => {
       if (res.success) {
+        const latestUser = {
+          ...res.data.user,
+          sessionToken: res.data.sessionToken
+        };
+
+        dispatch(modifyUser(latestUser));
+        setBatch('user', latestUser);
+
         dispatch(getDirectorySuccess(res.data));
       } else {
         dispatch(getDirectoryFailure(res.error));

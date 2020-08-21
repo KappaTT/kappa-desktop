@@ -446,12 +446,12 @@ export interface TGetUsersPayload {
 
 interface TGetUsersRequestResponse {
   users: TUser[];
+  user: TUser;
+  sessionToken: string;
 }
 
 interface TGetUsersResponse extends TResponse {
-  data?: {
-    users: TUser[];
-  };
+  data?: TGetUsersRequestResponse;
 }
 
 export const getUsers = async (payload: TGetUsersPayload): Promise<TGetUsersResponse> => {
@@ -476,7 +476,9 @@ export const getUsers = async (payload: TGetUsersPayload): Promise<TGetUsersResp
     }
 
     return pass({
-      users: response.data.users
+      users: response.data.users,
+      user: response.data.user,
+      sessionToken: response.data.sessionToken
     });
   } catch (error) {
     log(error);
@@ -668,7 +670,7 @@ export interface TCreateExcusePayload {
 }
 
 export interface TCreateExcuseRequestResponse {
-  excused: TEvent[];
+  excused: TExcuse[];
 }
 
 export interface TCreateExcuseResponse extends TResponse {
