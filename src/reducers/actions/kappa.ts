@@ -121,7 +121,7 @@ export const updateUser = (user: TUser, target: string, changes: Partial<TUser>)
     if (target) {
       Kappa.updateUser({ user, target, changes }).then((res) => {
         if (res.success) {
-          if (user.email === res.data.user.email) {
+          if (user.email === res.data.user?.email) {
             dispatch(modifyUser(res.data.user));
             setBatch('user', changes);
           }
