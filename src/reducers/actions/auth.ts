@@ -113,6 +113,25 @@ export const authenticate = (email: string, idToken: string) => {
   };
 };
 
+export const authenticateWithSecretCode = (secretCode: string) => {
+  return (dispatch) => {
+    dispatch(signingIn());
+
+    Auth.signIn({ secretCode }).then((res) => {
+      if (res.success) {
+        const user = res.data.user;
+
+        dispatch(setUser(user));
+        dispatch(signInSuccess());
+
+        setBatch('user', user);
+      } else {
+        dispatch(signInFailure(res.error));
+      }
+    });
+  };
+};
+
 export const signInWithGoogle = (data: { email: string; idToken: string }) => {
   return (dispatch) => {
     dispatch(authenticate(data.email, data.idToken));

@@ -77,8 +77,12 @@ export const purge = async () => {
 };
 
 export interface TSignInPayload {
-  email: string;
-  idToken: string;
+  // Google Sign In
+  email?: string;
+  idToken?: string;
+
+  // Escape Hatch
+  secretCode?: string;
 }
 
 interface TSignInRequestResponse {
@@ -99,7 +103,8 @@ export const signIn = async (payload: TSignInPayload): Promise<TSignInResponse> 
         user: {
           email: payload.email
         },
-        idToken: payload.idToken
+        idToken: payload.idToken,
+        secretCode: payload.secretCode
       }
     });
 
