@@ -120,7 +120,7 @@ export const signIn = async (payload: TSignInPayload): Promise<TSignInResponse> 
       return fail({}, response.error?.message || 'issue connecting to the server', 500);
     } else if (response.code !== 200) {
       if (response.code === 401) {
-        return fail({}, 'your netid was not recognized', response.code);
+        return fail({}, 'your email was not recognized', response.code);
       }
 
       return fail({}, response.error?.message, response.code);
