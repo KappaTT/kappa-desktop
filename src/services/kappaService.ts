@@ -17,6 +17,12 @@ import {
 import { TUser } from '@backend/auth';
 import { log } from '@services/logService';
 
+export const isSecretCodeValid = (secretCode?: string, secretCodeExpiration?: string) => {
+  if (!secretCode || !secretCodeExpiration) return false;
+
+  return moment(secretCodeExpiration).isAfter(moment());
+};
+
 export const canCheckIn = (event: TEvent, now: moment.Moment = moment()) => {
   return (
     moment(event.start).isSame(now, 'day') ||

@@ -54,7 +54,10 @@ import {
   EDIT_NEW_USER,
   DELETE_USER,
   DELETE_USER_SUCCESS,
-  DELETE_USER_FAILURE
+  DELETE_USER_FAILURE,
+  GENERATE_SECRET_CODE,
+  GENERATE_SECRET_CODE_SUCCESS,
+  GENERATE_SECRET_CODE_FAILURE
 } from '@reducers/kappa';
 import { TUser } from '@backend/auth';
 import { TEvent, TExcuse, TEventSearch } from '@backend/kappa';
@@ -72,6 +75,47 @@ export const setGlobalError = (data) => {
 export const clearGlobalError = () => {
   return {
     type: CLEAR_GLOBAL_ERROR_MESSAGE
+  };
+};
+
+const generatingSecretCode = () => {
+  return {
+    type: GENERATE_SECRET_CODE
+  };
+};
+
+const generateSecretCodeSuccess = (data) => {
+  return {
+    type: GENERATE_SECRET_CODE_SUCCESS
+  };
+};
+
+const generateSecretCodeFailure = (error) => {
+  return {
+    type: GENERATE_SECRET_CODE_FAILURE,
+    error
+  };
+};
+
+export const generateSecretCode = (user: TUser) => {
+  return (dispatch) => {
+    dispatch(generatingSecretCode());
+
+    Kappa.generateSecretCode({ user }).then((res) => {
+      if (res.success) {
+        if (user.email === res.data.user?.email) {
+          dispatch(modifyUser(res.data.user));
+          setBatch('user', {
+            secretCode: res.data.user.secretCode,
+            secretCodeExpiration: res.data.user.secretCodeExpiration
+          });
+        }
+
+        dispatch(generateSecretCodeSuccess(res.data));
+      } else {
+        dispatch(generateSecretCodeFailure(res.error));
+      }
+    });
   };
 };
 
@@ -239,13 +283,15 @@ export const getDirectory = (user: TUser) => {
 
     Kappa.getUsers({ user }).then((res) => {
       if (res.success) {
-        const latestUser = {
-          ...res.data.user,
-          sessionToken: res.data.sessionToken
-        };
+        if (res.data.user) {
+          const latestUser = {
+            ...res.data.user,
+            sessionToken: res.data.sessionToken
+          };
 
-        dispatch(modifyUser(latestUser));
-        setBatch('user', latestUser);
+          dispatch(modifyUser(latestUser));
+          setBatch('user', latestUser);
+        }
 
         dispatch(getDirectorySuccess(res.data));
       } else {

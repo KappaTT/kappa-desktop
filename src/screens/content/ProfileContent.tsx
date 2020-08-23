@@ -16,7 +16,8 @@ import {
   prettyPhone,
   getAttendedEvents,
   getExcusedEvents,
-  getTypeCounts
+  getTypeCounts,
+  isSecretCodeValid
 } from '@services/kappaService';
 import { Header, Icon, HorizontalSegmentBar } from '@components';
 
@@ -38,6 +39,7 @@ const ProfileContent: React.FC<{
   const points = useSelector((state: TRedux) => state.kappa.points);
   const isGettingPoints = useSelector((state: TRedux) => state.kappa.isGettingPoints);
   const getPointsError = useSelector((state: TRedux) => state.kappa.getPointsError);
+  const isGeneratingSecretCode = useSelector((state: TRedux) => state.kappa.isGeneratingSecretCode);
 
   const attended = getAttendedEvents(records, user.email);
   const excused = getExcusedEvents(records, user.email);
@@ -51,6 +53,10 @@ const ProfileContent: React.FC<{
     [dispatch, user]
   );
   const dispatchGetPoints = React.useCallback(() => dispatch(_kappa.getPointsByUser(user, user.email)), [
+    dispatch,
+    user
+  ]);
+  const dispatchGenerateSecretCode = React.useCallback(() => dispatch(_kappa.generateSecretCode(user)), [
     dispatch,
     user
   ]);
@@ -249,6 +255,29 @@ const ProfileContent: React.FC<{
             </View>
           </React.Fragment>
         )}
+
+        <View style={styles.dangerZone}>
+          <View style={styles.editZone}>
+            <View style={styles.warning}>
+              <Text style={styles.zoneLabel}>Sign in on mobile</Text>
+              <Text style={styles.description}>
+                If your phone does not support signing in with google, you can generate a unique sign in code. On your
+                phone, please type the code to sign in. WARNING: do not share this code with anyone as it will allow
+                them to sign into your account!
+              </Text>
+            </View>
+
+            {isGeneratingSecretCode ? (
+              <ActivityIndicator style={styles.zoneIcon} color={theme.COLORS.PRIMARY} />
+            ) : (
+              <TouchableOpacity disabled={isGeneratingSecretCode} onPress={dispatchGenerateSecretCode}>
+                <Text style={styles.zoneText}>
+                  {isSecretCodeValid(user.secretCode, user.secretCodeExpiration) ? user.secretCode : 'Generate'}
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
       </View>
     </View>
   );
@@ -369,6 +398,42 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: theme.COLORS.GRAY,
     textTransform: 'uppercase'
+  },
+  dangerZone: {
+    marginTop: 16,
+    padding: 16,
+    borderRadius: 8,
+    backgroundColor: theme.COLORS.INPUT_ERROR_LIGHT
+  },
+  editZone: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  deleteZone: {
+    marginTop: 16,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  warning: {
+    flex: 1,
+    marginRight: 8
+  },
+  zoneLabel: {
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 14
+  },
+  zoneIcon: {
+    width: 32
+  },
+  zoneText: {
+    paddingVertical: 16,
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 14,
+    color: theme.COLORS.PRIMARY
   }
 });
 

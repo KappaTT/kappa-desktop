@@ -102,6 +102,48 @@ export interface TEventSearchResult extends TEvent {
   pending?: boolean;
 }
 
+export interface TGenerateSecretCodePayload {
+  user: TUser;
+}
+
+interface TGenerateSecretCodeRequestResponse {
+  user: TUser;
+}
+
+interface TGenerateSecretCodeResponse extends TResponse {
+  data?: TGenerateSecretCodeRequestResponse;
+}
+
+export const generateSecretCode = async (payload: TGenerateSecretCodePayload): Promise<TGenerateSecretCodeResponse> => {
+  try {
+    const response = await makeAuthorizedRequest<TGenerateSecretCodeRequestResponse>(
+      ENDPOINTS.GENERATE_SECRET_CODE(),
+      METHODS.GENERATE_SECRET_CODE,
+      {},
+      payload.user.sessionToken
+    );
+
+    log('Generate secret code response', response);
+
+    if (!response.success) {
+      return fail({}, response.error?.message || 'issue connecting to the server', 500);
+    } else if (response.code !== 200) {
+      if (response.code === 401) {
+        return fail({}, 'your credentials were invalid or have expired', response.code);
+      }
+
+      return fail({}, response.error?.message, response.code);
+    }
+
+    return pass({
+      user: response.data.user
+    });
+  } catch (error) {
+    log(error);
+    return fail({}, "that wasn't supposed to happen", -1);
+  }
+};
+
 export interface TCreateUserPayload {
   user: TUser;
   newUser: Partial<TUser>;

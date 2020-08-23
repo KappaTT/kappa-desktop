@@ -33,6 +33,10 @@ import moment from 'moment';
 export const SET_GLOBAL_ERROR_MESSAGE = 'SET_GLOBAL_ERROR_MESSAGE';
 export const CLEAR_GLOBAL_ERROR_MESSAGE = 'CLEAR_GLOBAL_ERROR_MESSAGE';
 
+export const GENERATE_SECRET_CODE = 'GENERATE_SECRET_CODE';
+export const GENERATE_SECRET_CODE_SUCCESS = 'GENERATE_SECRET_CODE_SUCCESS';
+export const GENERATE_SECRET_CODE_FAILURE = 'GENERATE_SECRET_CODE_FAILURE';
+
 export const EDIT_USER = 'EDIT_USER';
 export const EDIT_NEW_USER = 'EDIT_NEW_USER';
 export const CANCEL_EDIT_USER = 'CANCEL_EDIT_USER';
@@ -104,6 +108,10 @@ export interface TKappaState {
   globalErrorMessage: string;
   globalErrorCode: number;
   globalErrorDate: Date;
+
+  isGeneratingSecretCode: boolean;
+  generateSecretCodeError: boolean;
+  generateSecretCodeErrorMessage: string;
 
   editingUserEmail: string;
   isUpdatingUser: boolean;
@@ -210,6 +218,10 @@ const initialState: TKappaState = {
   globalErrorMessage: '',
   globalErrorCode: 0,
   globalErrorDate: null,
+
+  isGeneratingSecretCode: false,
+  generateSecretCodeError: false,
+  generateSecretCodeErrorMessage: '',
 
   editingUserEmail: '',
   isUpdatingUser: false,
@@ -322,6 +334,26 @@ export default (state = initialState, action: any): TKappaState => {
         globalErrorMessage: '',
         globalErrorCode: 0,
         globalErrorDate: null
+      };
+    case GENERATE_SECRET_CODE:
+      return {
+        ...state,
+        isGeneratingSecretCode: true,
+        generateSecretCodeError: false,
+        generateSecretCodeErrorMessage: ''
+      };
+    case GENERATE_SECRET_CODE_SUCCESS:
+      return {
+        ...state,
+        isGeneratingSecretCode: false
+      };
+    case GENERATE_SECRET_CODE_FAILURE:
+      return {
+        ...state,
+        isGeneratingSecretCode: false,
+        generateSecretCodeError: true,
+        generateSecretCodeErrorMessage: action.error.message,
+        ...setGlobalError(action.error.message, action.error.code)
       };
     case EDIT_USER:
       return {

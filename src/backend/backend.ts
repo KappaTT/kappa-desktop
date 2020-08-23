@@ -20,6 +20,7 @@ export const ENDPOINTS: {
   [key: string]: (config?: any) => string;
 } = {
   SIGN_IN: () => 'users/login',
+  GENERATE_SECRET_CODE: () => 'users/generate-secret-code',
   CREATE_USER: () => 'users',
   UPDATE_USER: (config: { email: string }) => `users/${config.email}`,
   DELETE_USER: (config: { email: string }) => `users/${config.email}`,
@@ -56,6 +57,7 @@ export const METHODS: {
   [key: string]: TMethod;
 } = {
   SIGN_IN: M_POST,
+  GENERATE_SECRET_CODE: M_POST,
   CREATE_USER: M_POST,
   UPDATE_USER: M_PATCH,
   DELETE_USER: M_DELETE,

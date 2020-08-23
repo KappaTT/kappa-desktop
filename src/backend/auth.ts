@@ -39,6 +39,8 @@ export interface TUser {
   type: string;
   role?: string;
   privileged?: boolean;
+  secretCode?: string;
+  secretCodeExpiration?: string;
 
   // ONBOARDING
   phone?: string;
@@ -57,6 +59,8 @@ export const initialUser: TUser = {
   type: '',
   role: '',
   privileged: false,
+  secretCode: '',
+  secretCodeExpiration: '',
 
   // ONBOARDING
   phone: '',
@@ -67,21 +71,6 @@ export const incompleteUser: Partial<TUser> = {
   phone: '',
   gradYear: ''
 };
-
-export interface TUserResponse {
-  sessionToken: string;
-  _id: string;
-  email: string;
-  familyName: string;
-  givenName: string;
-  firstYear: string;
-  semester: string;
-  type: string;
-  role?: string;
-  privileged?: boolean;
-  phone?: string;
-  gradYear?: string;
-}
 
 export const purge = async () => {
   return deleteBatch('user', initialUser);
@@ -94,12 +83,12 @@ export interface TSignInPayload {
 
 interface TSignInRequestResponse {
   sessionToken: string;
-  user: TUserResponse;
+  user: TUser;
 }
 
 interface TSignInResponse extends TResponse {
   data?: {
-    user: TUserResponse;
+    user: TUser;
   };
 }
 
