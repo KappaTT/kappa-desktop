@@ -107,22 +107,22 @@ const EditProfilePage: React.FC<{
         canEditWeb
           ? _kappa.updateUser(user, initialUser ? initialUser.email : '', {
               email: email !== initialUser?.email ? email : undefined,
-              phone,
+              phone: phone || '',
               givenName,
               familyName,
               firstYear,
-              gradYear,
+              gradYear: gradYear || '',
               semester: pledgeClass,
               role,
               privileged
             })
           : canEditPrivileged
           ? _kappa.updateUser(user, initialUser ? initialUser.email : '', {
-              phone,
+              phone: phone || '',
               givenName,
               familyName,
               firstYear,
-              gradYear,
+              gradYear: gradYear || '',
               semester: pledgeClass
             })
           : _kappa.updateUser(user, initialUser ? initialUser.email : '', {
@@ -154,8 +154,11 @@ const EditProfilePage: React.FC<{
   const pledgeClassOptions = React.useMemo(() => getPledgeClassOptions(), []);
 
   const readyToSave = React.useMemo(
-    () => !(prettyPhoneValue === '' || prettyPhoneValue === 'Invalid' || gradYear === ''),
-    [gradYear, prettyPhoneValue]
+    () =>
+      user.email === editingUserEmail
+        ? !(prettyPhoneValue === '' || prettyPhoneValue === 'Invalid' || gradYear === '')
+        : true,
+    [editingUserEmail, gradYear, prettyPhoneValue, user.email]
   );
 
   const onChangeEmail = React.useCallback((text: string) => {
