@@ -39,12 +39,12 @@ const getGradYearOptions = () => {
     const fall = `Fall ${year + i}`;
 
     options.push({
-      id: fall,
-      title: fall
-    });
-    options.push({
       id: spring,
       title: spring
+    });
+    options.push({
+      id: fall,
+      title: fall
     });
   }
 
@@ -61,12 +61,12 @@ const getPledgeClassOptions = () => {
     const fall = `Fall ${year + i}`;
 
     options.push({
-      id: fall,
-      title: fall
-    });
-    options.push({
       id: spring,
       title: spring
+    });
+    options.push({
+      id: fall,
+      title: fall
     });
   }
 
