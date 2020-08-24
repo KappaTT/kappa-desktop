@@ -160,6 +160,10 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
       <View style={styles.expandedContent}>
         <View style={styles.splitPropertyRow}>
           <View style={styles.splitProperty}>
+            <Text style={styles.propertyHeader}>First Year</Text>
+            <Text style={styles.propertyValue}>{brother.firstYear}</Text>
+          </View>
+          <View style={styles.splitProperty}>
             <Text style={styles.propertyHeader}>Grad Year</Text>
             <Text style={styles.propertyValue}>{brother.gradYear}</Text>
           </View>
