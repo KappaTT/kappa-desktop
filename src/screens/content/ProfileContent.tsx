@@ -39,6 +39,8 @@ const ProfileContent: React.FC<{
   const points = useSelector((state: TRedux) => state.kappa.points);
   const isGettingPoints = useSelector((state: TRedux) => state.kappa.isGettingPoints);
   const getPointsError = useSelector((state: TRedux) => state.kappa.getPointsError);
+  const isGettingDirectory = useSelector((state: TRedux) => state.kappa.isGettingDirectory);
+  const getDirectoryError = useSelector((state: TRedux) => state.kappa.getDirectoryError);
   const isGeneratingSecretCode = useSelector((state: TRedux) => state.kappa.isGeneratingSecretCode);
 
   const attended = getAttendedEvents(records, user.email);
@@ -56,6 +58,7 @@ const ProfileContent: React.FC<{
     dispatch,
     user
   ]);
+  const dispatchGetDirectory = React.useCallback(() => dispatch(_kappa.getDirectory(user)), [dispatch, user]);
   const dispatchGenerateSecretCode = React.useCallback(() => dispatch(_kappa.generateSecretCode(user)), [
     dispatch,
     user
@@ -70,6 +73,8 @@ const ProfileContent: React.FC<{
   const loadData = React.useCallback(
     (force: boolean) => {
       if (!isGettingEvents && (force || (!getEventsError && shouldLoad(loadHistory, 'events')))) dispatchGetEvents();
+      if (!isGettingDirectory && (force || (!getDirectoryError && shouldLoad(loadHistory, 'directory'))))
+        dispatchGetDirectory();
       if (!isGettingAttendance && (force || (!getAttendanceError && shouldLoad(loadHistory, `user-${user.email}`))))
         dispatchGetMyAttendance(force);
       if (!isGettingPoints && (force || (!getPointsError && shouldLoad(loadHistory, `points-${user.email}`))))
@@ -80,6 +85,9 @@ const ProfileContent: React.FC<{
       getEventsError,
       loadHistory,
       dispatchGetEvents,
+      isGettingDirectory,
+      getDirectoryError,
+      dispatchGetDirectory,
       isGettingAttendance,
       getAttendanceError,
       user.email,
