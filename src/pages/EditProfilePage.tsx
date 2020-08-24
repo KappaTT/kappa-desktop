@@ -57,8 +57,8 @@ const getPledgeClassOptions = () => {
   const year = new Date().getFullYear() - 5;
 
   for (let i = 0; i < 6; i++) {
-    const fall = `Fall ${year + i}`;
     const spring = `Spring ${year + i}`;
+    const fall = `Fall ${year + i}`;
 
     options.push({
       id: fall,
