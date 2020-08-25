@@ -536,22 +536,23 @@ export const recomputeKappaState = ({
   records: TRecords;
   directory: TDirectory;
 }) => {
-  const eventArray = Object.values(events);
+  const eventArray = Object.values(events).sort(sortEventByDate);
   const now = moment();
   const futureEventArray = eventArray.filter(
     (event) => moment(event.start).isSameOrAfter(now, 'day') || canCheckIn(event, now)
   );
   const futureEvents = separateByEventId(futureEventArray);
-  const eventsSize = Object.keys(events).length;
+  const eventsSize = eventArray.length;
   const directoryArray = Object.values(directory);
   const directorySize = directoryArray.length;
-  const eventsByDate = separateByDate(Object.values(events));
+  const eventsByDate = separateByDate(eventArray);
   const mandatoryEvents = getMandatoryEvents(events);
   const missedMandatory = getMissedMandatory(records, mandatoryEvents, directory);
   const gmCount = getTypeCount(events, 'GM');
-  const eventSections = Object.entries(eventsByDate)
-    .sort((a, b) => (moment(a[0]).isBefore(moment(b[0])) ? -1 : 1))
-    .map((entry: [string, TEvent[]]) => ({ title: entry[0], data: entry[1] }));
+  const eventSections = Object.entries(eventsByDate).map((entry: [string, TEvent[]]) => ({
+    title: entry[0],
+    data: entry[1]
+  }));
   const futureIndex = getFutureDateIndex(eventSections);
   const upcomingSections = futureIndex >= 0 ? eventSections.slice(futureIndex) : [];
 
