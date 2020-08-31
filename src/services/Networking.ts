@@ -78,7 +78,7 @@ export const jsonRequest = async <T>(
   try {
     const response = await fetch(url, {
       method,
-      cache: 'no-cache',
+      cache: 'no-store',
       headers: {
         ...headers,
         Accept: 'application/json',
