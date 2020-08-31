@@ -278,6 +278,21 @@ const ProfileContent: React.FC<{
           </View>
         </View>
 
+        {!isGettingAttendance && mandatory.length > 0 && (
+          <React.Fragment>
+            <Text style={styles.mandatoryHeaderText}>Missed Mandatory</Text>
+
+            <View style={styles.mandatoryContainer}>
+              {mandatory.map((event: TEvent) => (
+                <View key={event._id} style={styles.eventContainer}>
+                  <Text style={styles.eventTitle}>{event.title}</Text>
+                  <Text style={styles.eventDate}>{moment(event.start).format('M/D/Y')}</Text>
+                </View>
+              ))}
+            </View>
+          </React.Fragment>
+        )}
+
         <Text style={styles.headingText}>Requirements</Text>
 
         <View style={styles.splitPropertyRow}>
@@ -299,21 +314,6 @@ const ProfileContent: React.FC<{
             {renderRequirements(POINTS_SR, GM_SR)}
           </View>
         </View>
-
-        {!isGettingAttendance && mandatory.length > 0 && (
-          <React.Fragment>
-            <Text style={styles.mandatoryHeaderText}>Missed Mandatory</Text>
-
-            <View style={styles.mandatoryContainer}>
-              {mandatory.map((event: TEvent) => (
-                <View key={event._id} style={styles.eventContainer}>
-                  <Text style={styles.eventTitle}>{event.title}</Text>
-                  <Text style={styles.eventDate}>{moment(event.start).format('M/D/Y')}</Text>
-                </View>
-              ))}
-            </View>
-          </React.Fragment>
-        )}
 
         <View style={styles.dangerZone}>
           <View style={styles.editZone}>
