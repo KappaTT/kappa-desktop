@@ -34,7 +34,7 @@ const EventsContent: React.FC<{
   const upcomingSections = useSelector((state: TRedux) => state.kappa.upcomingSections);
   const getEventsErrorMessage = useSelector((state: TRedux) => state.kappa.getEventsErrorMessage);
 
-  const [showing, setShowing] = React.useState<'Full Year' | 'Upcoming'>('Full Year');
+  const [showing, setShowing] = React.useState<'Full Year' | 'Upcoming'>('Upcoming');
 
   const dispatch = useDispatch();
   const dispatchGetEvents = React.useCallback(() => dispatch(_kappa.getEvents(user)), [dispatch, user]);
