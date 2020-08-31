@@ -9,6 +9,7 @@ import { TRedux } from '@reducers';
 import { _auth, _kappa, _nav } from '@reducers/actions';
 import { TEvent } from '@backend/kappa';
 import { theme } from '@constants';
+import { TPoints, POINTS_SO, GM_SO, POINTS_JR, GM_JR, POINTS_SR, GM_SR } from '@constants/Points';
 import { HEADER_HEIGHT, isEmpty } from '@services/utils';
 import {
   shouldLoad,
@@ -128,6 +129,34 @@ const ProfileContent: React.FC<{
       loadData(false);
     }
   }, [isFocused, loadData, user.sessionToken]);
+
+  const renderRequirements = (points: TPoints, gm: number) => {
+    return (
+      <View style={styles.splitPropertyRow}>
+        <View style={styles.splitProperty}>
+          <Text style={styles.propertyHeader}>Prof</Text>
+          <Text style={styles.propertyValue}>{points.PROF}</Text>
+        </View>
+        <View style={styles.splitProperty}>
+          <Text style={styles.propertyHeader}>Phil</Text>
+          <Text style={styles.propertyValue}>{points.PHIL}</Text>
+        </View>
+        <View style={styles.splitProperty}>
+          <Text style={styles.propertyHeader}>Bro</Text>
+          <Text style={styles.propertyValue}>{points.BRO}</Text>
+        </View>
+        <View style={styles.splitProperty}>
+          <Text style={styles.propertyHeader}>Rush</Text>
+          <Text style={styles.propertyValue}>{points.RUSH}</Text>
+        </View>
+
+        <View style={styles.splitProperty}>
+          <Text style={styles.propertyHeader}>GM</Text>
+          <Text style={styles.propertyValue}>{gm}%</Text>
+        </View>
+      </View>
+    );
+  };
 
   return (
     <View style={styles.container}>
@@ -249,6 +278,28 @@ const ProfileContent: React.FC<{
           </View>
         </View>
 
+        <Text style={styles.headingText}>Requirements</Text>
+
+        <View style={styles.splitPropertyRow}>
+          <View style={styles.splitProperty}>
+            <Text style={styles.subHeadingText}>Sophomore</Text>
+
+            {renderRequirements(POINTS_SO, GM_SO)}
+          </View>
+
+          <View style={styles.splitProperty}>
+            <Text style={styles.subHeadingText}>Junior</Text>
+
+            {renderRequirements(POINTS_JR, GM_JR)}
+          </View>
+
+          <View style={styles.splitProperty}>
+            <Text style={styles.subHeadingText}>Senior</Text>
+
+            {renderRequirements(POINTS_SR, GM_SR)}
+          </View>
+        </View>
+
         {!isGettingAttendance && mandatory.length > 0 && (
           <React.Fragment>
             <Text style={styles.mandatoryHeaderText}>Missed Mandatory</Text>
@@ -335,6 +386,12 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     fontFamily: 'OpenSans-Bold',
     fontSize: 20
+  },
+  subHeadingText: {
+    marginTop: 8,
+    marginBottom: 8,
+    fontFamily: 'OpenSans-Bold',
+    fontSize: 14
   },
   propertyWrapper: {
     display: 'flex',
