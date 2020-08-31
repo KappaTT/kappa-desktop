@@ -78,6 +78,7 @@ export const jsonRequest = async <T>(
   try {
     const response = await fetch(url, {
       method,
+      mode: 'cors',
       cache: 'no-store',
       headers: {
         ...headers,
