@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, ActivityIndicator, Clipboard } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, ActivityIndicator, Clipboard, Linking } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment';
 
@@ -159,6 +159,16 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
     }
   }, [dispatchShowToast, event.link]);
 
+  const onLongPressLink = React.useCallback(async () => {
+    if (event.link) {
+      const canOpen = await Linking.canOpenURL(event.link);
+
+      if (canOpen) {
+        window.open(event.link, '_blank');
+      }
+    }
+  }, [event.link]);
+
   React.useEffect(() => {
     if (expanded) {
       loadData(false);
@@ -189,7 +199,7 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
           </View>
 
           <View style={styles.splitProperty}>
-            <TouchableOpacity activeOpacity={0.6} onPress={onPressLink}>
+            <TouchableOpacity activeOpacity={0.6} onPress={onPressLink} onLongPress={onLongPressLink}>
               <Text style={styles.propertyHeader}>Link</Text>
               <Text style={[styles.propertyValue, event.link && { color: theme.COLORS.PRIMARY }]} numberOfLines={1}>
                 {event.link || 'N/A'}
