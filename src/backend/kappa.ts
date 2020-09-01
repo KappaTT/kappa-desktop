@@ -19,6 +19,7 @@ export interface TEvent {
   start: string;
   duration: number;
   location: string;
+  link?: string;
   points: TPointsDict;
 }
 

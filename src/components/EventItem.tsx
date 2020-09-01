@@ -1,10 +1,11 @@
 import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, ActivityIndicator, Clipboard } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment';
 
 import { TRedux } from '@reducers';
-import { _auth, _kappa } from '@reducers/actions';
+import { TToast } from '@reducers/ui';
+import { _auth, _kappa, _ui } from '@reducers/actions';
 import {
   hasValidCheckIn,
   getAttendance,
@@ -60,6 +61,7 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
     (eventId: string, excuse: boolean) => dispatch(_kappa.setCheckInEvent(eventId, excuse)),
     [dispatch]
   );
+  const dispatchShowToast = React.useCallback((toast: Partial<TToast>) => dispatch(_ui.showToast(toast)), [dispatch]);
 
   const loadData = React.useCallback(
     (force: boolean) => {
@@ -141,6 +143,22 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
     return attended !== undefined || !canCheckIn(event);
   }, [attended, event]);
 
+  const onPressLink = React.useCallback(() => {
+    if (event.link) {
+      Clipboard.setString(event.link);
+
+      dispatchShowToast({
+        title: 'Copied',
+        message: 'The link was saved to your clipboard',
+        allowClose: true,
+        timer: 1500,
+        toastColor: theme.COLORS.PRIMARY_GREEN,
+        textColor: theme.COLORS.WHITE,
+        showBackdrop: false
+      });
+    }
+  }, [dispatchShowToast, event.link]);
+
   React.useEffect(() => {
     if (expanded) {
       loadData(false);
@@ -170,22 +188,27 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
             <Text style={styles.propertyValue}>{prettyPoints(event.points)}</Text>
           </View>
 
-          {user.privileged && (
-            <View style={styles.splitProperty}>
-              <Text style={styles.propertyHeader}>Check-In Code</Text>
-              <Text style={styles.propertyValue}>{event.eventCode}</Text>
-            </View>
-          )}
-
-          {user.privileged && (
-            <View style={styles.chartArea}>
-              <HorizontalSegmentBar data={chartData} />
-            </View>
-          )}
+          <View style={styles.splitProperty}>
+            <TouchableOpacity activeOpacity={0.6} onPress={onPressLink}>
+              <Text style={styles.propertyHeader}>Link</Text>
+              <Text style={[styles.propertyValue, { color: theme.COLORS.PRIMARY }]}>{event.link || 'N/A'}</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         {user.privileged && (
           <React.Fragment>
+            <View style={[styles.splitPropertyRow, { marginTop: 12 }]}>
+              <View style={styles.splitProperty}>
+                <Text style={styles.propertyHeader}>Check-In Code</Text>
+                <Text style={styles.propertyValue}>{event.eventCode}</Text>
+              </View>
+
+              <View style={styles.chartArea}>
+                <HorizontalSegmentBar data={chartData} />
+              </View>
+            </View>
+
             <View style={styles.dangerZone}>
               <View style={styles.editZone}>
                 <View style={styles.warning}>
