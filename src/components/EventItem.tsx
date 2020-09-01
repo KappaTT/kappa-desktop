@@ -191,7 +191,9 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
           <View style={styles.splitProperty}>
             <TouchableOpacity activeOpacity={0.6} onPress={onPressLink}>
               <Text style={styles.propertyHeader}>Link</Text>
-              <Text style={[styles.propertyValue, { color: theme.COLORS.PRIMARY }]}>{event.link || 'N/A'}</Text>
+              <Text style={[styles.propertyValue, event.link && { color: theme.COLORS.PRIMARY }]} numberOfLines={1}>
+                {event.link || 'N/A'}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
