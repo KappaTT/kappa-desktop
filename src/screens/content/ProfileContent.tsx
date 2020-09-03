@@ -9,7 +9,7 @@ import { TRedux } from '@reducers';
 import { _auth, _kappa, _nav } from '@reducers/actions';
 import { TEvent } from '@backend/kappa';
 import { theme } from '@constants';
-import { TPoints, POINTS_SO, GM_SO, POINTS_JR, GM_JR, POINTS_SR, GM_SR } from '@constants/Points';
+import { TPoints, POINTS_SO, GM_SO, POINTS_JR, GM_JR, POINTS_SR, GM_SR, getClassYear } from '@constants/Points';
 import { HEADER_HEIGHT, isEmpty } from '@services/utils';
 import {
   shouldLoad,
@@ -123,6 +123,8 @@ const ProfileContent: React.FC<{
 
     return Object.values(missedMandatory[user.email]).sort(sortEventsByDateReverse);
   }, [user, missedMandatory]);
+
+  const classYear = React.useMemo(() => getClassYear(user.firstYear), [user.firstYear]);
 
   React.useEffect(() => {
     if (isFocused && user.sessionToken) {
@@ -296,19 +298,19 @@ const ProfileContent: React.FC<{
         <Text style={styles.headingText}>Requirements</Text>
 
         <View style={styles.splitPropertyRow}>
-          <View style={styles.splitProperty}>
+          <View style={[styles.splitProperty, { opacity: classYear === 'FR' || classYear === 'SO' ? 1 : 0.4 }]}>
             <Text style={styles.subHeadingText}>Sophomore</Text>
 
             {renderRequirements(POINTS_SO, GM_SO)}
           </View>
 
-          <View style={styles.splitProperty}>
+          <View style={[styles.splitProperty, { opacity: classYear === 'JR' ? 1 : 0.4 }]}>
             <Text style={styles.subHeadingText}>Junior</Text>
 
             {renderRequirements(POINTS_JR, GM_JR)}
           </View>
 
-          <View style={styles.splitProperty}>
+          <View style={[styles.splitProperty, { opacity: classYear === 'SR' ? 1 : 0.4 }]}>
             <Text style={styles.subHeadingText}>Senior</Text>
 
             {renderRequirements(POINTS_SR, GM_SR)}

@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 export interface TPoints {
   PROF: number;
   PHIL: number;
@@ -31,3 +33,23 @@ export const POINTS_SR: TPoints = {
 };
 
 export const GM_SR = 50;
+
+export const getClassYear = (firstYear: string) => {
+  if (!firstYear) return '';
+
+  const now = moment();
+
+  const firstYearMoment = moment(`${firstYear}-08-01`);
+
+  const difference = now.diff(firstYearMoment, 'years', true);
+
+  if (difference >= 3) {
+    return 'SR';
+  } else if (difference >= 2) {
+    return 'JR';
+  } else if (difference >= 1) {
+    return 'SO';
+  } else {
+    return 'FR';
+  }
+};
