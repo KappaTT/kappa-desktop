@@ -154,6 +154,10 @@ const EditSessionPage: React.FC<{
     setCandidateOrder(newCandidates);
   }, [candidateArray, candidateOrder, selectedCandidates]);
 
+  const onPressClear = React.useCallback(() => {
+    setCandidateOrder([]);
+  }, []);
+
   const onChangeCandidateOrder = React.useCallback((richCandidateOrder: TCandidate[]) => {
     setCandidateOrder(richCandidateOrder.map((candidate) => candidate._id));
   }, []);
@@ -284,6 +288,10 @@ const EditSessionPage: React.FC<{
             <View style={styles.propertyHeaderContainer}>
               <Text style={styles.propertyHeader}>Eligible Candidates</Text>
               <Text style={[styles.propertyHeaderRequired, { flex: 1 }]}>*</Text>
+
+              <TouchableOpacity activeOpacity={0.6} style={{ marginRight: 16 }} onPress={onPressClear}>
+                <Text style={styles.propertyButtonText}>Clear</Text>
+              </TouchableOpacity>
 
               <TouchableOpacity activeOpacity={0.6} onPress={onPressAddAll}>
                 <Text style={styles.propertyButtonText}>Add All</Text>
