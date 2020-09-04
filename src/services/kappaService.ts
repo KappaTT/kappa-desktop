@@ -543,7 +543,7 @@ export const recomputeKappaState = ({
   );
   const futureEvents = separateByEventId(futureEventArray);
   const eventsSize = eventArray.length;
-  const directoryArray = Object.values(directory);
+  const directoryArray = Object.values(directory).sort(sortUserByName);
   const directorySize = directoryArray.length;
   const eventsByDate = separateByDate(eventArray);
   const mandatoryEvents = getMandatoryEvents(events);

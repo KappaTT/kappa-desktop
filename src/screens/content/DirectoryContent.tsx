@@ -10,7 +10,7 @@ import { TUser } from '@backend/auth';
 import { TEvent } from '@backend/kappa';
 import { theme } from '@constants';
 import { HEADER_HEIGHT } from '@services/utils';
-import { shouldLoad, sortUserByName } from '@services/kappaService';
+import { shouldLoad } from '@services/kappaService';
 import { Header, Icon, BrotherItem } from '@components';
 
 const DirectoryContent: React.FC<{
@@ -130,7 +130,7 @@ const DirectoryContent: React.FC<{
       <View style={styles.content}>
         <FlatList
           ref={(ref) => (scrollRef.current = ref)}
-          data={directoryArray.sort(sortUserByName)}
+          data={directoryArray}
           keyExtractor={keyExtractor}
           renderItem={renderItem}
           ListEmptyComponent={
