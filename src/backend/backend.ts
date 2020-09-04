@@ -1,7 +1,6 @@
 import Constants from 'expo-constants';
 
 import { jsonRequest, jsonAuthorizedRequest } from '@services/Networking';
-import { log } from '@services/logService';
 import { isEmpty } from '@services/utils';
 
 export const M_GET = 'GET';
@@ -32,6 +31,7 @@ export const ENDPOINTS: {
   UPDATE_EVENT: (config: { eventId: string }) => `events/${encodeURIComponent(config.eventId)}`,
   DELETE_EVENT: (config: { eventId: string }) => `events/${encodeURIComponent(config.eventId)}`,
   CREATE_ATTENDANCE: () => 'attendance',
+  CREATE_BULK_ATTENDANCE: () => 'bulk-attendance',
   GET_EXCUSES: () => 'excuse',
   CREATE_EXCUSE: () => 'excuse',
   UPDATE_EXCUSE: () => 'excuse',
@@ -69,6 +69,7 @@ export const METHODS: {
   UPDATE_EVENT: M_PATCH,
   DELETE_EVENT: M_DELETE,
   CREATE_ATTENDANCE: M_POST,
+  CREATE_BULK_ATTENDANCE: M_POST,
   GET_EXCUSES: M_GET,
   CREATE_EXCUSE: M_POST,
   UPDATE_EXCUSE: M_PATCH,

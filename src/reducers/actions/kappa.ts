@@ -57,7 +57,10 @@ import {
   DELETE_USER_FAILURE,
   GENERATE_SECRET_CODE,
   GENERATE_SECRET_CODE_SUCCESS,
-  GENERATE_SECRET_CODE_FAILURE
+  GENERATE_SECRET_CODE_FAILURE,
+  CREATE_BULK_ATTENDANCE,
+  CREATE_BULK_ATTENDANCE_SUCCESS,
+  CREATE_BULK_ATTENDANCE_FAILURE
 } from '@reducers/kappa';
 import { TUser } from '@backend/auth';
 import { TEvent, TExcuse, TEventSearch } from '@backend/kappa';
@@ -551,6 +554,40 @@ export const checkIn = (user: TUser, eventId: string, eventCode: string) => {
         dispatch(checkInSuccess(res.data));
       } else {
         dispatch(checkInFailure(res.error));
+      }
+    });
+  };
+};
+
+const creatingBulkAttendance = () => {
+  return {
+    type: CREATE_BULK_ATTENDANCE
+  };
+};
+
+const createBulkAttendanceSuccess = (data) => {
+  return {
+    type: CREATE_BULK_ATTENDANCE_SUCCESS,
+    attended: data.attended
+  };
+};
+
+const createBulkAttendanceFailure = (error) => {
+  return {
+    type: CREATE_BULK_ATTENDANCE_FAILURE,
+    error
+  };
+};
+
+export const createBulkAttendance = (user: TUser, eventId: string, emails: string[]) => {
+  return (dispatch) => {
+    dispatch(creatingBulkAttendance());
+
+    Kappa.createBulkAttendance({ user, eventId, emails }).then((res) => {
+      if (res.success) {
+        dispatch(createBulkAttendanceSuccess(res.data));
+      } else {
+        dispatch(createBulkAttendanceFailure(res.error));
       }
     });
   };

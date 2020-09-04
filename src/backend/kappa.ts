@@ -638,7 +638,58 @@ export const createAttendance = async (payload: TCreateAttendancePayload): Promi
       payload.user.sessionToken
     );
 
-    log('Get attendance response', response.code);
+    log('Create attendance response', response.code);
+
+    if (!response.success) {
+      return fail({}, response.error?.message || 'issue connecting to the server', 500);
+    } else if (response.code !== 200) {
+      if (response.code === 401) {
+        return fail({}, 'your credentials were invalid or have expired', response.code);
+      }
+
+      return fail({}, response.error?.message, response.code);
+    }
+
+    return pass({
+      attended: response.data.attended || []
+    });
+  } catch (error) {
+    log(error);
+    return fail({}, "that wasn't supposed to happen", -1);
+  }
+};
+
+export interface TCreateBulkAttendancePayload {
+  user: TUser;
+  eventId: string;
+  emails: string[];
+}
+
+interface TCreateBulkAttendanceRequestResponse {
+  attended: TAttendance[];
+}
+
+interface TCreateBulkAttendanceResponse extends TResponse {
+  data?: TCreateBulkAttendanceRequestResponse;
+}
+
+export const createBulkAttendance = async (
+  payload: TCreateBulkAttendancePayload
+): Promise<TCreateBulkAttendanceResponse> => {
+  try {
+    const response = await makeAuthorizedRequest<TCreateBulkAttendanceRequestResponse>(
+      ENDPOINTS.CREATE_BULK_ATTENDANCE(),
+      METHODS.CREATE_BULK_ATTENDANCE,
+      {
+        body: {
+          eventId: payload.eventId,
+          emails: payload.emails
+        }
+      },
+      payload.user.sessionToken
+    );
+
+    log('Create bulk attendance response', response.code);
 
     if (!response.success) {
       return fail({}, response.error?.message || 'issue connecting to the server', 500);
