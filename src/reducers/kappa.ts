@@ -100,6 +100,8 @@ export const REJECT_EXCUSE = 'REJECT_EXCUSE';
 export const REJECT_EXCUSE_SUCCESS = 'REJECT_EXCUSE_SUCCESS';
 export const REJECT_EXCUSE_FAILURE = 'REJECT_EXCUSE_FAILURE';
 
+export const SHOW_BULK_ATTENDANCE = 'SHOW_BULK_ATTENDANCE';
+export const HIDE_BULK_ATTENDANCE = 'HIDE_BULK_ATTENDANCE';
 export const CREATE_BULK_ATTENDANCE = 'CREATE_BULK_ATTENDANCE';
 export const CREATE_BULK_ATTENDANCE_SUCCESS = 'CREATE_BULK_ATTENDANCE_SUCCESS';
 export const CREATE_BULK_ATTENDANCE_FAILURE = 'CREATE_BULK_ATTENDANCE_FAILURE';
@@ -212,6 +214,7 @@ export interface TKappaState {
   rejectExcuseRequestDate: moment.Moment;
   rejectExcuseSuccessDate: moment.Moment;
 
+  bulkAttendanceEventId: string;
   isCreatingBulkAttendance: boolean;
   createBulkAttendanceError: boolean;
   createBulkAttendanceErrorMessage: string;
@@ -323,6 +326,7 @@ const initialState: TKappaState = {
   rejectExcuseRequestDate: null,
   rejectExcuseSuccessDate: null,
 
+  bulkAttendanceEventId: '',
   isCreatingBulkAttendance: false,
   createBulkAttendanceError: false,
   createBulkAttendanceErrorMessage: '',
@@ -702,35 +706,6 @@ export default (state = initialState, action: any): TKappaState => {
         checkInErrorMessage: action.error.message,
         ...setGlobalError(action.error.message, action.error.code)
       };
-    case CREATE_BULK_ATTENDANCE:
-      return {
-        ...state,
-        isCreatingBulkAttendance: true,
-        createBulkAttendanceError: false,
-        createBulkAttendanceErrorMessage: ''
-      };
-    case CREATE_BULK_ATTENDANCE_SUCCESS:
-      return {
-        ...state,
-        isCreatingBulkAttendance: false,
-        loadHistory: excludeFromHistory(state.loadHistory, (key: string) => key.startsWith('points-')),
-        ...recomputeKappaState({
-          events: state.events,
-          records: mergeRecords(state.records, {
-            attended: action.attended,
-            excused: []
-          }),
-          directory: state.directory
-        })
-      };
-    case CREATE_BULK_ATTENDANCE_FAILURE:
-      return {
-        ...state,
-        isCreatingBulkAttendance: false,
-        createBulkAttendanceError: true,
-        createBulkAttendanceErrorMessage: action.error.message,
-        ...setGlobalError(action.error.message, action.error.code)
-      };
     case CREATE_EXCUSE:
       return {
         ...state,
@@ -858,6 +833,46 @@ export default (state = initialState, action: any): TKappaState => {
         isGettingPoints: false,
         getPointsError: true,
         getPointsErrorMessage: action.error.message,
+        ...setGlobalError(action.error.message, action.error.code)
+      };
+    case SHOW_BULK_ATTENDANCE:
+      return {
+        ...state,
+        bulkAttendanceEventId: action.eventId
+      };
+    case HIDE_BULK_ATTENDANCE:
+      return {
+        ...state,
+        bulkAttendanceEventId: ''
+      };
+    case CREATE_BULK_ATTENDANCE:
+      return {
+        ...state,
+        isCreatingBulkAttendance: true,
+        createBulkAttendanceError: false,
+        createBulkAttendanceErrorMessage: ''
+      };
+    case CREATE_BULK_ATTENDANCE_SUCCESS:
+      return {
+        ...state,
+        isCreatingBulkAttendance: false,
+        bulkAttendanceEventId: '',
+        loadHistory: excludeFromHistory(state.loadHistory, (key: string) => key.startsWith('points-')),
+        ...recomputeKappaState({
+          events: state.events,
+          records: mergeRecords(state.records, {
+            attended: action.attended,
+            excused: []
+          }),
+          directory: state.directory
+        })
+      };
+    case CREATE_BULK_ATTENDANCE_FAILURE:
+      return {
+        ...state,
+        isCreatingBulkAttendance: false,
+        createBulkAttendanceError: true,
+        createBulkAttendanceErrorMessage: action.error.message,
         ...setGlobalError(action.error.message, action.error.code)
       };
     case GET_EVENT_SEARCH_RESULTS:

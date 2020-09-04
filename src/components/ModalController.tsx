@@ -5,9 +5,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import { TRedux } from '@reducers';
 import { _auth, _kappa, _voting } from '@reducers/actions';
 import { TEvent } from '@backend/kappa';
-import { getEventById } from '@services/kappaService';
 import { incompleteUser } from '@backend/auth';
 import {
+  BulkAttendPage,
   CheckInPage,
   EditEventPage,
   EditProfilePage,
@@ -31,6 +31,8 @@ const ModalController: React.FC = () => {
   const isCheckingIn = useSelector((state: TRedux) => state.kappa.isCheckingIn);
   const editingUserEmail = useSelector((state: TRedux) => state.kappa.editingUserEmail);
   const isUpdatingUser = useSelector((state: TRedux) => state.kappa.isUpdatingUser);
+  const bulkAttendanceEventId = useSelector((state: TRedux) => state.kappa.bulkAttendanceEventId);
+  const isCreatingBulkAttendance = useSelector((state: TRedux) => state.kappa.isCreatingBulkAttendance);
   const editingCandidateEmail = useSelector((state: TRedux) => state.voting.editingCandidateEmail);
   const isSavingCandidate = useSelector((state: TRedux) => state.voting.isSavingCandidate);
   const editingSessionId = useSelector((state: TRedux) => state.voting.editingSessionId);
@@ -47,6 +49,7 @@ const ModalController: React.FC = () => {
   );
   const dispatchCancelCheckInEvent = React.useCallback(() => dispatch(_kappa.setCheckInEvent('', false)), [dispatch]);
   const dispatchCancelEditUser = React.useCallback(() => dispatch(_kappa.cancelEditUser()), [dispatch]);
+  const dispatchHideBulkAttendance = React.useCallback(() => dispatch(_kappa.hideBulkAttendance()), [dispatch]);
   const dispatchCancelEditCandidate = React.useCallback(() => dispatch(_voting.cancelEditCandidate()), [dispatch]);
   const dispatchCancelEditSession = React.useCallback(() => dispatch(_voting.cancelEditSession()), [dispatch]);
   const dispatchHidePresentationMode = React.useCallback(() => dispatch(_voting.hidePresentationMode()), [dispatch]);
@@ -95,6 +98,14 @@ const ModalController: React.FC = () => {
         onDoneClosing={dispatchCancelEditUser}
       >
         <EditProfilePage onPressCancel={dispatchCancelEditUser} />
+      </PopupModal>
+
+      <PopupModal
+        visible={bulkAttendanceEventId !== ''}
+        allowClose={!isCreatingBulkAttendance}
+        onDoneClosing={dispatchHideBulkAttendance}
+      >
+        <BulkAttendPage onPressCancel={dispatchHideBulkAttendance} />
       </PopupModal>
 
       <PopupModal

@@ -1,3 +1,4 @@
+import BulkAttendPage from './BulkAttendPage';
 import CheckInPage from './CheckInPage';
 import EditCandidatePage from './EditCandidatePage';
 import EditEventPage from './EditEventPage';
@@ -8,6 +9,7 @@ import RequestExcusePage from './RequestExcusePage';
 import VotingPage from './VotingPage';
 
 export {
+  BulkAttendPage,
   CheckInPage,
   EditCandidatePage,
   EditEventPage,

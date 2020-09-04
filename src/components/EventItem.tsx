@@ -61,6 +61,10 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
     (eventId: string, excuse: boolean) => dispatch(_kappa.setCheckInEvent(eventId, excuse)),
     [dispatch]
   );
+  const dispatchShowBulkAttendance = React.useCallback(() => dispatch(_kappa.showBulkAttendance(event._id)), [
+    dispatch,
+    event._id
+  ]);
   const dispatchShowToast = React.useCallback((toast: Partial<TToast>) => dispatch(_ui.showToast(toast)), [dispatch]);
 
   const loadData = React.useCallback(
@@ -222,6 +226,26 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
             </View>
 
             <View style={styles.dangerZone}>
+              <View style={styles.bulkAttendanceZone}>
+                <View style={styles.warning}>
+                  <Text style={styles.zoneLabel}>Manually add attendance</Text>
+                  <Text style={styles.description}>
+                    Adding attendance manually allows you to check in users to an event. This is designed for use with
+                    events that are asynchronous or were not recorded with the app. Once a user has been added, you may
+                    not remove them so double check your list.
+                  </Text>
+                </View>
+
+                <TouchableOpacity disabled={isDeletingEvent} onPress={dispatchShowBulkAttendance}>
+                  <Icon
+                    style={styles.zoneIcon}
+                    family="Feather"
+                    name="user-plus"
+                    size={32}
+                    color={theme.COLORS.PRIMARY}
+                  />
+                </TouchableOpacity>
+              </View>
               <View style={styles.editZone}>
                 <View style={styles.warning}>
                   <Text style={styles.zoneLabel}>Edit this event</Text>
@@ -481,7 +505,14 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: theme.COLORS.INPUT_ERROR_LIGHT
   },
+  bulkAttendanceZone: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
   editZone: {
+    marginTop: 16,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
