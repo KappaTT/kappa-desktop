@@ -113,7 +113,7 @@ const VotingPage: React.FC<{
     votes
   ]);
 
-  const readyToSubmit = React.useMemo(() => selectedCandidates.length > 0 && selectedCandidates.length < maxVotes, [
+  const readyToSubmit = React.useMemo(() => selectedCandidates.length > 0 && selectedCandidates.length <= maxVotes, [
     maxVotes,
     selectedCandidates.length
   ]);
@@ -187,7 +187,7 @@ const VotingPage: React.FC<{
               >
                 <Text style={styles.saveText}>
                   {maxVotes === 0 || selectedCandidates.length <= maxVotes
-                    ? 'Submit'
+                    ? `Submit (${selectedCandidates.length})`
                     : `You may only select ${maxVotes} candidates`}
                 </Text>
               </TouchableOpacity>
