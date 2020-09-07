@@ -7,13 +7,10 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 import { TRedux } from '@reducers';
 import { _auth, _voting } from '@reducers/actions';
-import { TCandidate } from '@backend/voting';
+import { TCandidate, TSession } from '@backend/voting';
+import { TYPE_OPTIONS } from '@services/votingService';
 import { theme } from '@constants';
-import { Icon, FormattedInput, CheckList, CandidateReorder, Switch } from '@components';
-
-const nameFormatter = (text: string) => {
-  return text !== undefined ? text.trim() : '';
-};
+import { Icon, FormattedInput, RadioList, CheckList, CandidateReorder, Switch } from '@components';
 
 const EditSessionPage: React.FC<{
   onPressCancel(): void;
@@ -32,6 +29,7 @@ const EditSessionPage: React.FC<{
 
   const [readyToDelete, setReadyToDelete] = React.useState<boolean>(false);
   const [name, setName] = React.useState<string>(selectedSession?.name || '');
+  const [type, setType] = React.useState<TSession['type']>(selectedSession?.type || 'REGULAR');
   const [startDate, setStartDate] = React.useState(
     selectedSession ? moment(selectedSession.startDate) : moment(new Date()).startOf('hour')
   );
@@ -48,6 +46,7 @@ const EditSessionPage: React.FC<{
           user,
           {
             name,
+            type,
             startDate: startDate.toISOString(),
             candidateOrder,
             currentCandidateId
@@ -55,7 +54,7 @@ const EditSessionPage: React.FC<{
           editingSessionId !== 'NEW' ? editingSessionId : undefined
         )
       ),
-    [candidateOrder, currentCandidateId, dispatch, editingSessionId, name, startDate, user]
+    [candidateOrder, currentCandidateId, dispatch, editingSessionId, name, startDate, type, user]
   );
   const dispatchDeleteSession = React.useCallback(() => dispatch(_voting.deleteSession(user, editingSessionId)), [
     dispatch,
@@ -97,6 +96,10 @@ const EditSessionPage: React.FC<{
 
   const onChangeName = React.useCallback((text: string) => {
     setName(text);
+  }, []);
+
+  const onChangeType = React.useCallback((chosen: TSession['type']) => {
+    setType(chosen);
   }, []);
 
   const onChangeStartDate = React.useCallback(
@@ -216,6 +219,13 @@ const EditSessionPage: React.FC<{
               value={name}
               onChangeText={onChangeName}
             />
+
+            <View style={styles.propertyHeaderContainer}>
+              <Text style={styles.propertyHeader}>Voting Type</Text>
+              <Text style={styles.propertyHeaderRequired}>*</Text>
+            </View>
+
+            <RadioList options={TYPE_OPTIONS} selected={type} onChange={onChangeType} />
 
             <View style={styles.propertyHeaderContainer}>
               <Text style={styles.propertyHeader}>Voting Date</Text>

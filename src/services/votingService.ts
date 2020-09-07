@@ -4,6 +4,11 @@ import { TCandidateDict, TCandidate, TSession, TSessionToCandidateToVoteDict, TV
 import { TDirectory } from '@backend/kappa';
 import { sortUserByName } from '@services/kappaService';
 
+export const TYPE_OPTIONS = [
+  { id: 'REGULAR', title: 'One at a time' },
+  { id: 'MULTI', title: 'Multiple choice' }
+];
+
 export const CLASS_YEAR_OPTIONS = [
   { id: 'FR', title: 'Freshman' },
   { id: 'SO', title: 'Sophomore' },
