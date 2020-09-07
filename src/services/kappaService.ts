@@ -492,7 +492,9 @@ export const getFutureDateIndex = (
 
 export const setGlobalError = (message: string, code: number) => {
   return {
-    globalErrorMessage: message,
+    globalErrorMessage: message.startsWith('FetchEvent.respondWith')
+      ? 'Safari is not supported. Please use Chrome!'
+      : message,
     globalErrorCode: code,
     globalErrorDate: new Date()
   };
