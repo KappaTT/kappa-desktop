@@ -29,6 +29,7 @@ export interface TSession {
   currentCandidateId: string;
   active: boolean;
   type?: 'REGULAR' | 'MULTI';
+  maxVotes?: number;
 }
 
 export interface TVote {

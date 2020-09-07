@@ -12,6 +12,10 @@ import { TYPE_OPTIONS } from '@services/votingService';
 import { theme } from '@constants';
 import { Icon, FormattedInput, RadioList, CheckList, CandidateReorder, Switch } from '@components';
 
+const numberFormatter = (text: string) => {
+  return text !== undefined ? text.replace(/\D/g, '') : '';
+};
+
 const EditSessionPage: React.FC<{
   onPressCancel(): void;
 }> = ({ onPressCancel }) => {
@@ -30,6 +34,9 @@ const EditSessionPage: React.FC<{
   const [readyToDelete, setReadyToDelete] = React.useState<boolean>(false);
   const [name, setName] = React.useState<string>(selectedSession?.name || '');
   const [type, setType] = React.useState<TSession['type']>(selectedSession?.type || 'REGULAR');
+  const [maxVotes, setMaxVotes] = React.useState<number>(
+    selectedSession?.maxVotes !== undefined ? selectedSession.maxVotes : 6
+  );
   const [startDate, setStartDate] = React.useState(
     selectedSession ? moment(selectedSession.startDate) : moment(new Date()).startOf('hour')
   );
@@ -47,6 +54,7 @@ const EditSessionPage: React.FC<{
           {
             name,
             type,
+            maxVotes,
             startDate: startDate.toISOString(),
             candidateOrder,
             currentCandidateId
@@ -54,7 +62,7 @@ const EditSessionPage: React.FC<{
           editingSessionId !== 'NEW' ? editingSessionId : undefined
         )
       ),
-    [candidateOrder, currentCandidateId, dispatch, editingSessionId, name, startDate, type, user]
+    [candidateOrder, currentCandidateId, dispatch, editingSessionId, maxVotes, name, startDate, type, user]
   );
   const dispatchDeleteSession = React.useCallback(() => dispatch(_voting.deleteSession(user, editingSessionId)), [
     dispatch,
@@ -100,6 +108,16 @@ const EditSessionPage: React.FC<{
 
   const onChangeType = React.useCallback((chosen: TSession['type']) => {
     setType(chosen);
+  }, []);
+
+  const onChangeMaxVotes = React.useCallback((text: string) => {
+    try {
+      if (text.length > 0) {
+        setMaxVotes(parseInt(text, 10));
+      }
+    } catch (error) {
+      setMaxVotes(0);
+    }
   }, []);
 
   const onChangeStartDate = React.useCallback(
@@ -226,6 +244,23 @@ const EditSessionPage: React.FC<{
             </View>
 
             <RadioList options={TYPE_OPTIONS} selected={type} onChange={onChangeType} />
+
+            {type === 'MULTI' && (
+              <React.Fragment>
+                <View style={styles.propertyHeaderContainer}>
+                  <Text style={styles.propertyHeader}>Max Votes</Text>
+                  <Text style={styles.propertyHeaderRequired}>*</Text>
+                </View>
+
+                <FormattedInput
+                  placeholderText="ex: 6"
+                  maxLength={2}
+                  value={maxVotes.toString()}
+                  formatter={numberFormatter}
+                  onChangeText={onChangeMaxVotes}
+                />
+              </React.Fragment>
+            )}
 
             <View style={styles.propertyHeaderContainer}>
               <Text style={styles.propertyHeader}>Voting Date</Text>
