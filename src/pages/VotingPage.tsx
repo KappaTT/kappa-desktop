@@ -351,7 +351,7 @@ const VotingPage: React.FC<{
 
   const renderCandidateOption = (candidate: TCandidate) => {
     return (
-      <View style={styles.candidateArea}>
+      <View key={candidate._id} style={styles.candidateArea}>
         <View style={styles.candidateHeader}>
           <View style={styles.candidateName}>
             <Text style={styles.name}>

@@ -73,36 +73,56 @@ export const mergeSessions = (sessions: TSession[], newSessions: TSession[]): TS
 export const sortSessionByDate = (a: { startDate: string }, b: { startDate: string }) =>
   moment(a.startDate).isBefore(moment(b.startDate)) ? -1 : 1;
 
-export const mergeVotes = (sessionToCandidateToVotes: TSessionToCandidateToVoteDict, newVotes: TVote[]) => {
+export const mergeVotes = (
+  sessionToCandidateToVotes: TSessionToCandidateToVoteDict,
+  newVotes: TVote[],
+  overwrite: boolean = false
+) => {
   if (newVotes.length === 0) {
     return sessionToCandidateToVotes;
   }
 
-  const mergedVotes = sessionToCandidateToVotes;
+  const mergedVotes = overwrite ? {} : sessionToCandidateToVotes;
 
-  const sessionId = newVotes[0].sessionId;
-  const candidateId = newVotes[0].candidateId;
-  const votes: {
-    [_id: string]: TVote;
+  const duplicateVoteCheck: {
+    [sessionId: string]: {
+      [candidateId: string]: {
+        [email: string]: TVote;
+      };
+    };
   } = {};
 
-  if (!mergedVotes.hasOwnProperty(sessionId)) {
-    mergedVotes[sessionId] = {};
-  }
-
-  if (!mergedVotes[sessionId].hasOwnProperty(candidateId)) {
-    mergedVotes[sessionId][candidateId] = [];
-  }
-
-  for (const vote of mergedVotes[sessionId][candidateId]) {
-    votes[vote._id] = vote;
-  }
-
   for (const vote of newVotes) {
-    votes[vote._id] = vote;
-  }
+    const sessionId = vote.sessionId;
+    const candidateId = vote.candidateId;
+    const email = vote.userEmail;
 
-  mergedVotes[sessionId][candidateId] = Object.values(votes);
+    if (!mergedVotes.hasOwnProperty(sessionId)) {
+      mergedVotes[sessionId] = {};
+    }
+
+    if (!mergedVotes[sessionId].hasOwnProperty(candidateId)) {
+      mergedVotes[sessionId][candidateId] = [];
+    }
+
+    if (!duplicateVoteCheck.hasOwnProperty(sessionId)) {
+      duplicateVoteCheck[sessionId] = {};
+    }
+
+    if (!duplicateVoteCheck[sessionId].hasOwnProperty(candidateId)) {
+      duplicateVoteCheck[sessionId][candidateId] = {};
+    }
+
+    for (const vote of mergedVotes[sessionId][candidateId]) {
+      duplicateVoteCheck[sessionId][candidateId][email] = vote;
+    }
+
+    for (const vote of newVotes) {
+      duplicateVoteCheck[sessionId][candidateId][email] = vote;
+    }
+
+    mergedVotes[sessionId][candidateId] = Object.values(duplicateVoteCheck[sessionId][candidateId]);
+  }
 
   return mergedVotes;
 };
