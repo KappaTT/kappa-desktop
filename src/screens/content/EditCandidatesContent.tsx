@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, FlatList, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, ScrollView, SectionList, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useIsFocused } from 'react-navigation-hooks';
 import moment from 'moment';
@@ -34,6 +34,20 @@ const EditCandidatesContent: React.FC<{
   const selectedCandidate = React.useMemo(
     () => candidateArray.find((candidate) => candidate.email === selectedCandidateEmail) || null,
     [candidateArray, selectedCandidateEmail]
+  );
+
+  const candidateSections = React.useMemo(
+    () => [
+      {
+        title: 'Approved',
+        data: approvedCandidateArray
+      },
+      {
+        title: 'Unapproved',
+        data: unapprovedCandidateArray
+      }
+    ],
+    [approvedCandidateArray, unapprovedCandidateArray]
   );
 
   const dispatch = useDispatch();
@@ -126,8 +140,7 @@ const EditCandidatesContent: React.FC<{
       <View style={styles.sectionContent}>
         <SubHeader title="Candidates" />
         <View style={styles.candidateList}>
-          <FlatList data={approvedCandidateArray} keyExtractor={keyExtractor} renderItem={renderItem} />
-          <FlatList data={unapprovedCandidateArray} keyExtractor={keyExtractor} renderItem={renderItem} />
+          <SectionList sections={candidateSections} keyExtractor={keyExtractor} renderItem={renderItem} />
         </View>
       </View>
     );
@@ -265,6 +278,7 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans'
   },
   candidateList: {
+    flex: 1,
     justifyContent: 'flex-start'
   }
 });
