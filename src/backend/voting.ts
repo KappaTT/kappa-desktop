@@ -669,6 +669,7 @@ export const submitVote = async (payload: TSubmitVotePayload): Promise<TSubmitVo
 
 export interface TSubmitMultiVotePayload {
   user: TUser;
+  sessionId: string;
   candidates: string[];
 }
 
@@ -687,6 +688,7 @@ export const submitMultiVote = async (payload: TSubmitMultiVotePayload): Promise
       METHODS.SUBMIT_MULTI_VOTE,
       {
         body: {
+          sessionId: payload.sessionId,
           candidates: payload.candidates
         }
       },

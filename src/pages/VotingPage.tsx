@@ -62,11 +62,10 @@ const VotingPage: React.FC<{
       ),
     [activeSession, currentCandidate, dispatch, reason, user]
   );
-  const dispatchSubmitMultiVote = React.useCallback(() => dispatch(_voting.submitMultiVote(user, selectedCandidates)), [
-    dispatch,
-    selectedCandidates,
-    user
-  ]);
+  const dispatchSubmitMultiVote = React.useCallback(
+    () => dispatch(_voting.submitMultiVote(user, activeSession?._id, selectedCandidates)),
+    [activeSession, dispatch, selectedCandidates, user]
+  );
 
   const attendedEvents = React.useMemo(() => {
     if (!currentCandidate) return [];

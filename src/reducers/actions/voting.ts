@@ -499,11 +499,11 @@ export const submitVote = (user: TUser, vote: Partial<TVote>) => {
   };
 };
 
-export const submitMultiVote = (user: TUser, candidates: string[]) => {
+export const submitMultiVote = (user: TUser, sessionId: string, candidates: string[]) => {
   return (dispatch) => {
     dispatch(submittingVote());
 
-    Voting.submitMultiVote({ user, candidates }).then((res) => {
+    Voting.submitMultiVote({ user, sessionId, candidates }).then((res) => {
       if (res.success) {
         dispatch(submitVoteSuccess(res.data));
       } else {
