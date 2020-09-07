@@ -131,6 +131,14 @@ const EditCandidatesContent: React.FC<{
 
   const keyExtractor = React.useCallback((item: TCandidate) => item._id, []);
 
+  const renderSectionHeader = ({ section: { title, data } }) => {
+    return (
+      <View style={styles.sectionHeaderContainer}>
+        <Text style={styles.sectionHeaderText}>{title}</Text>
+      </View>
+    );
+  };
+
   const renderItem = ({ item }: { item: TCandidate }) => {
     return <CandidateItem candidate={item} />;
   };
@@ -140,7 +148,12 @@ const EditCandidatesContent: React.FC<{
       <View style={styles.sectionContent}>
         <SubHeader title="Candidates" />
         <View style={styles.candidateList}>
-          <SectionList sections={candidateSections} keyExtractor={keyExtractor} renderItem={renderItem} />
+          <SectionList
+            sections={candidateSections}
+            keyExtractor={keyExtractor}
+            renderSectionHeader={renderSectionHeader}
+            renderItem={renderItem}
+          />
         </View>
       </View>
     );
@@ -280,6 +293,19 @@ const styles = StyleSheet.create({
   candidateList: {
     flex: 1,
     justifyContent: 'flex-start'
+  },
+  sectionHeaderContainer: {
+    height: 24,
+    paddingHorizontal: 16,
+    backgroundColor: theme.COLORS.SUPER_LIGHT_BLUE_GRAY,
+    borderBottomColor: theme.COLORS.LIGHT_BORDER,
+    borderBottomWidth: 1,
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  sectionHeaderText: {
+    fontFamily: 'OpenSans',
+    fontSize: 14
   }
 });
 
