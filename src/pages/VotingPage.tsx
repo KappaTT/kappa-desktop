@@ -6,9 +6,10 @@ import moment from 'moment';
 import { TRedux } from '@reducers';
 import { _voting } from '@reducers/actions';
 import { TEvent } from '@backend/kappa';
-import { getVotes } from '@services/votingService';
+import { getVotes, getVotesBySession } from '@services/votingService';
 import { theme } from '@constants';
 import { Icon, RoundButton, FormattedInput } from '@components';
+import { TCandidate } from '@backend/voting';
 
 const VotingPage: React.FC<{
   onPressCancel(): void;
@@ -24,13 +25,28 @@ const VotingPage: React.FC<{
   const [votingRefreshDate, setVotingRefreshDate] = React.useState(null);
   const [reason, setReason] = React.useState<string>('');
   const [showReasonError, setShowReasonError] = React.useState<boolean>(false);
+  const [selectedCandidates, setSelectedCandidates] = React.useState<string[]>([]);
 
   const activeSession = React.useMemo(() => sessionArray.find((session) => session.active) || null, [sessionArray]);
+
+  const maxVotes = React.useMemo(() => (activeSession?.maxVotes !== undefined ? activeSession.maxVotes : 0), [
+    activeSession
+  ]);
 
   const currentCandidate = React.useMemo(
     () => candidateArray.find((candidate) => candidate._id === activeSession?.currentCandidateId) || null,
     [activeSession, candidateArray]
   );
+
+  const currentCandidateArray = React.useMemo(() => {
+    if (activeSession?.type === 'MULTI') {
+      return activeSession.candidateOrder
+        .map((id) => candidateArray.find((candidate) => candidate._id === id) || null)
+        .filter((candidate) => candidate !== null);
+    }
+
+    return [];
+  }, [activeSession, candidateArray]);
 
   const dispatch = useDispatch();
   const dispatchGetActiveVotes = React.useCallback(() => dispatch(_voting.getActiveVotes(user)), [dispatch, user]);
@@ -46,6 +62,11 @@ const VotingPage: React.FC<{
       ),
     [activeSession, currentCandidate, dispatch, reason, user]
   );
+  const dispatchSubmitMultiVote = React.useCallback(() => dispatch(_voting.submitMultiVote(user, selectedCandidates)), [
+    dispatch,
+    selectedCandidates,
+    user
+  ]);
 
   const attendedEvents = React.useMemo(() => {
     if (!currentCandidate) return [];
@@ -63,11 +84,39 @@ const VotingPage: React.FC<{
     return events;
   }, [eventArray, currentCandidate]);
 
+  const candidateIdToAttendedEvents = React.useMemo(() => {
+    if (currentCandidateArray.length === 0) return {};
+
+    const idToEvents = {};
+
+    for (const candidate of currentCandidateArray) {
+      const events = [];
+
+      for (const eventId of candidate.events) {
+        const event = eventArray.find((event) => event._id === eventId);
+
+        if (event) {
+          events.push(event);
+        }
+      }
+
+      idToEvents[candidate._id] = events;
+    }
+
+    return idToEvents;
+  }, [currentCandidateArray, eventArray]);
+
   const votes = getVotes(sessionToCandidateToVotes, activeSession?._id, activeSession?.currentCandidateId, {});
+  const sessionVotes = getVotesBySession(sessionToCandidateToVotes, activeSession?._id);
 
   const currentVote = React.useMemo(() => votes.find((vote) => vote.userEmail === user.email) || null, [
     user.email,
     votes
+  ]);
+
+  const readyToSubmit = React.useMemo(() => selectedCandidates.length > 0 && selectedCandidates.length < maxVotes, [
+    maxVotes,
+    selectedCandidates.length
   ]);
 
   const onChangeReason = React.useCallback((text: string) => setReason(text), []);
@@ -86,6 +135,17 @@ const VotingPage: React.FC<{
     dispatchSubmitVote(true);
   }, [dispatchSubmitVote]);
 
+  const onPressSelectCandidate = React.useCallback(
+    (candidateId) => {
+      if (selectedCandidates.indexOf(candidateId) >= 0) {
+        setSelectedCandidates(selectedCandidates.filter((id) => id !== candidateId));
+      } else {
+        setSelectedCandidates([...selectedCandidates, candidateId]);
+      }
+    },
+    [selectedCandidates]
+  );
+
   const refreshVotes = React.useCallback(() => {
     if (!isGettingActiveVotes) dispatchGetActiveVotes();
 
@@ -93,11 +153,7 @@ const VotingPage: React.FC<{
   }, [dispatchGetActiveVotes, isGettingActiveVotes]);
 
   React.useEffect(() => {
-    if (
-      activeSession !== null &&
-      !isGettingActiveVotes &&
-      (votingRefreshDate === null || votingRefreshDate.isBefore(moment()))
-    ) {
+    if (!isGettingActiveVotes && (votingRefreshDate === null || votingRefreshDate.isBefore(moment()))) {
       const t = setTimeout(refreshVotes, votingRefreshDate === null ? 0 : 5000);
       return () => clearTimeout(t);
     }
@@ -116,11 +172,34 @@ const VotingPage: React.FC<{
           <Text style={styles.titleText}>Voting</Text>
           <Text style={styles.subtitleText}>{activeSession !== null ? activeSession.name : 'No Active Session'}</Text>
         </View>
+
+        {activeSession?.type === 'MULTI' && (
+          <View style={styles.saveWrapper}>
+            {isSubmittingVote ? (
+              <ActivityIndicator style={styles.saveLoader} color={theme.COLORS.PRIMARY} />
+            ) : (
+              <TouchableOpacity
+                style={{
+                  opacity: readyToSubmit ? 1 : 0.6
+                }}
+                activeOpacity={0.6}
+                disabled={!readyToSubmit}
+                onPress={dispatchSubmitMultiVote}
+              >
+                <Text style={styles.saveText}>
+                  {maxVotes === 0 || selectedCandidates.length <= maxVotes
+                    ? 'Submit'
+                    : `You may only select ${maxVotes} candidates`}
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
       </React.Fragment>
     );
   };
 
-  const renderCurrentCandidateSection = () => {
+  const renderRegular = () => {
     return (
       <View style={styles.sectionContent}>
         <ScrollView>
@@ -271,6 +350,107 @@ const VotingPage: React.FC<{
     );
   };
 
+  const renderCandidateOption = (candidate: TCandidate) => {
+    return (
+      <View style={styles.candidateArea}>
+        <View style={styles.candidateHeader}>
+          <View style={styles.candidateName}>
+            <Text style={styles.name}>
+              {candidate.familyName}, {candidate.givenName}
+            </Text>
+
+            {candidate.approved && (
+              <Icon
+                style={styles.approvedIcon}
+                family="Feather"
+                name="check"
+                size={24}
+                color={theme.COLORS.PRIMARY_GREEN}
+              />
+            )}
+          </View>
+
+          <View style={styles.candidateButtonArea}>
+            {sessionVotes.hasOwnProperty(candidate._id) &&
+              sessionVotes[candidate._id].find((vote) => vote.userEmail === user.email) && (
+                <Text style={styles.submittedText}>Submitted</Text>
+              )}
+            {selectedCandidates.indexOf(candidate._id) >= 0 ? (
+              <RoundButton
+                label="Unselect"
+                alt={true}
+                color={theme.COLORS.PRIMARY}
+                bgColor={theme.COLORS.SUPER_LIGHT_BLUE_GRAY}
+                onPress={() => onPressSelectCandidate(candidate._id)}
+              />
+            ) : (
+              <RoundButton
+                label="Select"
+                color={theme.COLORS.PRIMARY}
+                onPress={() => onPressSelectCandidate(candidate._id)}
+              />
+            )}
+          </View>
+        </View>
+
+        <View style={styles.splitPropertyRow}>
+          <View style={styles.splitProperty}>
+            <Text style={styles.propertyHeader}>Year</Text>
+            <Text style={styles.propertyValue}>{candidate.classYear}</Text>
+          </View>
+          <View style={styles.splitProperty}>
+            <Text style={styles.propertyHeader}>Major</Text>
+            <Text style={styles.propertyValue}>{candidate.major}</Text>
+          </View>
+          <View style={styles.splitProperty}>
+            <Text style={styles.propertyHeader}>2nd Time Rush</Text>
+            <Text style={styles.propertyValue}>{candidate.secondTimeRush ? 'Yes' : 'No'}</Text>
+          </View>
+        </View>
+
+        <Text style={styles.propertyHeader}>Attended Events</Text>
+        {candidateIdToAttendedEvents.hasOwnProperty(candidate._id) ? (
+          candidateIdToAttendedEvents[candidate._id].map((event: TEvent) => (
+            <View key={event._id} style={styles.eventContainer}>
+              <Text style={styles.eventTitle}>{event.title}</Text>
+              <Text style={styles.eventDate}>{moment(event.start).format('ddd LLL')}</Text>
+            </View>
+          ))
+        ) : (
+          <Text style={styles.noEvents}>No events</Text>
+        )}
+      </View>
+    );
+  };
+
+  const renderMultiSelect = () => {
+    return (
+      <View style={styles.sectionContent}>
+        <ScrollView>
+          <View style={styles.scrollContent}>
+            <View style={styles.propertyHeaderContainer}>
+              <Text style={[styles.propertyHeader, { marginTop: 0 }]}>Candidate Options</Text>
+            </View>
+
+            <View style={styles.activeContent}>
+              {currentCandidateArray.length > 0 ? (
+                <React.Fragment>
+                  {currentCandidateArray.map((candidate) => renderCandidateOption(candidate))}
+                </React.Fragment>
+              ) : (
+                <View style={styles.candidateArea}>
+                  <Text style={styles.noVotes}>
+                    There is currently no candidate being voted on. This page will automatically update.
+                  </Text>
+                </View>
+              )}
+            </View>
+          </View>
+        </ScrollView>
+      </View>
+    );
+  };
+
   const renderDivider = () => {
     return (
       <View style={styles.dividerWrapper}>
@@ -287,7 +467,7 @@ const VotingPage: React.FC<{
         style={[styles.content, activeSession === null && { opacity: 0.5 }]}
         pointerEvents={activeSession !== null ? 'auto' : 'none'}
       >
-        <View style={styles.section}>{renderCurrentCandidateSection()}</View>
+        <View style={styles.section}>{activeSession?.type === 'MULTI' ? renderMultiSelect() : renderRegular()}</View>
       </View>
     </View>
   );
@@ -424,6 +604,10 @@ const styles = StyleSheet.create({
   approvedIcon: {
     marginLeft: 8
   },
+  candidateButtonArea: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
   splitPropertyRow: {
     flexDirection: 'row',
     flexWrap: 'wrap'
@@ -486,6 +670,13 @@ const styles = StyleSheet.create({
   },
   multilineInput: {
     height: 128
+  },
+  submittedText: {
+    marginRight: 8,
+    height: 20,
+    fontFamily: 'OpenSans',
+    fontSize: 15,
+    color: theme.COLORS.DARK_GRAY
   }
 });
 

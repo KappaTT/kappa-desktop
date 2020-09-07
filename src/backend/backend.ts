@@ -50,7 +50,8 @@ export const ENDPOINTS: {
   GET_ACTIVE_VOTES: () => 'active-candidate/votes',
   GET_CANDIDATE_VOTES: () => 'votes',
   CREATE_NEXT_SESSION: () => 'session/next',
-  SUBMIT_VOTE: () => 'vote'
+  SUBMIT_VOTE: () => 'vote',
+  SUBMIT_MULTI_VOTE: () => 'multi-vote'
 };
 
 export const METHODS: {
@@ -88,7 +89,8 @@ export const METHODS: {
   GET_ACTIVE_VOTES: M_GET,
   GET_CANDIDATE_VOTES: M_POST,
   CREATE_NEXT_SESSION: M_POST,
-  SUBMIT_VOTE: M_POST
+  SUBMIT_VOTE: M_POST,
+  SUBMIT_MULTI_VOTE: M_POST
 };
 
 export interface TResponse {

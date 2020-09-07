@@ -440,15 +440,17 @@ export default (state = initialState, action: any): TVotingState => {
         getActiveVotesError: false,
         getActiveVotesErrorMessage: ''
       };
-    case GET_ACTIVE_VOTES_SUCCESS:
-      if (action.sessions.length > 0 && action.candidate !== null) {
+    case GET_ACTIVE_VOTES_SUCCESS: {
+      if (action.sessions.length > 0 && (action.candidate !== null || action.candidates.length > 0)) {
+        const candidatesToMerge = action.candidate ? [action.candidate] : action.candidates;
+
         return {
           ...state,
           isGettingActiveVotes: false,
           sessionArray: mergeSessions(state.sessionArray, action.sessions),
           sessionToCandidateToVotes: mergeVotes(state.sessionToCandidateToVotes, action.votes),
           ...recomputeVotingState({
-            emailToCandidate: mergeCandidates(state.emailToCandidate, [action.candidate])
+            emailToCandidate: mergeCandidates(state.emailToCandidate, candidatesToMerge)
           })
         };
       } else {
@@ -457,6 +459,7 @@ export default (state = initialState, action: any): TVotingState => {
           isGettingActiveVotes: false
         };
       }
+    }
     case GET_ACTIVE_VOTES_FAILURE:
       return {
         ...state,

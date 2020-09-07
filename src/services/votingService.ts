@@ -129,6 +129,19 @@ export const getVotes = (
   });
 };
 
+export const getVotesBySession = (
+  sessionToCandidateToVotes: TSessionToCandidateToVoteDict,
+  sessionId: string
+): {
+  [candidateId: string]: TVote[];
+} => {
+  if (!sessionToCandidateToVotes.hasOwnProperty(sessionId)) {
+    return {};
+  }
+
+  return sessionToCandidateToVotes[sessionId];
+};
+
 export const recomputeVotingState = ({ emailToCandidate }: { emailToCandidate: TCandidateDict }) => {
   const candidateArray = Object.values(emailToCandidate).sort(sortUserByName);
   const idToCandidate = separateByCandidateId(candidateArray);
