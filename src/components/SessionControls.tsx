@@ -353,7 +353,7 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
                         ))}
                       </View>
                     ) : (
-                      <Text style={styles.noVotes}>No Candidates</Text>
+                      <Text style={styles.noVotes}>No candidates</Text>
                     )}
                   </View>
                   <View style={styles.dividerWrapper}>

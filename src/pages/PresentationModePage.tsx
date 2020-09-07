@@ -146,7 +146,7 @@ const PresentationModePage: React.FC<{
                 ))}
               </View>
             ) : (
-              <Text style={[styles.noVotes, { marginLeft: 16 }]}>No Candidates</Text>
+              <Text style={[styles.noVotes, { marginLeft: 16 }]}>No candidates</Text>
             )}
           </View>
         </ScrollView>
