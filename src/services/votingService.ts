@@ -92,18 +92,28 @@ export const mergeVotes = (
     };
   } = {};
 
+  // load current votes into duplicate check
+  for (const sessionId of Object.keys(mergedVotes)) {
+    for (const candidateId of Object.keys(mergedVotes[sessionId])) {
+      for (const vote of mergedVotes[sessionId][candidateId]) {
+        if (!duplicateVoteCheck.hasOwnProperty(sessionId)) {
+          duplicateVoteCheck[sessionId] = {};
+        }
+
+        if (!duplicateVoteCheck[sessionId].hasOwnProperty(candidateId)) {
+          duplicateVoteCheck[sessionId][candidateId] = {};
+        }
+
+        duplicateVoteCheck[sessionId][candidateId][vote.userEmail] = vote;
+      }
+    }
+  }
+
+  // incorporate new votes
   for (const vote of newVotes) {
     const sessionId = vote.sessionId;
     const candidateId = vote.candidateId;
     const email = vote.userEmail;
-
-    if (!mergedVotes.hasOwnProperty(sessionId)) {
-      mergedVotes[sessionId] = {};
-    }
-
-    if (!mergedVotes[sessionId].hasOwnProperty(candidateId)) {
-      mergedVotes[sessionId][candidateId] = [];
-    }
 
     if (!duplicateVoteCheck.hasOwnProperty(sessionId)) {
       duplicateVoteCheck[sessionId] = {};
@@ -113,15 +123,22 @@ export const mergeVotes = (
       duplicateVoteCheck[sessionId][candidateId] = {};
     }
 
-    for (const vote of mergedVotes[sessionId][candidateId]) {
-      duplicateVoteCheck[sessionId][candidateId][email] = vote;
-    }
+    duplicateVoteCheck[sessionId][candidateId][email] = vote;
+  }
 
-    for (const vote of newVotes) {
-      duplicateVoteCheck[sessionId][candidateId][email] = vote;
-    }
+  // update merged
+  for (const sessionId of Object.keys(duplicateVoteCheck)) {
+    for (const candidateId of Object.keys(duplicateVoteCheck[sessionId])) {
+      if (!mergedVotes.hasOwnProperty(sessionId)) {
+        mergedVotes[sessionId] = {};
+      }
 
-    mergedVotes[sessionId][candidateId] = Object.values(duplicateVoteCheck[sessionId][candidateId]);
+      if (!mergedVotes[sessionId].hasOwnProperty(candidateId)) {
+        mergedVotes[sessionId][candidateId] = [];
+      }
+
+      mergedVotes[sessionId][candidateId] = Object.values(duplicateVoteCheck[sessionId][candidateId]);
+    }
   }
 
   return mergedVotes;
@@ -140,13 +157,17 @@ export const getVotes = (
     return [];
   }
 
-  return sessionToCandidateToVotes[sessionId][candidateId].map((vote) => {
+  const votes = sessionToCandidateToVotes[sessionId][candidateId].map((vote) => {
     const user = directory[vote.userEmail];
     return {
       ...vote,
       userName: user ? `${user.familyName}, ${user.givenName}` : vote.userEmail
     };
   });
+
+  console.log(votes);
+
+  return votes;
 };
 
 export const getVotesBySession = (
