@@ -78,11 +78,11 @@ export const mergeVotes = (
   newVotes: TVote[],
   overwrite: boolean = false
 ) => {
-  if (newVotes.length === 0) {
-    return sessionToCandidateToVotes;
-  }
-
   const mergedVotes = overwrite ? {} : sessionToCandidateToVotes;
+
+  if (newVotes.length === 0) {
+    return mergedVotes;
+  }
 
   const duplicateVoteCheck: {
     [sessionId: string]: {
@@ -157,17 +157,13 @@ export const getVotes = (
     return [];
   }
 
-  const votes = sessionToCandidateToVotes[sessionId][candidateId].map((vote) => {
+  return sessionToCandidateToVotes[sessionId][candidateId].map((vote) => {
     const user = directory[vote.userEmail];
     return {
       ...vote,
       userName: user ? `${user.familyName}, ${user.givenName}` : vote.userEmail
     };
   });
-
-  console.log(votes);
-
-  return votes;
 };
 
 export const getVotesBySession = (
