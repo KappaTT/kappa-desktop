@@ -34,9 +34,7 @@ const EditSessionPage: React.FC<{
   const [readyToDelete, setReadyToDelete] = React.useState<boolean>(false);
   const [name, setName] = React.useState<string>(selectedSession?.name || '');
   const [type, setType] = React.useState<TSession['type']>(selectedSession?.type || 'REGULAR');
-  const [maxVotes, setMaxVotes] = React.useState<number>(
-    selectedSession?.maxVotes !== undefined ? selectedSession.maxVotes : 6
-  );
+  const [maxVotes, setMaxVotes] = React.useState<string>(selectedSession?.maxVotes?.toString() || '');
   const [startDate, setStartDate] = React.useState(
     selectedSession ? moment(selectedSession.startDate) : moment(new Date()).startOf('hour')
   );
@@ -54,7 +52,7 @@ const EditSessionPage: React.FC<{
           {
             name,
             type,
-            maxVotes,
+            maxVotes: parseInt(maxVotes, 10),
             startDate: startDate.toISOString(),
             candidateOrder,
             currentCandidateId
@@ -111,13 +109,7 @@ const EditSessionPage: React.FC<{
   }, []);
 
   const onChangeMaxVotes = React.useCallback((text: string) => {
-    try {
-      if (text.length > 0) {
-        setMaxVotes(parseInt(text, 10));
-      }
-    } catch (error) {
-      setMaxVotes(0);
-    }
+    setMaxVotes(text);
   }, []);
 
   const onChangeStartDate = React.useCallback(
