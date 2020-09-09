@@ -14,6 +14,7 @@ import GoogleSignInButton from './GoogleSignInButton';
 import Header from './Header';
 import HorizontalSegmentBar from './HorizontalSegmentBar';
 import Icon from './Icon';
+import LinkContainer from './LinkContainer';
 import ModalController from './ModalController';
 import PendingExcuseItem from './PendingExcuseItem';
 import PopupModal from './PopupModal';
@@ -47,6 +48,7 @@ export {
   Header,
   HorizontalSegmentBar,
   Icon,
+  LinkContainer,
   ModalController,
   PendingExcuseItem,
   PopupModal,
