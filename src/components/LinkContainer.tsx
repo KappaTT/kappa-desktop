@@ -41,7 +41,7 @@ const LinkContainer: React.FC<{ link?: string; disabled?: boolean; children: Rea
   }, [link]);
 
   return (
-    <TouchableOpacity activeOpacity={0.6} onPress={onPressLink} onLongPress={onLongPressLink}>
+    <TouchableOpacity activeOpacity={0.6} disabled={disabled} onPress={onPressLink} onLongPress={onLongPressLink}>
       {children}
     </TouchableOpacity>
   );
