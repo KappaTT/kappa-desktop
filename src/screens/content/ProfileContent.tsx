@@ -10,6 +10,7 @@ import { _auth, _kappa, _nav } from '@reducers/actions';
 import { TEvent } from '@backend/kappa';
 import { theme } from '@constants';
 import { TPoints, POINTS_SO, GM_SO, POINTS_JR, GM_JR, POINTS_SR, GM_SR, getClassYear } from '@constants/Points';
+import { LINK_LINKTREE } from '@constants/Links';
 import { HEADER_HEIGHT, isEmpty } from '@services/utils';
 import {
   shouldLoad,
@@ -20,7 +21,7 @@ import {
   getTypeCounts,
   isSecretCodeValid
 } from '@services/kappaService';
-import { Header, Icon, HorizontalSegmentBar } from '@components';
+import { Header, Icon, HorizontalSegmentBar, LinkContainer } from '@components';
 
 const ProfileContent: React.FC<{
   navigation: ParamType;
@@ -314,6 +315,19 @@ const ProfileContent: React.FC<{
             <Text style={styles.subHeadingText}>Senior</Text>
 
             {renderRequirements(POINTS_SR, GM_SR)}
+          </View>
+        </View>
+
+        <Text style={styles.headingText}>Links</Text>
+
+        <View style={styles.splitPropertyRow}>
+          <View style={styles.splitProperty}>
+            <LinkContainer link={LINK_LINKTREE}>
+              <Text style={styles.propertyHeader}>Linktree</Text>
+              <Text style={[styles.propertyValue, { color: theme.COLORS.PRIMARY }]} numberOfLines={1}>
+                {LINK_LINKTREE || 'N/A'}
+              </Text>
+            </LinkContainer>
           </View>
         </View>
 
