@@ -19,6 +19,7 @@ import ModalController from './ModalController';
 import PendingExcuseItem from './PendingExcuseItem';
 import PopupModal from './PopupModal';
 import RadioList from './RadioList';
+import RectangleChip from './RectangleChip';
 import RoundButton from './RoundButton';
 import SessionCandidateItem from './SessionCandidateItem';
 import SessionControls from './SessionControls';
@@ -53,6 +54,7 @@ export {
   PendingExcuseItem,
   PopupModal,
   RadioList,
+  RectangleChip,
   RoundButton,
   SessionCandidateItem,
   SessionControls,
