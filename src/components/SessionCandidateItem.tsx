@@ -4,14 +4,17 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { TRedux } from '@reducers';
 import { _auth, _kappa, _ui, _voting } from '@reducers/actions';
+import { getVotes } from '@services/votingService';
 import { theme } from '@constants';
 import { TCandidate } from '@backend/voting';
 import Icon from '@components/Icon';
+import RectangleChip from '@components/RectangleChip';
 
 const SessionCandidateItem: React.FC<{ candidate: TCandidate }> = ({ candidate }) => {
   const user = useSelector((state: TRedux) => state.auth.user);
   const sessionArray = useSelector((state: TRedux) => state.voting.sessionArray);
   const selectedSessionId = useSelector((state: TRedux) => state.voting.selectedSessionId);
+  const sessionToCandidateToVotes = useSelector((state: TRedux) => state.voting.sessionToCandidateToVotes);
 
   const dispatch = useDispatch();
   const dispatchSelectSessionCandidate = React.useCallback(
@@ -43,6 +46,8 @@ const SessionCandidateItem: React.FC<{ candidate: TCandidate }> = ({ candidate }
     selectedSession
   ]);
 
+  const votes = getVotes(sessionToCandidateToVotes, selectedSessionId, candidate._id, {});
+
   const onPressSelect = React.useCallback(() => {
     dispatchSelectSessionCandidate();
   }, [dispatchSelectSessionCandidate]);
@@ -63,6 +68,9 @@ const SessionCandidateItem: React.FC<{ candidate: TCandidate }> = ({ candidate }
               <Text style={styles.name}>
                 {candidate.familyName}, {candidate.givenName}
               </Text>
+
+              <RectangleChip active={votes.length > 0} label={`${votes.length}`} />
+
               {candidate.approved && (
                 <Icon
                   style={styles.approvedIcon}
@@ -114,6 +122,7 @@ const styles = StyleSheet.create({
     marginLeft: 8
   },
   name: {
+    marginRight: 8,
     fontFamily: 'OpenSans-SemiBold',
     fontSize: 16
   },
