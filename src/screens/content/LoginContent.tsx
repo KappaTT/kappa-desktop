@@ -1,17 +1,16 @@
 import React from 'react';
 import { StyleSheet, View, Text, Image, ActivityIndicator } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { useIsFocused } from 'react-navigation-hooks';
+import { useIsFocused, NavigationProp } from '@react-navigation/native';
 import { GoogleLoginResponse } from 'react-google-login';
 
-import { ParamType } from '@navigation/NavigationTypes';
 import { TRedux } from '@reducers';
 import { _auth, _nav } from '@reducers/actions';
 import { theme, Images } from '@constants';
 import { GoogleSignInButton } from '@components';
 
 const LoginContent: React.FC<{
-  navigation: ParamType;
+  navigation: NavigationProp<any, 'Login'>;
 }> = ({ navigation }) => {
   const authorized = useSelector((state: TRedux) => state.auth.authorized);
   const isAuthenticating = useSelector((state: TRedux) => state.auth.isAuthenticating);
@@ -44,7 +43,7 @@ const LoginContent: React.FC<{
 
   React.useEffect(() => {
     if (authorized) {
-      navigation.navigate('EventsStack');
+      navigation.navigate('Events');
       dispatchSetSelectedPage('Events');
     }
   }, [authorized, dispatchSetSelectedPage, navigation]);

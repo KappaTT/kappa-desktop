@@ -10,7 +10,8 @@ import { _auth } from '@reducers/actions';
 import { incompleteUser } from '@backend/auth';
 import { Images, theme } from '@constants';
 import AppNavigator from '@navigation/AppNavigator';
-import { setTopLevelNavigator, navigate } from '@navigation/NavigationService';
+import { navigate } from '@navigation/NavigationService';
+
 import { SIDEBAR_WIDTH } from '@services/utils';
 import { Sidebar, ModalController, ToastController } from '@components';
 import './styles/global.css';
@@ -68,7 +69,7 @@ const App = () => {
 
   React.useEffect(() => {
     if (loadedUser && !authorized) {
-      navigate('LoginStack');
+      navigate('Login');
     }
   }, [loadedUser, authorized]);
 
@@ -86,12 +87,7 @@ const App = () => {
         )}
 
         <View style={styles.appContainer}>
-          <AppNavigator
-            ref={(navigatorRef) => {
-              setTopLevelNavigator(navigatorRef);
-              setIsNavigatorReady(true);
-            }}
-          />
+          <AppNavigator />
         </View>
 
         <ToastController />

@@ -1,10 +1,10 @@
 import React from 'react';
+import { NavigationProp } from '@react-navigation/native';
 
-import { ParamType } from '@navigation/NavigationTypes';
 import Content from '@screens/content/MessagesContent';
 
 const MessagesScreen: React.FC<{
-  navigation: ParamType;
+  navigation: NavigationProp<any, 'Messages'>;
 }> = ({ navigation }) => {
   return <Content navigation={navigation} />;
 };

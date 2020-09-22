@@ -1,9 +1,8 @@
 import React from 'react';
 import { StyleSheet, View, Text, ActivityIndicator, TouchableOpacity, FlatList } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { useIsFocused } from 'react-navigation-hooks';
+import { useIsFocused, NavigationProp } from '@react-navigation/native';
 
-import { ParamType } from '@navigation/NavigationTypes';
 import { TRedux } from '@reducers';
 import { _auth, _kappa, _nav } from '@reducers/actions';
 import { TUser } from '@backend/auth';
@@ -14,7 +13,7 @@ import { shouldLoad } from '@services/kappaService';
 import { Header, Icon, BrotherItem } from '@components';
 
 const DirectoryContent: React.FC<{
-  navigation: ParamType;
+  navigation: NavigationProp<any, 'Directory'>;
 }> = ({ navigation }) => {
   const isFocused = useIsFocused();
 

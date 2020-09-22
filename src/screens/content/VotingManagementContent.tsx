@@ -10,10 +10,9 @@ import {
   Dimensions
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { useIsFocused } from 'react-navigation-hooks';
+import { useIsFocused, NavigationProp } from '@react-navigation/native';
 import moment from 'moment';
 
-import { ParamType } from '@navigation/NavigationTypes';
 import { TRedux } from '@reducers';
 import { _auth, _kappa, _nav, _ui, _voting } from '@reducers/actions';
 import { shouldLoad } from '@services/kappaService';
@@ -23,7 +22,7 @@ import { HEADER_HEIGHT } from '@services/utils';
 import { Header, SubHeader, Icon, SessionItem, SessionCandidateItem, SessionControls } from '@components';
 
 const VotingManagementContent: React.FC<{
-  navigation: ParamType;
+  navigation: NavigationProp<any, 'Voting Management'>;
 }> = ({ navigation }) => {
   const isFocused = useIsFocused();
 

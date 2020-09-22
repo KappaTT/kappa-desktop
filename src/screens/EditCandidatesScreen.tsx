@@ -1,10 +1,10 @@
 import React from 'react';
+import { NavigationProp } from '@react-navigation/native';
 
-import { ParamType } from '@navigation/NavigationTypes';
 import Content from '@screens/content/EditCandidatesContent';
 
 const EditCandidatesScreen: React.FC<{
-  navigation: ParamType;
+  navigation: NavigationProp<any, 'Edit Candidates'>;
 }> = ({ navigation }) => {
   return <Content navigation={navigation} />;
 };

@@ -1,10 +1,9 @@
 import React from 'react';
 import { StyleSheet, Dimensions, View, Text, ActivityIndicator, TouchableOpacity, SectionList } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { useIsFocused } from 'react-navigation-hooks';
+import { useIsFocused, NavigationProp } from '@react-navigation/native';
 import moment from 'moment';
 
-import { ParamType } from '@navigation/NavigationTypes';
 import { TRedux } from '@reducers';
 import { _auth, _kappa } from '@reducers/actions';
 import { theme } from '@constants';
@@ -16,7 +15,7 @@ import { Header, Icon, EventItem } from '@components';
 const { height } = Dimensions.get('window');
 
 const EventsContent: React.FC<{
-  navigation: ParamType;
+  navigation: NavigationProp<any, 'Events'>;
 }> = ({ navigation }) => {
   const isFocused = useIsFocused();
 

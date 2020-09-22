@@ -1,10 +1,9 @@
 import React from 'react';
 import { StyleSheet, View, ScrollView, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { useIsFocused } from 'react-navigation-hooks';
+import { useIsFocused, NavigationProp } from '@react-navigation/native';
 import moment from 'moment';
 
-import { ParamType } from '@navigation/NavigationTypes';
 import { TRedux } from '@reducers';
 import { _auth, _kappa, _nav } from '@reducers/actions';
 import { TEvent } from '@backend/kappa';
@@ -24,7 +23,7 @@ import {
 import { Header, Icon, HorizontalSegmentBar, LinkContainer } from '@components';
 
 const ProfileContent: React.FC<{
-  navigation: ParamType;
+  navigation: NavigationProp<any, 'Profile'>;
 }> = ({ navigation }) => {
   const isFocused = useIsFocused();
 

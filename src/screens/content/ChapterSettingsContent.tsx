@@ -1,10 +1,9 @@
 import React from 'react';
 import { StyleSheet, View, ScrollView, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { useIsFocused } from 'react-navigation-hooks';
+import { useIsFocused, NavigationProp } from '@react-navigation/native';
 import moment from 'moment';
 
-import { ParamType } from '@navigation/NavigationTypes';
 import { TRedux } from '@reducers';
 import { _auth, _kappa, _nav } from '@reducers/actions';
 import { theme } from '@constants';
@@ -12,7 +11,7 @@ import { HEADER_HEIGHT } from '@services/utils';
 import { Header, Icon } from '@components';
 
 const ChapterSettingsContent: React.FC<{
-  navigation: ParamType;
+  navigation: NavigationProp<any, 'Chapter Settings'>;
 }> = ({ navigation }) => {
   const isFocused = useIsFocused();
 
