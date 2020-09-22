@@ -29,13 +29,13 @@ const Switch: React.FC<{
         pointerEvents="none"
         value={value}
         disabled={disabled}
-        thumbColor="#FFF"
         thumbTintColor={thumbColor}
+        thumbColor={thumbColor}
         // @ts-ignore
         activeThumbColor={thumbColor}
         onTintColor={`${trackColor}50`}
         tintColor={backgroundColor}
-        trackColor={{ false: trackColor, true: trackColor }}
+        trackColor={{ false: backgroundColor, true: trackColor }}
       />
     </TouchableOpacity>
   );
