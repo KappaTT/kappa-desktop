@@ -64,6 +64,9 @@ const ProfileContent: React.FC<{
     dispatch,
     user
   ]);
+  const dispatchSetSelectedPage = React.useCallback((routeName) => dispatch(_nav.setSelectedPage(routeName)), [
+    dispatch
+  ]);
 
   const refreshing = React.useMemo(() => isGettingEvents && isGettingAttendance && isGettingPoints, [
     isGettingAttendance,
@@ -131,6 +134,12 @@ const ProfileContent: React.FC<{
       loadData(false);
     }
   }, [isFocused, loadData, user.sessionToken]);
+
+  React.useEffect(() => {
+    if (isFocused) {
+      dispatchSetSelectedPage('Profile');
+    }
+  }, [dispatchSetSelectedPage, isFocused]);
 
   const renderRequirements = (points: TPoints, gm: number) => {
     return (

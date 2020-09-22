@@ -3,6 +3,7 @@ import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 
 import { theme } from '@constants';
 import { TSidebarElement } from '@navigation/SidebarLayout';
+import { Link } from '@react-navigation/native';
 
 const SidebarNavButton: React.FC<{
   element: TSidebarElement;
@@ -14,13 +15,23 @@ const SidebarNavButton: React.FC<{
     onPress(element);
   }, [element, onPress]);
 
-  return (
-    <TouchableOpacity activeOpacity={0.6} onPress={onPressElement}>
+  const renderElement = () => {
+    return (
       <View style={[styles.container, level === 1 && styles.subContainer, selected && styles.selectedContainer]}>
         <Text style={[styles.label, level === 1 && styles.subLabel, selected && styles.selectedLabel]}>
           {element.label}
         </Text>
       </View>
+    );
+  };
+
+  if (element.path) {
+    return <Link to={element.path}>{renderElement()}</Link>;
+  }
+
+  return (
+    <TouchableOpacity activeOpacity={0.6} onPress={onPressElement}>
+      {renderElement()}
     </TouchableOpacity>
   );
 };

@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
+import { useLinkTo } from '@react-navigation/native';
 
 import { TRedux } from '@reducers';
 import { _auth, _kappa, _voting, _nav } from '@reducers/actions';
@@ -12,6 +13,8 @@ import SidebarNavButton from '@components/SidebarNavButton';
 import Icon from '@components/Icon';
 
 const Sidebar: React.FC = () => {
+  const linkTo = useLinkTo();
+
   const authorized = useSelector((state: TRedux) => state.auth.authorized);
   const user = useSelector((state: TRedux) => state.auth.user);
   const selectedRouteName = useSelector((state: TRedux) => state.nav.selectedRouteName);
@@ -54,7 +57,11 @@ const Sidebar: React.FC = () => {
           }
         });
       } else if (element.routeName) {
-        navigate(element.routeName);
+        if (element.path) {
+          linkTo(element.path);
+        } else {
+          navigate(element.routeName);
+        }
       } else {
         switch (element.label) {
           case 'Check In':
@@ -72,7 +79,7 @@ const Sidebar: React.FC = () => {
         }
       }
     },
-    [dispatchOpenCheckIn, dispatchOpenRequestExcuse, dispatchShowVoting, dispatchSignOut, sidebarNav]
+    [dispatchOpenCheckIn, dispatchOpenRequestExcuse, dispatchShowVoting, dispatchSignOut, linkTo, sidebarNav]
   );
 
   const onPressMessages = React.useCallback(() => {

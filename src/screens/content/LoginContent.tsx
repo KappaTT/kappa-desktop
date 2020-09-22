@@ -12,6 +12,8 @@ import { GoogleSignInButton } from '@components';
 const LoginContent: React.FC<{
   navigation: NavigationProp<any, 'Login'>;
 }> = ({ navigation }) => {
+  const isFocused = useIsFocused();
+
   const authorized = useSelector((state: TRedux) => state.auth.authorized);
   const isAuthenticating = useSelector((state: TRedux) => state.auth.isAuthenticating);
   const signInErrorMessage = useSelector((state: TRedux) => state.auth.signInErrorMessage);
@@ -44,7 +46,6 @@ const LoginContent: React.FC<{
   React.useEffect(() => {
     if (authorized) {
       navigation.navigate('Events');
-      dispatchSetSelectedPage('Events');
     }
   }, [authorized, dispatchSetSelectedPage, navigation]);
 
@@ -53,6 +54,12 @@ const LoginContent: React.FC<{
       alert(signInErrorMessage);
     }
   }, [signInErrorMessage]);
+
+  React.useEffect(() => {
+    if (isFocused) {
+      dispatchSetSelectedPage('Login');
+    }
+  }, [dispatchSetSelectedPage, isFocused]);
 
   return (
     <View style={styles.container}>

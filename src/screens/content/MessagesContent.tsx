@@ -31,6 +31,9 @@ const MessagesContent: React.FC<{
   const dispatch = useDispatch();
   const dispatchGetExcuses = React.useCallback(() => dispatch(_kappa.getExcuses(user)), [dispatch, user]);
   const dispatchOpenRequestExcuse = React.useCallback(() => dispatch(_kappa.setCheckInEvent('NONE', true)), [dispatch]);
+  const dispatchSetSelectedPage = React.useCallback((routeName) => dispatch(_nav.setSelectedPage(routeName)), [
+    dispatch
+  ]);
 
   const refreshing = React.useMemo(() => isGettingExcuses, [isGettingExcuses]);
 
@@ -82,6 +85,12 @@ const MessagesContent: React.FC<{
       loadData(false);
     }
   }, [user.sessionToken, isFocused, loadData]);
+
+  React.useEffect(() => {
+    if (isFocused) {
+      dispatchSetSelectedPage('Messages');
+    }
+  }, [dispatchSetSelectedPage, isFocused]);
 
   const keyExtractor = React.useCallback((item: TPendingExcuse) => `${item._id}:${item.eventId}`, []);
 

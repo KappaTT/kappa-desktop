@@ -77,6 +77,9 @@ const VotingManagementContent: React.FC<{
     [dispatch, user]
   );
   const dispatchShowPresentationMode = React.useCallback(() => dispatch(_voting.showPresentationMode()), [dispatch]);
+  const dispatchSetSelectedPage = React.useCallback((routeName) => dispatch(_nav.setSelectedPage(routeName)), [
+    dispatch
+  ]);
 
   const refreshing = React.useMemo(
     () => isGettingEvents || isGettingDirectory || isGettingCandidates || isGettingSessions || isGettingCandidateVotes,
@@ -216,6 +219,12 @@ const VotingManagementContent: React.FC<{
       loadData(false);
     }
   }, [isFocused, loadData, user.sessionToken]);
+
+  React.useEffect(() => {
+    if (isFocused) {
+      dispatchSetSelectedPage('Voting Management');
+    }
+  }, [dispatchSetSelectedPage, isFocused]);
 
   const sessionKeyExtractor = React.useCallback((item: TSession) => item._id, []);
   const candidateKeyExtractor = React.useCallback((item: TCandidate) => item._id, []);

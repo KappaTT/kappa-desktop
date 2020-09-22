@@ -71,6 +71,9 @@ const EditCandidatesContent: React.FC<{
       ),
     [dispatch, selectedCandidate, user]
   );
+  const dispatchSetSelectedPage = React.useCallback((routeName) => dispatch(_nav.setSelectedPage(routeName)), [
+    dispatch
+  ]);
 
   const refreshing = React.useMemo(() => isGettingEvents || isGettingCandidates, [
     isGettingCandidates,
@@ -127,6 +130,12 @@ const EditCandidatesContent: React.FC<{
       loadData(false);
     }
   }, [isFocused, loadData, user.sessionToken]);
+
+  React.useEffect(() => {
+    if (isFocused) {
+      dispatchSetSelectedPage('Edit Candidates');
+    }
+  }, [dispatchSetSelectedPage, isFocused]);
 
   const keyExtractor = React.useCallback((item: TCandidate) => item._id, []);
 

@@ -5,7 +5,7 @@ import { useIsFocused, NavigationProp } from '@react-navigation/native';
 import moment from 'moment';
 
 import { TRedux } from '@reducers';
-import { _auth, _kappa } from '@reducers/actions';
+import { _auth, _kappa, _nav, _voting } from '@reducers/actions';
 import { theme } from '@constants';
 import { TEvent } from '@backend/kappa';
 import { HEADER_HEIGHT } from '@services/utils';
@@ -44,6 +44,9 @@ const EventsContent: React.FC<{
   const dispatchGetDirectory = React.useCallback(() => dispatch(_kappa.getDirectory(user)), [dispatch, user]);
   const dispatchGetExcuses = React.useCallback(() => dispatch(_kappa.getExcuses(user)), [dispatch, user]);
   const dispatchEditNewEvent = React.useCallback(() => dispatch(_kappa.editNewEvent()), [dispatch]);
+  const dispatchSetSelectedPage = React.useCallback((routeName) => dispatch(_nav.setSelectedPage(routeName)), [
+    dispatch
+  ]);
 
   const scrollRef = React.useRef(undefined);
 
@@ -98,6 +101,12 @@ const EventsContent: React.FC<{
       loadData(false);
     }
   }, [isFocused, loadData, user.sessionToken]);
+
+  React.useEffect(() => {
+    if (isFocused) {
+      dispatchSetSelectedPage('Events');
+    }
+  }, [dispatchSetSelectedPage, isFocused]);
 
   const keyExtractor = React.useCallback((item: TEvent) => item._id, []);
 

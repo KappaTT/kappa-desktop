@@ -80,15 +80,7 @@ const App = () => {
   } else {
     return (
       <View style={styles.container}>
-        {authorized && (
-          <View style={styles.sidebarContainer}>
-            <Sidebar />
-          </View>
-        )}
-
-        <View style={styles.appContainer}>
-          <AppNavigator />
-        </View>
+        <AppNavigator />
 
         <ToastController />
         <ModalController />
@@ -101,12 +93,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'row'
-  },
-  sidebarContainer: {
-    width: SIDEBAR_WIDTH
-  },
-  appContainer: {
-    flex: 1
   }
 });
 

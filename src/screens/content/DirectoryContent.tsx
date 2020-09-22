@@ -39,6 +39,9 @@ const DirectoryContent: React.FC<{
   const dispatchGetDirectory = React.useCallback(() => dispatch(_kappa.getDirectory(user)), [dispatch, user]);
   const dispatchGetExcuses = React.useCallback(() => dispatch(_kappa.getExcuses(user)), [dispatch, user]);
   const dispatchEditNewUser = React.useCallback(() => dispatch(_kappa.editNewUser()), [dispatch]);
+  const dispatchSetSelectedPage = React.useCallback((routeName) => dispatch(_nav.setSelectedPage(routeName)), [
+    dispatch
+  ]);
 
   const scrollRef = React.useRef(undefined);
 
@@ -85,6 +88,12 @@ const DirectoryContent: React.FC<{
       loadData(false);
     }
   }, [isFocused, loadData, user.sessionToken]);
+
+  React.useEffect(() => {
+    if (isFocused) {
+      dispatchSetSelectedPage('Directory');
+    }
+  }, [dispatchSetSelectedPage, isFocused]);
 
   const keyExtractor = React.useCallback((item: TUser) => item._id, []);
 
