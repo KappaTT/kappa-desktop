@@ -9,9 +9,9 @@ import SidebarNavButton from '@components/SidebarNavButton';
 const SidebarDropdown: React.FC<{
   element: TSidebarElement;
   expanded: boolean;
-  selectedLabel: string;
+  selectedRouteName: string;
   onPress(element: TSidebarElement): void;
-}> = ({ element, expanded, selectedLabel, onPress }) => {
+}> = ({ element, expanded, selectedRouteName, onPress }) => {
   const navHeightBase = new Animated.Value(element.children.length * 24);
 
   const [animating, setAnimating] = React.useState<boolean>(false);
@@ -69,7 +69,7 @@ const SidebarDropdown: React.FC<{
           <SidebarNavButton
             key={child.label}
             element={child}
-            selected={child.label === selectedLabel}
+            selected={child.routeName === selectedRouteName}
             level={1}
             onPress={() => onPress(child)}
           />

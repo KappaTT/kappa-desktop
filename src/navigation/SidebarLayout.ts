@@ -1,7 +1,7 @@
 export interface TSidebarElement {
   type: 'NAV' | 'DROP';
   label: string;
-  target?: string;
+  routeName?: string;
   expanded?: boolean;
   children?: TSidebarElement[];
   privileged?: boolean;
@@ -10,16 +10,16 @@ export interface TSidebarElement {
 const Header = (label: string, children: TSidebarElement[], privileged: boolean = false): TSidebarElement => ({
   type: 'DROP',
   label,
-  target: null,
+  routeName: null,
   expanded: true,
   children,
   privileged
 });
 
-const Nav = (label: string, target: string, privileged: boolean = false): TSidebarElement => ({
+const Nav = (label: string, routeName: string, privileged: boolean = false): TSidebarElement => ({
   type: 'NAV',
   label,
-  target,
+  routeName,
   children: null,
   privileged
 });

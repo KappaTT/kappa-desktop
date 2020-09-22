@@ -1,11 +1,11 @@
 export const SET_SELECTED_PAGE = 'SET_SELECTED_PAGE';
 
 export interface TNavState {
-  selectedPageLabel: string;
+  selectedRouteName: string;
 }
 
 const initialState: TNavState = {
-  selectedPageLabel: 'Events'
+  selectedRouteName: 'Login'
 };
 
 export default (state = initialState, action: any): TNavState => {
@@ -13,7 +13,7 @@ export default (state = initialState, action: any): TNavState => {
     case SET_SELECTED_PAGE:
       return {
         ...state,
-        selectedPageLabel: action.label
+        selectedRouteName: action.routeName
       };
     default:
       return state;

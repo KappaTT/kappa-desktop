@@ -14,7 +14,7 @@ import Icon from '@components/Icon';
 const Sidebar: React.FC = () => {
   const authorized = useSelector((state: TRedux) => state.auth.authorized);
   const user = useSelector((state: TRedux) => state.auth.user);
-  const selectedPageLabel = useSelector((state: TRedux) => state.nav.selectedPageLabel);
+  const selectedRouteName = useSelector((state: TRedux) => state.nav.selectedRouteName);
   const pendingExcusesArray = useSelector((state: TRedux) => state.kappa.pendingExcusesArray);
 
   const [sidebarNav, setSidebarNav] = React.useState<{ [label: string]: TSidebarElement }>(() => {
@@ -28,9 +28,6 @@ const Sidebar: React.FC = () => {
   });
 
   const dispatch = useDispatch();
-  const dispatchSetSelectedPage = React.useCallback((label: string) => dispatch(_nav.setSelectedPage(label)), [
-    dispatch
-  ]);
   const dispatchOpenCheckIn = React.useCallback(() => dispatch(_kappa.setCheckInEvent('NONE', false)), [dispatch]);
   const dispatchOpenRequestExcuse = React.useCallback(() => dispatch(_kappa.setCheckInEvent('NONE', true)), [dispatch]);
   const dispatchShowVoting = React.useCallback(() => dispatch(_voting.showVoting()), [dispatch]);
@@ -56,9 +53,8 @@ const Sidebar: React.FC = () => {
             expanded: !element.expanded
           }
         });
-      } else if (element.target) {
-        navigate(element.target);
-        dispatchSetSelectedPage(element.label);
+      } else if (element.routeName) {
+        navigate(element.routeName);
       } else {
         switch (element.label) {
           case 'Check In':
@@ -76,21 +72,14 @@ const Sidebar: React.FC = () => {
         }
       }
     },
-    [
-      dispatchOpenCheckIn,
-      dispatchOpenRequestExcuse,
-      dispatchSetSelectedPage,
-      dispatchShowVoting,
-      dispatchSignOut,
-      sidebarNav
-    ]
+    [dispatchOpenCheckIn, dispatchOpenRequestExcuse, dispatchShowVoting, dispatchSignOut, sidebarNav]
   );
 
   const onPressMessages = React.useCallback(() => {
     onPressElement({
       type: 'NAV',
       label: 'Messages',
-      target: 'MessagesStack'
+      routeName: 'Messages'
     });
   }, [onPressElement]);
 
@@ -111,7 +100,7 @@ const Sidebar: React.FC = () => {
         <View
           style={[
             styles.messagesCircle,
-            selectedPageLabel === 'Messages' && { backgroundColor: theme.COLORS.PRIMARY_LIGHT }
+            selectedRouteName === 'Messages' && { backgroundColor: theme.COLORS.PRIMARY_LIGHT }
           ]}
         >
           <TouchableOpacity activeOpacity={0.6} onPress={onPressMessages}>
@@ -120,7 +109,7 @@ const Sidebar: React.FC = () => {
               family="Feather"
               name="message-square"
               size={24}
-              color={selectedPageLabel === 'Messages' ? theme.COLORS.PRIMARY : theme.COLORS.DARK_GRAY}
+              color={selectedRouteName === 'Messages' ? theme.COLORS.PRIMARY : theme.COLORS.DARK_GRAY}
             />
 
             {unreadMessages && (
@@ -128,7 +117,7 @@ const Sidebar: React.FC = () => {
                 <View
                   style={[
                     styles.badgeContainer,
-                    selectedPageLabel === 'Messages' && { borderColor: theme.COLORS.PRIMARY_LIGHT }
+                    selectedRouteName === 'Messages' && { borderColor: theme.COLORS.PRIMARY_LIGHT }
                   ]}
                 >
                   <View style={styles.badge} />
@@ -149,14 +138,14 @@ const Sidebar: React.FC = () => {
                 <SidebarDropdown
                   element={sidebarNav[element.label]}
                   expanded={sidebarNav[element.label].expanded}
-                  selectedLabel={selectedPageLabel}
+                  selectedRouteName={selectedRouteName}
                   onPress={onPressElement}
                 />
               )}
               {element.type === 'NAV' && (
                 <SidebarNavButton
                   element={sidebarNav[element.label]}
-                  selected={element.label === selectedPageLabel}
+                  selected={element.routeName === selectedRouteName}
                   onPress={onPressElement}
                 />
               )}
