@@ -120,7 +120,7 @@ const ScreenLinks = (routes: { routeName: string; link: string }[]) => {
 const domains = ['localhost:19006', 'app.kappathetatau.org'];
 
 const LinkingArray: { routeName: string; link: string }[] = [
-  { routeName: 'Login', link: '' },
+  { routeName: 'Login', link: 'login' },
   { routeName: 'Events', link: 'events' },
   { routeName: 'Directory', link: 'directory' },
   { routeName: 'Messages', link: 'messages' },

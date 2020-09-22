@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Text, Image, ActivityIndicator } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { useIsFocused, NavigationProp } from '@react-navigation/native';
+import { useIsFocused, NavigationProp, useLinkTo } from '@react-navigation/native';
 import { GoogleLoginResponse } from 'react-google-login';
 
 import { TRedux } from '@reducers';
@@ -13,6 +13,7 @@ const LoginContent: React.FC<{
   navigation: NavigationProp<any, 'Login'>;
 }> = ({ navigation }) => {
   const isFocused = useIsFocused();
+  const linkTo = useLinkTo();
 
   const authorized = useSelector((state: TRedux) => state.auth.authorized);
   const isAuthenticating = useSelector((state: TRedux) => state.auth.isAuthenticating);
@@ -45,21 +46,15 @@ const LoginContent: React.FC<{
 
   React.useEffect(() => {
     if (authorized) {
-      navigation.navigate('Events');
+      linkTo('/events');
     }
-  }, [authorized, dispatchSetSelectedPage, navigation]);
+  }, [authorized, dispatchSetSelectedPage, linkTo, navigation]);
 
   React.useEffect(() => {
     if (signInErrorMessage) {
       alert(signInErrorMessage);
     }
   }, [signInErrorMessage]);
-
-  React.useEffect(() => {
-    if (isFocused) {
-      dispatchSetSelectedPage('Login');
-    }
-  }, [dispatchSetSelectedPage, isFocused]);
 
   return (
     <View style={styles.container}>
