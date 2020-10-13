@@ -622,7 +622,7 @@ const styles = StyleSheet.create({
   },
   voteContainer: {
     width: '100%',
-    height: 48,
+    minHeight: 48,
     borderBottomColor: theme.COLORS.LIGHT_GRAY,
     borderBottomWidth: 1,
     display: 'flex',
@@ -636,7 +636,8 @@ const styles = StyleSheet.create({
   voteSubtitle: {
     fontFamily: 'OpenSans',
     fontSize: 12,
-    color: theme.COLORS.DARK_GRAY
+    color: theme.COLORS.DARK_GRAY,
+    flexWrap: 'wrap'
   },
   dividerWrapper: {
     display: 'flex',
