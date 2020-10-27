@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { TRedux } from '@reducers';
@@ -10,7 +10,10 @@ import { TCandidate } from '@backend/voting';
 import Icon from '@components/Icon';
 import RectangleChip from '@components/RectangleChip';
 
-const SessionCandidateItem: React.FC<{ candidate: TCandidate }> = ({ candidate }) => {
+const SessionCandidateItem: React.FC<{ candidate: TCandidate; disabled?: boolean }> = ({
+  candidate,
+  disabled = false
+}) => {
   const user = useSelector((state: TRedux) => state.auth.user);
   const sessionArray = useSelector((state: TRedux) => state.voting.sessionArray);
   const selectedSessionId = useSelector((state: TRedux) => state.voting.selectedSessionId);
@@ -61,7 +64,7 @@ const SessionCandidateItem: React.FC<{ candidate: TCandidate }> = ({ candidate }
         }
       ]}
     >
-      <TouchableOpacity activeOpacity={0.4} disabled={isSelected} onPress={onPressSelect}>
+      <TouchableOpacity activeOpacity={0.4} disabled={isSelected || disabled} onPress={onPressSelect}>
         <View style={styles.contentWrapper}>
           <View style={styles.content}>
             <View style={styles.contentHeader}>

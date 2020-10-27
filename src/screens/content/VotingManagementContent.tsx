@@ -234,7 +234,12 @@ const VotingManagementContent: React.FC<{
   };
 
   const renderCandidateItem = ({ item }: { item: TCandidate }) => {
-    return <SessionCandidateItem candidate={item} />;
+    return (
+      <SessionCandidateItem
+        candidate={item}
+        disabled={selectedSession.operatorEmail !== user.email && selectedSession.operatorEmail !== ''}
+      />
+    );
   };
 
   const renderSessionList = () => {
