@@ -141,11 +141,16 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
     [candidateIndex, session.candidateOrder.length]
   );
 
-  const canGoBackward = React.useMemo(() => candidateIndex > 0, [candidateIndex]);
-  const canGoForward = React.useMemo(() => candidateIndex < session.candidateOrder.length - 1, [
-    candidateIndex,
-    session.candidateOrder.length
-  ]);
+  const canGoBackward = React.useMemo(
+    () => candidateIndex > 0 && (session.operatorEmail === user.email || session.operatorEmail === ''),
+    [candidateIndex, session.operatorEmail, user.email]
+  );
+  const canGoForward = React.useMemo(
+    () =>
+      candidateIndex < session.candidateOrder.length - 1 &&
+      (session.operatorEmail === user.email || session.operatorEmail === ''),
+    [candidateIndex, session.candidateOrder.length, session.operatorEmail, user.email]
+  );
 
   const onPressBackward = React.useCallback(
     () =>
