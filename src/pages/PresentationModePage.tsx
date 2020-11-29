@@ -67,20 +67,28 @@ const PresentationModePage: React.FC<{
 
   const votes = getVotes(sessionToCandidateToVotes, activeSession?._id, activeSession?.currentCandidateId, {});
 
+  const approvedVotes = React.useMemo(() => votes.filter((vote) => vote.verdict === true), [votes]);
+  const rejectedVotes = React.useMemo(() => votes.filter((vote) => vote.verdict !== true), [votes]);
+
   const candidateApprovalData = React.useMemo(
     () => [
       {
-        count: votes.length,
-        label: 'Voted',
+        count: approvedVotes.length,
+        label: 'Approved',
         color: theme.COLORS.PRIMARY
       },
       {
-        count: directorySize - votes.length,
+        count: rejectedVotes.length,
+        label: 'Rejected',
+        color: theme.COLORS.BLACK
+      },
+      {
+        count: directorySize - approvedVotes.length - rejectedVotes.length,
         label: 'Abstained',
         color: theme.COLORS.BORDER
       }
     ],
-    [directorySize, votes.length]
+    [approvedVotes.length, directorySize, rejectedVotes.length]
   );
 
   const refreshVotes = React.useCallback(() => {
