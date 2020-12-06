@@ -217,32 +217,47 @@ export const getExcusedEvents = (records: TRecords, email: string) => {
   return records.excused[email];
 };
 
-export const getEventRecordCounts = (records: TRecords, eventId: string) => {
-  let attended = 0;
-  let excused = 0;
-  let pending = 0;
+export const getEventRecords = (directory: TDirectory, records: TRecords, eventId: string) => {
+  const attended: {
+    [email: string]: TUser;
+  } = {};
+  const excused: {
+    [email: string]: TUser;
+  } = {};
+  const pending: {
+    [email: string]: TUser;
+  } = {};
+  const absent: {
+    [email: string]: TUser;
+  } = {};
 
-  for (const record of Object.values(records.attended)) {
+  for (const [email, record] of Object.entries(records.attended)) {
     if (record.hasOwnProperty(eventId)) {
-      attended++;
+      attended[email] = directory[email];
     }
   }
 
-  for (const record of Object.values(records.excused)) {
+  for (const [email, record] of Object.entries(records.excused)) {
     if (record.hasOwnProperty(eventId)) {
       if (record[eventId].approved) {
-        excused++;
+        excused[email] = directory[email];
       } else {
-        pending++;
+        pending[email] = directory[email];
       }
     }
   }
 
+  for (const [email, user] of Object.entries(directory)) {
+    if (!attended.hasOwnProperty(email) && !excused.hasOwnProperty(email) && !pending.hasOwnProperty(email)) {
+      absent[email] = user;
+    }
+  }
+
   return {
-    attended,
-    excused,
-    pending,
-    sum: attended + excused + pending
+    attended: Object.values(attended).sort(sortUserByName),
+    excused: Object.values(excused).sort(sortUserByName),
+    pending: Object.values(pending).sort(sortUserByName),
+    absent: Object.values(absent).sort(sortUserByName)
   };
 };
 
