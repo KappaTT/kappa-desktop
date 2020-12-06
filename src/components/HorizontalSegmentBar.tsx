@@ -1,17 +1,23 @@
 import React from 'react';
-import { StyleSheet, StyleProp, ViewStyle, View, Text } from 'react-native';
+import { StyleSheet, StyleProp, ViewStyle, View, Text, TouchableOpacity } from 'react-native';
 
 import { theme } from '@constants';
 
 const HorizontalLabel: React.FC<{
   count: number;
   label: string;
-}> = ({ count, label }) => {
+  pressable: boolean;
+  onPress(label: string): void;
+}> = ({ count, label, pressable, onPress }) => {
+  const onPressLabel = React.useCallback(() => onPress(label), [label, onPress]);
+
   return (
     <View style={styles.labelWrapper}>
-      <Text style={styles.label}>
-        {count} {label}
-      </Text>
+      <TouchableOpacity disabled={!pressable} onPress={onPressLabel}>
+        <Text style={[styles.label, pressable && { color: theme.COLORS.PRIMARY }]}>
+          {count} {label}
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -47,7 +53,16 @@ const HorizontalSegmentBar: React.FC<{
   borderColor?: string;
   hideAllLabels?: boolean;
   showAllLabels?: boolean;
-}> = ({ data, borderColor = theme.COLORS.WHITE, hideAllLabels = false, showAllLabels = false }) => {
+  pressableLabels?: boolean;
+  onPressLabel?(label: string): void;
+}> = ({
+  data,
+  borderColor = theme.COLORS.WHITE,
+  hideAllLabels = false,
+  showAllLabels = false,
+  pressableLabels = false,
+  onPressLabel = (label: string) => {}
+}) => {
   const totalCount = React.useMemo(() => {
     let total = 0;
 
@@ -62,7 +77,15 @@ const HorizontalSegmentBar: React.FC<{
     return data
       .filter((section) => section.count > 0 || showAllLabels)
       .map((section) => {
-        return <HorizontalLabel key={section.label} count={section.count} label={section.label} />;
+        return (
+          <HorizontalLabel
+            key={section.label}
+            count={section.count}
+            label={section.label}
+            pressable={pressableLabels}
+            onPress={onPressLabel}
+          />
+        );
       });
   };
 
