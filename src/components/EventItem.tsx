@@ -10,7 +10,7 @@ import {
   hasValidCheckIn,
   getAttendance,
   getExcuse,
-  getEventRecordCounts,
+  getEventRecords,
   getMissedMandatoryByEvent,
   sortUserByName,
   prettyPoints,
@@ -31,14 +31,13 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
   const loadHistory = useSelector((state: TRedux) => state.kappa.loadHistory);
   const records = useSelector((state: TRedux) => state.kappa.records);
   const directory = useSelector((state: TRedux) => state.kappa.directory);
-  const directorySize = useSelector((state: TRedux) => state.kappa.directorySize);
-  const missedMandatory = useSelector((state: TRedux) => state.kappa.missedMandatory);
   const isGettingAttendance = useSelector((state: TRedux) => state.kappa.isGettingAttendance);
   const getAttendanceError = useSelector((state: TRedux) => state.kappa.getAttendanceError);
   const isDeletingEvent = useSelector((state: TRedux) => state.kappa.isDeletingEvent);
 
   const [expanded, setExpanded] = React.useState<boolean>(false);
   const [readyToDelete, setReadyToDelete] = React.useState<boolean>(false);
+  const [visibleCategory, setVisibleCategory] = React.useState<string>('Attended');
 
   const dispatch = useDispatch();
   const dispatchGetAttendance = React.useCallback(
@@ -66,7 +65,6 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
     dispatch,
     event._id
   ]);
-  const dispatchShowToast = React.useCallback((toast: Partial<TToast>) => dispatch(_ui.showToast(toast)), [dispatch]);
 
   const loadData = React.useCallback(
     (force: boolean) => {
@@ -111,30 +109,29 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
     setReadyToDelete(newValue);
   }, []);
 
+  const onPressBarLabel = React.useCallback((label: string) => setVisibleCategory(label), []);
+
   const attended = getAttendance(records, user.email, event._id);
   const excused = getExcuse(records, user.email, event._id);
-  const recordCounts = getEventRecordCounts(records, event._id);
+  const eventRecords = getEventRecords(directory, records, event._id);
 
   const chartData = React.useMemo(() => {
     return [
-      { count: recordCounts.attended, label: 'Attended', color: theme.COLORS.PRIMARY },
-      { count: recordCounts.excused, label: 'Excused', color: theme.COLORS.PRIMARY },
-      { count: recordCounts.pending, label: 'Pending', color: theme.COLORS.INPUT_ERROR_LIGHT },
+      { count: eventRecords.attended.length, label: 'Attended', color: theme.COLORS.PRIMARY },
+      { count: eventRecords.excused.length, label: 'Excused', color: theme.COLORS.PRIMARY },
+      { count: eventRecords.pending.length, label: 'Pending', color: theme.COLORS.INPUT_ERROR_LIGHT },
       {
-        count: directorySize - recordCounts.attended - recordCounts.excused - recordCounts.pending,
+        count: eventRecords.absent.length,
         label: 'Absent',
         color: theme.COLORS.LIGHT_BORDER
       }
     ];
-  }, [recordCounts, directorySize]);
-
-  const mandatory = React.useMemo(() => {
-    if (!user.privileged) return [];
-
-    if (event._id === '') return [];
-
-    return Object.values(getMissedMandatoryByEvent(missedMandatory, directory, event._id)).sort(sortUserByName);
-  }, [user, missedMandatory, directory, event._id]);
+  }, [
+    eventRecords.absent.length,
+    eventRecords.attended.length,
+    eventRecords.excused.length,
+    eventRecords.pending.length
+  ]);
 
   const excuseDisabled = React.useMemo(() => {
     return (
@@ -196,7 +193,7 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
               </View>
 
               <View style={styles.chartArea}>
-                <HorizontalSegmentBar data={chartData} />
+                <HorizontalSegmentBar data={chartData} pressableLabels={true} onPressLabel={onPressBarLabel} />
               </View>
             </View>
 
@@ -267,18 +264,64 @@ const EventItem: React.FC<{ event: TEvent }> = ({ event }) => {
               </View>
             </View>
 
-            {!isGettingAttendance && mandatory.length > 0 && (
-              <React.Fragment>
-                <Text style={styles.mandatoryHeaderText}>Missed Mandatory</Text>
+            {!isGettingAttendance && (
+              <View
+                style={{
+                  marginTop: 16
+                }}
+              >
+                <Text style={styles.propertyHeader}>{visibleCategory}</Text>
 
-                <View style={styles.mandatoryContainer}>
-                  {mandatory.map((missed: TUser) => (
-                    <Text key={missed._id} style={styles.mandatoryUser}>
-                      {missed.familyName}, {missed.givenName}
-                    </Text>
-                  ))}
-                </View>
-              </React.Fragment>
+                {visibleCategory === 'Attended' ? (
+                  <View style={styles.mandatoryContainer}>
+                    {eventRecords.attended.length > 0 ? (
+                      eventRecords.attended.map((missed: TUser) => (
+                        <Text key={missed._id} style={styles.mandatoryUser}>
+                          {missed.familyName}, {missed.givenName}
+                        </Text>
+                      ))
+                    ) : (
+                      <Text style={styles.mandatoryUser}>No brothers</Text>
+                    )}
+                  </View>
+                ) : visibleCategory === 'Excused' ? (
+                  <View style={styles.mandatoryContainer}>
+                    {eventRecords.excused.length > 0 ? (
+                      eventRecords.excused.map((missed: TUser) => (
+                        <Text key={missed._id} style={styles.mandatoryUser}>
+                          {missed.familyName}, {missed.givenName}
+                        </Text>
+                      ))
+                    ) : (
+                      <Text style={styles.mandatoryUser}>No brothers</Text>
+                    )}
+                  </View>
+                ) : visibleCategory === 'Pending' ? (
+                  <View style={styles.mandatoryContainer}>
+                    {eventRecords.pending.length > 0 ? (
+                      eventRecords.pending.map((missed: TUser) => (
+                        <Text key={missed._id} style={styles.mandatoryUser}>
+                          {missed.familyName}, {missed.givenName}
+                        </Text>
+                      ))
+                    ) : (
+                      <Text style={styles.mandatoryUser}>No brothers</Text>
+                    )}
+                  </View>
+                ) : (
+                  <View style={styles.mandatoryContainer}>
+                    {eventRecords.absent.length > 0 ? (
+                      eventRecords.absent.map((missed: TUser) => (
+                        <Text key={missed._id} style={styles.mandatoryUser}>
+                          {missed.familyName}, {missed.givenName}
+                        </Text>
+                      ))
+                    ) : (
+                      <Text style={styles.mandatoryUser}>No brothers</Text>
+                    )}
+                  </View>
+                )}
+              </View>
             )}
           </React.Fragment>
         )}
@@ -534,13 +577,6 @@ const styles = StyleSheet.create({
   mandatoryContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap'
-  },
-  mandatoryHeaderText: {
-    marginTop: 16,
-    fontFamily: 'OpenSans-SemiBold',
-    fontSize: 13,
-    textTransform: 'uppercase',
-    color: theme.COLORS.PRIMARY
   },
   mandatoryUser: {
     marginRight: 16,
