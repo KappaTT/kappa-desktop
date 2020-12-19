@@ -1,10 +1,10 @@
 import React from 'react';
 import GoogleLogin, { GoogleLoginResponse } from 'react-google-login';
 
+import * as secrets from 'secrets';
+
 export const GOOGLE_CLIENT_ID =
-  process.env.NODE_ENV !== 'development'
-    ? '223233671218-l6tkqeif7rb8hj35ek87sci396nmt37r.apps.googleusercontent.com'
-    : '223233671218-mujcmkmt5plupe2c5piurpvp1h435pgu.apps.googleusercontent.com';
+  process.env.NODE_ENV !== 'development' ? secrets.GOOGLE_CLIENT_IDS.prod : secrets.GOOGLE_CLIENT_IDS.dev;
 
 const GoogleSignInButton: React.FC<{
   onSuccess(payload: GoogleLoginResponse): void;

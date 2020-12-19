@@ -1,7 +1,6 @@
-import Constants from 'expo-constants';
-
 import { jsonRequest, jsonAuthorizedRequest } from '@services/Networking';
 import { isEmpty } from '@services/utils';
+import * as secrets from 'secrets';
 
 export const M_GET = 'GET';
 export const M_POST = 'POST';
@@ -10,7 +9,7 @@ export const M_PATCH = 'PATCH';
 export const M_DELETE = 'DELETE';
 export type TMethod = typeof M_GET | typeof M_POST | typeof M_PUT | typeof M_PATCH | typeof M_DELETE;
 
-export const BASE_URL_PRODUCTION = 'https://80ala1muig.execute-api.us-east-1.amazonaws.com/dev/';
+export const BASE_URL_PRODUCTION = secrets.API_URL;
 export const BASE_URL_DEVELOPMENT = 'http://127.0.0.1:3000/dev/';
 
 export const BASE_URL = process.env.NODE_ENV !== 'development' ? BASE_URL_PRODUCTION : BASE_URL_DEVELOPMENT;

@@ -1,8 +1,21 @@
 # ktt-web &middot; [![Netlify Status](https://api.netlify.com/api/v1/badges/06850475-210a-452a-9c2c-0acf54de50df/deploy-status)](https://app.netlify.com/sites/kappa-app/deploys)
 
-<img src="assets/icon.png#rounded" style="border-radius: 25%; overflow: hidden;" width="256" />
+<img src="assets/icon.png" style="border-radius: 25%; overflow: hidden;" width="256" />
 
 ![screenshot](./readme/screenshot.png)
+
+## Secrets:
+
+Create a file `src/secrets.ts` as follows:
+
+```javascript
+export const API_URL = '<CHANGE ME>';
+
+export const GOOGLE_CLIENT_IDS = {
+  dev: '<CHANGE ME>',
+  prod: '<CHANGE ME>'
+};
+```
 
 ## Development
 
