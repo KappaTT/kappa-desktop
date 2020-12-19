@@ -1,8 +1,8 @@
-# ktt-web &middot; [![Netlify Status](https://api.netlify.com/api/v1/badges/06850475-210a-452a-9c2c-0acf54de50df/deploy-status)](https://app.netlify.com/sites/kappa-app/deploys)
+# kappa-desktop
+
+[![Netlify Status](https://api.netlify.com/api/v1/badges/06850475-210a-452a-9c2c-0acf54de50df/deploy-status)](https://app.netlify.com/sites/kappa-app/deploys)
 
 <img src="assets/icon.png" width="256" />
-
-![screenshot](./readme/screenshot.png)
 
 ## Secrets:
 
@@ -27,3 +27,7 @@ export const GOOGLE_CLIENT_IDS = {
 
 1. `npm install -g netlify-cli` if you don't have netlify installed
 2. `yarn deploy`
+
+## Preview
+
+![screenshot](./readme/screenshot.png)
