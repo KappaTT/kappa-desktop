@@ -4,7 +4,7 @@
 
 <img src="assets/icon.png" width="256" />
 
-## Secrets:
+## Secrets
 
 Create a file `src/secrets.ts` as follows:
 
