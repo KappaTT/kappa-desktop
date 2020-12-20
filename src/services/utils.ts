@@ -2,6 +2,20 @@ export const SIDEBAR_WIDTH = 220;
 export const HEADER_HEIGHT = 56;
 export const TOAST_HEIGHT = 28;
 
+/**
+ * Sleep for a given number of milliseconds.
+ */
+export const sleep = (time: number) => {
+  return new Promise<void>((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, time);
+  });
+};
+
+/**
+ * Convert a string to a given type.
+ */
 export const castTo = (value: string, type: string) => {
   if (typeof value === type) {
     return value;
@@ -19,6 +33,9 @@ export const castTo = (value: string, type: string) => {
   }
 };
 
+/**
+ * Convert a given object to a string.
+ */
 export const castToString = (value: any) => {
   if (typeof value === 'string') {
     return value;
@@ -33,6 +50,9 @@ export const castToString = (value: any) => {
   }
 };
 
+/**
+ * Check if an object is empty-ish.
+ */
 export const isEmpty = (obj: any) => {
   if (obj === undefined || obj === null) return true;
   if (obj.constructor !== Object) return false;

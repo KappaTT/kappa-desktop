@@ -2,6 +2,9 @@ import { log } from '@services/logService';
 import { TRequestResponse } from '@backend/backend';
 import { castToString } from '@services/utils';
 
+/**
+ * Build an API url from given components.
+ */
 export const buildUrl = (baseUrl: string, port: string, endpoint: string, secure: boolean = true) => {
   let url = baseUrl;
 
@@ -29,6 +32,9 @@ export const buildUrl = (baseUrl: string, port: string, endpoint: string, secure
   return url;
 };
 
+/**
+ * Attach query params to a given URL.
+ */
 export const attachQueryParams = (url: string, queryParams: any) => {
   if (!queryParams) {
     return url;
@@ -54,6 +60,9 @@ export const attachQueryParams = (url: string, queryParams: any) => {
   return url;
 };
 
+/**
+ * Make a json request.
+ */
 export const jsonRequest = async <T>(
   baseUrl: string,
   port: string,
@@ -112,6 +121,9 @@ export const jsonRequest = async <T>(
   }
 };
 
+/**
+ * Make an authorized json request.
+ */
 export const jsonAuthorizedRequest = async <T>(
   baseUrl: string,
   port: string,

@@ -8,6 +8,9 @@ export type TGetItem = (key: string) => Promise<{ key: string; value: string } |
 export type TExternalDeleteItem = (key: string) => Promise<void>;
 export type TDeleteItem = (key: string) => Promise<{ key: string; value: string } | undefined>;
 
+/**
+ * Set an item in storage by key-value.
+ */
 export const setItemTemplate = async (f: TExternalSetItem, key: string, value: any) => {
   try {
     await f(key, castToString(value));
@@ -22,6 +25,9 @@ export const setItemTemplate = async (f: TExternalSetItem, key: string, value: a
   }
 };
 
+/**
+ * Set a JSON object in storage by key.
+ */
 export const setJsonTemplate = async (f: TExternalSetItem, key: string, data: any) => {
   try {
     await f(key, JSON.stringify(data));
@@ -35,6 +41,9 @@ export const setJsonTemplate = async (f: TExternalSetItem, key: string, data: an
   }
 };
 
+/**
+ * Set a batch of items from a given object with a parent key.
+ */
 export const setBatchTemplate = async (f: TSetItem, parent: string, data: any) => {
   const promises = [];
 
@@ -53,6 +62,9 @@ export const setBatchTemplate = async (f: TSetItem, parent: string, data: any) =
   }
 };
 
+/**
+ * Get an item from storage by key.
+ */
 export const getItemTemplate = async (f: TExternalGetItem, key: string) => {
   try {
     const res = await f(key);
@@ -67,6 +79,9 @@ export const getItemTemplate = async (f: TExternalGetItem, key: string) => {
   }
 };
 
+/**
+ * Get a JSON object from storage by key.
+ */
 export const getJsonTemplate = async (f: TExternalGetItem, key: string) => {
   try {
     const res = await f(key);
@@ -76,10 +91,13 @@ export const getJsonTemplate = async (f: TExternalGetItem, key: string) => {
     };
   } catch (error) {
     log(error);
-    undefined;
+    return undefined;
   }
 };
 
+/**
+ * Get a batch object from storage by parent key with defaults.
+ */
 export const getBatchTemplate = async (f: TGetItem, parent: string, defaultData: any, force: boolean = false) => {
   const promises = [];
 
@@ -87,7 +105,7 @@ export const getBatchTemplate = async (f: TGetItem, parent: string, defaultData:
 
   for (const [key, defaultValue] of Object.entries(defaultData)) {
     promises.push(
-      new Promise((resolve, reject) => {
+      new Promise<void>((resolve, reject) => {
         f(`${parent}.${key}`).then((res) => {
           if (res && res.value) {
             loaded[key] = castTo(res.value, typeof defaultValue);
@@ -116,6 +134,9 @@ export const getBatchTemplate = async (f: TGetItem, parent: string, defaultData:
   }
 };
 
+/**
+ * Delete an item from storage by key.
+ */
 export const deleteItemTemplate = async (f: TExternalDeleteItem, key: string) => {
   try {
     await f(key);
@@ -130,6 +151,9 @@ export const deleteItemTemplate = async (f: TExternalDeleteItem, key: string) =>
   }
 };
 
+/**
+ * Delete a batch of items from storage by parent key.
+ */
 export const deleteBatchTemplate = async (f: TDeleteItem, parent: string, data: any) => {
   const promises = [];
 
