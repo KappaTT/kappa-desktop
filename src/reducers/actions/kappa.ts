@@ -69,6 +69,9 @@ import { TEvent, TExcuse, TEventSearch } from '@backend/kappa';
 import { modifyUser } from './auth';
 import { setBatch } from '@services/asyncStorage';
 
+/**
+ * Set the global error message.
+ */
 export const setGlobalError = (data) => {
   return {
     type: SET_GLOBAL_ERROR_MESSAGE,
@@ -77,24 +80,36 @@ export const setGlobalError = (data) => {
   };
 };
 
+/**
+ * Clear the global error message.
+ */
 export const clearGlobalError = () => {
   return {
     type: CLEAR_GLOBAL_ERROR_MESSAGE
   };
 };
 
+/**
+ * Is generating a secret code.
+ */
 const generatingSecretCode = () => {
   return {
     type: GENERATE_SECRET_CODE
   };
 };
 
+/**
+ * Finished generating a secret code successfully.
+ */
 const generateSecretCodeSuccess = (data) => {
   return {
     type: GENERATE_SECRET_CODE_SUCCESS
   };
 };
 
+/**
+ * Finished generating a secret code with an error.
+ */
 const generateSecretCodeFailure = (error) => {
   return {
     type: GENERATE_SECRET_CODE_FAILURE,
@@ -102,6 +117,9 @@ const generateSecretCodeFailure = (error) => {
   };
 };
 
+/**
+ * Generate a secret code.
+ */
 export const generateSecretCode = (user: TUser) => {
   return (dispatch) => {
     dispatch(generatingSecretCode());
@@ -124,6 +142,9 @@ export const generateSecretCode = (user: TUser) => {
   };
 };
 
+/**
+ * Open the editing page for a given user by email.
+ */
 export const editUser = (email: string) => {
   return {
     type: EDIT_USER,
@@ -131,24 +152,36 @@ export const editUser = (email: string) => {
   };
 };
 
+/**
+ * Open the editing page to create a new user.
+ */
 export const editNewUser = () => {
   return {
     type: EDIT_NEW_USER
   };
 };
 
+/**
+ * Cancel the user editing page.
+ */
 export const cancelEditUser = () => {
   return {
     type: CANCEL_EDIT_USER
   };
 };
 
+/**
+ * Is updating a user.
+ */
 const updatingUser = () => {
   return {
     type: UPDATE_USER
   };
 };
 
+/**
+ * Finished updating a user successfully.
+ */
 const updateUserSuccess = (data) => {
   return {
     type: UPDATE_USER_SUCCESS,
@@ -156,6 +189,9 @@ const updateUserSuccess = (data) => {
   };
 };
 
+/**
+ * Finished updating a user with an error.
+ */
 const updateUserFailure = (error) => {
   return {
     type: UPDATE_USER_FAILURE,
@@ -163,6 +199,9 @@ const updateUserFailure = (error) => {
   };
 };
 
+/**
+ * Update a given user.
+ */
 export const updateUser = (user: TUser, target: string, changes: Partial<TUser>) => {
   return (dispatch) => {
     dispatch(updatingUser());
@@ -192,12 +231,18 @@ export const updateUser = (user: TUser, target: string, changes: Partial<TUser>)
   };
 };
 
+/**
+ * Is deleting a user.
+ */
 const deletingUser = () => {
   return {
     type: DELETE_USER
   };
 };
 
+/**
+ * Finished deleting a user successfully.
+ */
 const deleteUserSuccess = (data) => {
   return {
     type: DELETE_USER_SUCCESS,
@@ -205,6 +250,9 @@ const deleteUserSuccess = (data) => {
   };
 };
 
+/**
+ * Finished deleting a user with an error.
+ */
 const deleteUserFailure = (error) => {
   return {
     type: DELETE_USER_FAILURE,
@@ -212,6 +260,9 @@ const deleteUserFailure = (error) => {
   };
 };
 
+/**
+ * Delete a given user.
+ */
 export const deleteUser = (user: TUser, email: string) => {
   return (dispatch) => {
     dispatch(deletingUser());
@@ -226,12 +277,18 @@ export const deleteUser = (user: TUser, email: string) => {
   };
 };
 
+/**
+ * Is getting the list of events.
+ */
 const gettingEvents = () => {
   return {
     type: GET_EVENTS
   };
 };
 
+/**
+ * Finished getting the events successfully.
+ */
 const getEventsSuccess = (data) => {
   return {
     type: GET_EVENTS_SUCCESS,
@@ -239,6 +296,9 @@ const getEventsSuccess = (data) => {
   };
 };
 
+/**
+ * Finished getting the events with an error.
+ */
 const getEventsFailure = (err) => {
   return {
     type: GET_EVENTS_FAILURE,
@@ -246,6 +306,9 @@ const getEventsFailure = (err) => {
   };
 };
 
+/**
+ * Get the list of events.
+ */
 export const getEvents = (user: TUser) => {
   return (dispatch) => {
     dispatch(gettingEvents());
@@ -260,12 +323,18 @@ export const getEvents = (user: TUser) => {
   };
 };
 
+/**
+ * Is getting the brother list.
+ */
 const gettingDirectory = () => {
   return {
     type: GET_DIRECTORY
   };
 };
 
+/**
+ * Finished getting the brother list successfully.
+ */
 const getDirectorySuccess = (data) => {
   return {
     type: GET_DIRECTORY_SUCCESS,
@@ -275,6 +344,9 @@ const getDirectorySuccess = (data) => {
   };
 };
 
+/**
+ * Finished getting the brother list with an error.
+ */
 const getDirectoryFailure = (err) => {
   return {
     type: GET_DIRECTORY_FAILURE,
@@ -282,6 +354,9 @@ const getDirectoryFailure = (err) => {
   };
 };
 
+/**
+ * Get the list of brothers.
+ */
 export const getDirectory = (user: TUser) => {
   return (dispatch) => {
     dispatch(gettingDirectory());
@@ -306,12 +381,18 @@ export const getDirectory = (user: TUser) => {
   };
 };
 
+/**
+ * Is getting attendance.
+ */
 const gettingAttendance = () => {
   return {
     type: GET_ATTENDANCE
   };
 };
 
+/**
+ * Finished getting attendance successfully for a given user or event.
+ */
 const getAttendanceSuccess = (data, loadKey?: string, target?: string, overwrite: boolean = false) => {
   return {
     type: GET_ATTENDANCE_SUCCESS,
@@ -323,6 +404,9 @@ const getAttendanceSuccess = (data, loadKey?: string, target?: string, overwrite
   };
 };
 
+/**
+ * Finished getting attendance with an error.
+ */
 const getAttendanceFailure = (err) => {
   return {
     type: GET_ATTENDANCE_FAILURE,
@@ -330,10 +414,16 @@ const getAttendanceFailure = (err) => {
   };
 };
 
+/**
+ * Get attendance for the signed in user.
+ */
 export const getMyAttendance = (user: TUser, overwrite: boolean = false) => {
   return getUserAttendance(user, user.email, overwrite);
 };
 
+/**
+ * Get attendance for a given user.
+ */
 export const getUserAttendance = (user: TUser, target: string, overwrite: boolean = false) => {
   return (dispatch) => {
     dispatch(gettingAttendance());
@@ -348,6 +438,9 @@ export const getUserAttendance = (user: TUser, target: string, overwrite: boolea
   };
 };
 
+/**
+ * Get attendance for a given event.
+ */
 export const getEventAttendance = (user: TUser, target: string, overwrite: boolean = false) => {
   return (dispatch) => {
     dispatch(gettingAttendance());
@@ -362,12 +455,18 @@ export const getEventAttendance = (user: TUser, target: string, overwrite: boole
   };
 };
 
+/**
+ * Is getting excuses.
+ */
 const gettingExcuses = () => {
   return {
     type: GET_EXCUSES
   };
 };
 
+/**
+ * Finished getting excuses successfully.
+ */
 const getExcusesSuccess = (data) => {
   return {
     type: GET_EXCUSES_SUCCESS,
@@ -375,6 +474,9 @@ const getExcusesSuccess = (data) => {
   };
 };
 
+/**
+ * Finished getting excuses with an error.
+ */
 const getExcusesFailure = (err) => {
   return {
     type: GET_EXCUSES_FAILURE,
@@ -382,6 +484,9 @@ const getExcusesFailure = (err) => {
   };
 };
 
+/**
+ * Get the pending excuses for a given user.
+ */
 export const getExcuses = (user: TUser) => {
   return (dispatch) => {
     dispatch(gettingExcuses());
@@ -396,6 +501,9 @@ export const getExcuses = (user: TUser) => {
   };
 };
 
+/**
+ * Select a given event.
+ */
 export const selectEvent = (eventId: string) => {
   return {
     type: SELECT_EVENT,
@@ -403,12 +511,18 @@ export const selectEvent = (eventId: string) => {
   };
 };
 
+/**
+ * Clear the event selection.
+ */
 export const unselectEvent = () => {
   return {
     type: UNSELECT_EVENT
   };
 };
 
+/**
+ * Select a given user.
+ */
 export const selectUser = (email: string) => {
   return {
     type: SELECT_USER,
@@ -416,18 +530,27 @@ export const selectUser = (email: string) => {
   };
 };
 
+/**
+ * Clear the user selection.
+ */
 export const unselectUser = () => {
   return {
     type: UNSELECT_USER
   };
 };
 
+/**
+ * Open the event editor page to create a new event.
+ */
 export const editNewEvent = () => {
   return {
     type: EDIT_NEW_EVENT
   };
 };
 
+/**
+ * Open the event editor page to edit an existing event.
+ */
 export const editExistingEvent = (eventId: string) => {
   return {
     type: EDIT_EXISTING_EVENT,
@@ -435,18 +558,27 @@ export const editExistingEvent = (eventId: string) => {
   };
 };
 
+/**
+ * Close the event editor.
+ */
 export const cancelEditEvent = () => {
   return {
     type: CANCEL_EDIT_EVENT
   };
 };
 
+/**
+ * Is saving an event.
+ */
 const savingEditEvent = () => {
   return {
     type: SAVE_EDIT_EVENT
   };
 };
 
+/**
+ * Finished saving an event successfully.
+ */
 const saveEditEventSuccess = (data) => {
   return {
     type: SAVE_EDIT_EVENT_SUCCESS,
@@ -454,6 +586,9 @@ const saveEditEventSuccess = (data) => {
   };
 };
 
+/**
+ * Finished saving an event with an error.
+ */
 const saveEditEventFailure = (err) => {
   return {
     type: SAVE_EDIT_EVENT_FAILURE,
@@ -461,6 +596,9 @@ const saveEditEventFailure = (err) => {
   };
 };
 
+/**
+ * Save an event with the given id or create one that does not exist.
+ */
 export const saveEditEvent = (user: TUser, event: Partial<TEvent>, eventId?: string) => {
   return (dispatch) => {
     dispatch(savingEditEvent());
@@ -485,12 +623,18 @@ export const saveEditEvent = (user: TUser, event: Partial<TEvent>, eventId?: str
   };
 };
 
+/**
+ * Is deleting an event.
+ */
 const deletingEvent = () => {
   return {
     type: DELETE_EVENT
   };
 };
 
+/**
+ * Finished deleting an event successfully.
+ */
 const deleteEventSuccess = (data) => {
   return {
     type: DELETE_EVENT_SUCCESS,
@@ -498,6 +642,9 @@ const deleteEventSuccess = (data) => {
   };
 };
 
+/**
+ * Finished deleting an event with an error.
+ */
 const deleteEventFailure = (err) => {
   return {
     type: DELETE_EVENT_FAILURE,
@@ -505,6 +652,9 @@ const deleteEventFailure = (err) => {
   };
 };
 
+/**
+ * Delete a given event.
+ */
 export const deleteEvent = (user: TUser, event: TEvent) => {
   return (dispatch) => {
     dispatch(deletingEvent());
@@ -519,6 +669,9 @@ export const deleteEvent = (user: TUser, event: TEvent) => {
   };
 };
 
+/**
+ * Set the event being checked into.
+ */
 export const setCheckInEvent = (eventId: string, excuse: boolean) => {
   return {
     type: SET_CHECK_IN_EVENT,
@@ -527,12 +680,18 @@ export const setCheckInEvent = (eventId: string, excuse: boolean) => {
   };
 };
 
+/**
+ * Is checking in to an event.
+ */
 const checkingIn = () => {
   return {
     type: CHECK_IN
   };
 };
 
+/**
+ * Finished checking in successfully.
+ */
 const checkInSuccess = (data) => {
   return {
     type: CHECK_IN_SUCCESS,
@@ -540,6 +699,9 @@ const checkInSuccess = (data) => {
   };
 };
 
+/**
+ * Finished checking in with an error.
+ */
 const checkInFailure = (err) => {
   return {
     type: CHECK_IN_FAILURE,
@@ -547,6 +709,9 @@ const checkInFailure = (err) => {
   };
 };
 
+/**
+ * Check into a given event with a given code.
+ */
 export const checkIn = (user: TUser, eventId: string, eventCode: string) => {
   return (dispatch) => {
     dispatch(checkingIn());
@@ -561,12 +726,18 @@ export const checkIn = (user: TUser, eventId: string, eventCode: string) => {
   };
 };
 
+/**
+ * Is creating an excuse.
+ */
 const creatingExcuse = () => {
   return {
     type: CREATE_EXCUSE
   };
 };
 
+/**
+ * Finished creating an excuse successfully.
+ */
 const createExcuseSuccess = (data) => {
   return {
     type: CREATE_EXCUSE_SUCCESS,
@@ -575,6 +746,9 @@ const createExcuseSuccess = (data) => {
   };
 };
 
+/**
+ * Finished creating an excuse with an error.
+ */
 const createExcuseFailure = (err) => {
   return {
     type: CREATE_EXCUSE_FAILURE,
@@ -582,6 +756,9 @@ const createExcuseFailure = (err) => {
   };
 };
 
+/**
+ * Create a new excuse for a given event.
+ */
 export const createExcuse = (
   user: TUser,
   event: TEvent,
@@ -603,12 +780,18 @@ export const createExcuse = (
   };
 };
 
+/**
+ * Is approving an excuse.
+ */
 const approvingExcuse = () => {
   return {
     type: APPROVE_EXCUSE
   };
 };
 
+/**
+ * Finished approving an excuse successfully.
+ */
 const approveExcuseSuccess = (data) => {
   return {
     type: APPROVE_EXCUSE_SUCCESS,
@@ -616,6 +799,9 @@ const approveExcuseSuccess = (data) => {
   };
 };
 
+/**
+ * Finished approving an excuse with an error.
+ */
 const approveExcuseFailure = (err) => {
   return {
     type: APPROVE_EXCUSE_FAILURE,
@@ -623,6 +809,9 @@ const approveExcuseFailure = (err) => {
   };
 };
 
+/**
+ * Approve a given excuse.
+ */
 export const approveExcuse = (user: TUser, excuse: TExcuse) => {
   return (dispatch) => {
     dispatch(approvingExcuse());
@@ -637,12 +826,18 @@ export const approveExcuse = (user: TUser, excuse: TExcuse) => {
   };
 };
 
+/**
+ * Is rejecting an excuse.
+ */
 const rejectingExcuse = () => {
   return {
     type: REJECT_EXCUSE
   };
 };
 
+/**
+ * Finished rejecting an excuse successfully.
+ */
 const rejectExcuseSuccess = (data) => {
   return {
     type: REJECT_EXCUSE_SUCCESS,
@@ -650,6 +845,9 @@ const rejectExcuseSuccess = (data) => {
   };
 };
 
+/**
+ * Finished rejecting an excuse with an error.
+ */
 const rejectExcuseFailure = (err) => {
   return {
     type: REJECT_EXCUSE_FAILURE,
@@ -657,6 +855,9 @@ const rejectExcuseFailure = (err) => {
   };
 };
 
+/**
+ * Reject a given excuse.
+ */
 export const rejectExcuse = (user: TUser, excuse: TExcuse) => {
   return (dispatch) => {
     dispatch(rejectingExcuse());
@@ -671,12 +872,18 @@ export const rejectExcuse = (user: TUser, excuse: TExcuse) => {
   };
 };
 
+/**
+ * Is getting the points for a user.
+ */
 const gettingPoints = () => {
   return {
     type: GET_POINTS
   };
 };
 
+/**
+ * Finished getting points successfully.
+ */
 const getPointsSuccess = (data, target: string) => {
   return {
     type: GET_POINTS_SUCCESS,
@@ -685,6 +892,9 @@ const getPointsSuccess = (data, target: string) => {
   };
 };
 
+/**
+ * Finished getting points with an error.
+ */
 const getPointsFailure = (err) => {
   return {
     type: GET_POINTS_FAILURE,
@@ -692,6 +902,9 @@ const getPointsFailure = (err) => {
   };
 };
 
+/**
+ * Get the points for a given user.
+ */
 export const getPointsByUser = (user: TUser, target: string) => {
   return (dispatch) => {
     dispatch(gettingPoints());
@@ -706,6 +919,9 @@ export const getPointsByUser = (user: TUser, target: string) => {
   };
 };
 
+/**
+ * Show the bulk attendance editor.
+ */
 export const showBulkAttendance = (eventId: string) => {
   return {
     type: SHOW_BULK_ATTENDANCE,
@@ -713,18 +929,27 @@ export const showBulkAttendance = (eventId: string) => {
   };
 };
 
+/**
+ * Hide the bulk attendance editor.
+ */
 export const hideBulkAttendance = () => {
   return {
     type: HIDE_BULK_ATTENDANCE
   };
 };
 
+/**
+ * Is creating new bulk attendance.
+ */
 const creatingBulkAttendance = () => {
   return {
     type: CREATE_BULK_ATTENDANCE
   };
 };
 
+/**
+ * Finished creating the bulk attendance successfully.
+ */
 const createBulkAttendanceSuccess = (data) => {
   return {
     type: CREATE_BULK_ATTENDANCE_SUCCESS,
@@ -732,6 +957,9 @@ const createBulkAttendanceSuccess = (data) => {
   };
 };
 
+/**
+ * Finished creating the bulk attendance with an error.
+ */
 const createBulkAttendanceFailure = (error) => {
   return {
     type: CREATE_BULK_ATTENDANCE_FAILURE,
@@ -739,6 +967,9 @@ const createBulkAttendanceFailure = (error) => {
   };
 };
 
+/**
+ * Create the bulk attendance records.
+ */
 export const createBulkAttendance = (user: TUser, eventId: string, emails: string[]) => {
   return (dispatch) => {
     dispatch(creatingBulkAttendance());
@@ -753,12 +984,18 @@ export const createBulkAttendance = (user: TUser, eventId: string, emails: strin
   };
 };
 
+/**
+ * Is getting the event search results.
+ */
 const gettingEventSearchResults = () => {
   return {
     type: GET_EVENT_SEARCH_RESULTS
   };
 };
 
+/**
+ * Finished getting event search results successfully.
+ */
 const getEventSearchResultsSuccess = (data) => {
   return {
     type: GET_EVENT_SEARCH_RESULTS_SUCCESS,
@@ -766,6 +1003,9 @@ const getEventSearchResultsSuccess = (data) => {
   };
 };
 
+/**
+ * Finished getting event search results with an error.
+ */
 const getEventSearchResultsFailure = (err) => {
   return {
     type: GET_EVENT_SEARCH_RESULTS_FAILURE,
@@ -773,6 +1013,9 @@ const getEventSearchResultsFailure = (err) => {
   };
 };
 
+/**
+ * Get events that match given criteria.
+ */
 export const getEventSearchResults = (user: TUser, search: TEventSearch) => {
   return (dispatch) => {
     dispatch(gettingEventSearchResults());

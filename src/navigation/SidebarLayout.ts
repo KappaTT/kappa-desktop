@@ -8,6 +8,9 @@ export interface TSidebarElement {
   privileged?: boolean;
 }
 
+/**
+ * Create a header element.
+ */
 const Header = (label: string, children: TSidebarElement[], privileged: boolean = false): TSidebarElement => ({
   type: 'DROP',
   label,
@@ -18,6 +21,9 @@ const Header = (label: string, children: TSidebarElement[], privileged: boolean 
   privileged
 });
 
+/**
+ * Create a nav element.
+ */
 const Nav = (label: string, routeName: string, path: string = null, privileged: boolean = false): TSidebarElement => ({
   type: 'NAV',
   label,
@@ -27,6 +33,9 @@ const Nav = (label: string, routeName: string, path: string = null, privileged: 
   privileged
 });
 
+/**
+ * The sidebar configuration.
+ */
 const SidebarLayout: TSidebarElement[] = [
   Header('Chapter', [
     Nav('Events', 'Events', '/events'),

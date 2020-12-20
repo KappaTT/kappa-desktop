@@ -14,6 +14,9 @@ export const BASE_URL_DEVELOPMENT = 'http://127.0.0.1:3000/dev/';
 
 export const BASE_URL = process.env.NODE_ENV !== 'development' ? BASE_URL_PRODUCTION : BASE_URL_DEVELOPMENT;
 
+/**
+ * Endpoints available for the Kappa API.
+ */
 export const ENDPOINTS: {
   [key: string]: (config?: any) => string;
 } = {
@@ -53,6 +56,9 @@ export const ENDPOINTS: {
   SUBMIT_MULTI_VOTE: () => 'multi-vote'
 };
 
+/**
+ * Methods for the Kappa API.
+ */
 export const METHODS: {
   [key: string]: TMethod;
 } = {
@@ -118,6 +124,9 @@ export interface TBlame {
   [key: string]: TFlatBlame;
 }
 
+/**
+ * Make a request to a given endpoint with a method and optional configurations.
+ */
 export const makeRequest = async <T>(
   endpoint: string,
   method: TMethod,
@@ -130,6 +139,9 @@ export const makeRequest = async <T>(
   return jsonRequest<T>(BASE_URL, undefined, endpoint, true, method, params.headers, params.queryParams, params.body);
 };
 
+/**
+ * Make a regular request but with the given authorization token.
+ */
 export const makeAuthorizedRequest = async <T>(
   endpoint: string,
   method: TMethod,
@@ -153,6 +165,9 @@ export const makeAuthorizedRequest = async <T>(
   );
 };
 
+/**
+ * Elevate all blamed fields.
+ */
 export const flattenBlame = (blameObj: TBlame): TFlatBlame => {
   const blame = {};
 
@@ -165,6 +180,9 @@ export const flattenBlame = (blameObj: TBlame): TFlatBlame => {
   return blame;
 };
 
+/**
+ * Return a failure object with blamed fields and optional message and code.
+ */
 export const fail = (blame: TBlame, message?: string, code?: number) => {
   if (isEmpty(blame)) {
     return {
@@ -187,6 +205,9 @@ export const fail = (blame: TBlame, message?: string, code?: number) => {
   };
 };
 
+/**
+ * Return a success object with optional data.
+ */
 export const pass = <T>(data?: T) => {
   return {
     success: true,

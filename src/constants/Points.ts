@@ -34,6 +34,9 @@ export const POINTS_SR: TPoints = {
 
 export const GM_SR = 50;
 
+/**
+ * Calculates a user's class year based on the first year they attended college
+ */
 export const getClassYear = (firstYear: string) => {
   if (!firstYear) return '';
 

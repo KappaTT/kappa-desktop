@@ -61,6 +61,9 @@ interface TGetCandidatesResponse extends TResponse {
   };
 }
 
+/**
+ * Get the list of candidates available.
+ */
 export const getCandidates = async (payload: TGetCandidatesPayload): Promise<TGetCandidatesResponse> => {
   try {
     const response = await makeAuthorizedRequest<TGetCandidatesRequestResponse>(
@@ -106,6 +109,9 @@ interface TCreateCandidateResponse extends TResponse {
   };
 }
 
+/**
+ * Create a new candidate.
+ */
 export const createCandidate = async (payload: TCreateCandidatePayload): Promise<TCreateCandidateResponse> => {
   try {
     const response = await makeAuthorizedRequest<TCreateCandidateRequestResponse>(
@@ -156,6 +162,9 @@ interface TUpdateCandidateResponse extends TResponse {
   };
 }
 
+/**
+ * Update an existing candidate.
+ */
 export const updateCandidate = async (payload: TUpdateCandidatePayload): Promise<TUpdateCandidateResponse> => {
   try {
     const response = await makeAuthorizedRequest<TUpdateCandidateRequestResponse>(
@@ -209,6 +218,9 @@ interface TDeleteCandidateResponse extends TResponse {
   };
 }
 
+/**
+ * Delete a given candidate.
+ */
 export const deleteCandidate = async (payload: TDeleteCandidatePayload): Promise<TDeleteCandidateResponse> => {
   try {
     const response = await makeAuthorizedRequest<TDeleteCandidateRequestResponse>(
@@ -253,6 +265,9 @@ interface TGetSessionsResponse extends TResponse {
   data?: TGetSessionsRequestResponse;
 }
 
+/**
+ * Get the list of available sessions.
+ */
 export const getSessions = async (payload: TGetSessionsPayload): Promise<TGetSessionsResponse> => {
   try {
     const response = await makeAuthorizedRequest<TGetSessionsRequestResponse>(
@@ -296,6 +311,9 @@ interface TCreateSessionResponse extends TResponse {
   data?: TCreateSessionRequestResponse;
 }
 
+/**
+ * Create a new session.
+ */
 export const createSession = async (payload: TCreateSessionPayload): Promise<TCreateSessionResponse> => {
   try {
     const response = await makeAuthorizedRequest<TCreateSessionRequestResponse>(
@@ -344,6 +362,9 @@ interface TUpdateSessionResponse extends TResponse {
   data?: TUpdateSessionRequestResponse;
 }
 
+/**
+ * Update an existing session.
+ */
 export const updateSession = async (payload: TUpdateSessionPayload): Promise<TUpdateSessionResponse> => {
   try {
     const response = await makeAuthorizedRequest<TUpdateSessionRequestResponse>(
@@ -393,6 +414,9 @@ interface TDeleteSessionResponse extends TResponse {
   data?: TDeleteSessionRequestResponse;
 }
 
+/**
+ * Delete a given session.
+ */
 export const deleteSession = async (payload: TDeleteSessionPayload): Promise<TDeleteSessionResponse> => {
   try {
     const response = await makeAuthorizedRequest<TDeleteSessionRequestResponse>(
@@ -438,6 +462,9 @@ interface TStartSessionResponse extends TResponse {
   data?: TStartSessionRequestResponse;
 }
 
+/**
+ * Start a given session.
+ */
 export const startSession = async (payload: TStartSessionPayload): Promise<TStartSessionResponse> => {
   try {
     const response = await makeAuthorizedRequest<TStartSessionRequestResponse>(
@@ -481,6 +508,9 @@ interface TStopSessionResponse extends TResponse {
   data?: TStopSessionRequestResponse;
 }
 
+/**
+ * Stop a given session.
+ */
 export const stopSession = async (payload: TStopSessionPayload): Promise<TStopSessionResponse> => {
   try {
     const response = await makeAuthorizedRequest<TStopSessionRequestResponse>(
@@ -526,6 +556,9 @@ interface TGetActiveVotesResponse extends TResponse {
   data?: TGetActiveVotesRequestResponse;
 }
 
+/**
+ * Get the votes for the active candidate and session if available.
+ */
 export const getActiveVotes = async (payload: TGetActiveVotesPayload): Promise<TGetActiveVotesResponse> => {
   try {
     const response = await makeAuthorizedRequest<TGetActiveVotesRequestResponse>(
@@ -579,6 +612,9 @@ interface TGetCandidateVotesResponse extends TResponse {
   data?: TGetCandidateVotesRequestResponse;
 }
 
+/**
+ * Get the votes for a given candidate and session.
+ */
 export const getCandidateVotes = async (payload: TGetCandidateVotesPayload): Promise<TGetCandidateVotesResponse> => {
   try {
     const response = await makeAuthorizedRequest<TGetCandidateVotesRequestResponse>(
@@ -633,6 +669,9 @@ interface TSubmitVoteResponse extends TResponse {
   data?: TSubmitVoteRequestResponse;
 }
 
+/**
+ * Submit a vote for a given candidate and session.
+ */
 export const submitVote = async (payload: TSubmitVotePayload): Promise<TSubmitVoteResponse> => {
   try {
     const response = await makeAuthorizedRequest<TSubmitVoteRequestResponse>(
@@ -681,6 +720,9 @@ interface TSubmitMultiVoteResponse extends TResponse {
   data?: TSubmitMultiVoteRequestResponse;
 }
 
+/**
+ * Submit votes for multiple candidates in a given session.
+ */
 export const submitMultiVote = async (payload: TSubmitMultiVotePayload): Promise<TSubmitMultiVoteResponse> => {
   try {
     const response = await makeAuthorizedRequest<TSubmitMultiVoteRequestResponse>(
@@ -729,6 +771,9 @@ interface TCreateNextSessionResponse extends TResponse {
   data?: TCreateNextSessionRequestResponse;
 }
 
+/**
+ * Create the next session based off the current session state.
+ */
 export const createNextSession = async (payload: TCreateNextSessionPayload): Promise<TCreateNextSessionResponse> => {
   try {
     const response = await makeAuthorizedRequest<TCreateNextSessionRequestResponse>(

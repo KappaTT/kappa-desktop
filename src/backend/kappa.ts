@@ -115,6 +115,11 @@ interface TGenerateSecretCodeResponse extends TResponse {
   data?: TGenerateSecretCodeRequestResponse;
 }
 
+/**
+ * API request to generate a secret login code. Returns the updated user object containing the code.
+ *
+ * This request is intended for use by an already authorized user.
+ */
 export const generateSecretCode = async (payload: TGenerateSecretCodePayload): Promise<TGenerateSecretCodeResponse> => {
   try {
     const response = await makeAuthorizedRequest<TGenerateSecretCodeRequestResponse>(
@@ -158,6 +163,11 @@ interface TCreateUserResponse extends TResponse {
   data?: TCreateUserRequestResponse;
 }
 
+/**
+ * API request to create a new user with the given data.
+ *
+ * Intended for use only by the admin.
+ */
 export const createUser = async (payload: TCreateUserPayload): Promise<TCreateUserResponse> => {
   try {
     const response = await makeAuthorizedRequest<TCreateUserRequestResponse>(
@@ -206,6 +216,9 @@ interface TUpdateUserResponse extends TResponse {
   data?: TUpdateUserRequestResponse;
 }
 
+/**
+ * API request to update a given user profile.
+ */
 export const updateUser = async (payload: TUpdateUserPayload): Promise<TUpdateUserResponse> => {
   try {
     const response = await makeAuthorizedRequest<TUpdateUserRequestResponse>(
@@ -257,6 +270,11 @@ interface TDeleteUserResponse extends TResponse {
   data?: TDeleteUserRequestResponse;
 }
 
+/**
+ * API request to delete a given user.
+ *
+ * Intended only for use by the admin.
+ */
 export const deleteUser = async (payload: TDeleteUserPayload): Promise<TDeleteUserResponse> => {
   try {
     const response = await makeAuthorizedRequest<TDeleteUserRequestResponse>(
@@ -303,6 +321,9 @@ interface TGetEventsResponse extends TResponse {
   };
 }
 
+/**
+ * API request to get the list of events.
+ */
 export const getEvents = async (payload: TGetEventsPayload): Promise<TGetEventsResponse> => {
   try {
     const response = await makeAuthorizedRequest<TGetEventsRequestResponse>(
@@ -348,6 +369,9 @@ interface TCreateEventResponse extends TResponse {
   };
 }
 
+/**
+ * API request to create a new event.
+ */
 export const createEvent = async (payload: TCreateEventPayload): Promise<TCreateEventResponse> => {
   try {
     const response = await makeAuthorizedRequest<TCreateEventRequestResponse>(
@@ -398,6 +422,9 @@ interface TUpdateEventResponse extends TResponse {
   };
 }
 
+/**
+ * API request to update a given event.
+ */
 export const updateEvent = async (payload: TUpdateEventPayload): Promise<TUpdateEventResponse> => {
   try {
     const response = await makeAuthorizedRequest<TUpdateEventRequestResponse>(
@@ -451,6 +478,9 @@ interface TDeleteEventResponse extends TResponse {
   };
 }
 
+/**
+ * API request to delete a given event.
+ */
 export const deleteEvent = async (payload: TDeleteEventPayload): Promise<TDeleteEventResponse> => {
   try {
     const response = await makeAuthorizedRequest<TDeleteEventRequestResponse>(
@@ -497,6 +527,9 @@ interface TGetUsersResponse extends TResponse {
   data?: TGetUsersRequestResponse;
 }
 
+/**
+ * API request to get the brother directory.
+ */
 export const getUsers = async (payload: TGetUsersPayload): Promise<TGetUsersResponse> => {
   try {
     const response = await makeAuthorizedRequest<TGetUsersRequestResponse>(
@@ -546,6 +579,9 @@ interface TGetAttendanceResponse extends TResponse {
   };
 }
 
+/**
+ * API request to get a given user's attendance and excuse information.
+ */
 export const getAttendanceByUser = async (payload: TGetAttendancePayload): Promise<TGetAttendanceResponse> => {
   try {
     const response = await makeAuthorizedRequest<TGetAttendanceRequestResponse>(
@@ -577,6 +613,9 @@ export const getAttendanceByUser = async (payload: TGetAttendancePayload): Promi
   }
 };
 
+/**
+ * API request to get a given event's attendance and excuse information.
+ */
 export const getAttendanceByEvent = async (payload: TGetAttendancePayload): Promise<TGetAttendanceResponse> => {
   try {
     const response = await makeAuthorizedRequest<TGetAttendanceRequestResponse>(
@@ -624,6 +663,9 @@ interface TCreateAttendanceResponse extends TResponse {
   };
 }
 
+/**
+ * API request to create a new attendance record.
+ */
 export const createAttendance = async (payload: TCreateAttendancePayload): Promise<TCreateAttendanceResponse> => {
   try {
     const response = await makeAuthorizedRequest<TCreateAttendanceRequestResponse>(
@@ -673,6 +715,9 @@ interface TCreateBulkAttendanceResponse extends TResponse {
   data?: TCreateBulkAttendanceRequestResponse;
 }
 
+/**
+ * Set attendance in bulk for an event.
+ */
 export const createBulkAttendance = async (
   payload: TCreateBulkAttendancePayload
 ): Promise<TCreateBulkAttendanceResponse> => {
@@ -724,6 +769,9 @@ interface TGetPendingExcusesResponse extends TResponse {
   };
 }
 
+/**
+ * API request to get a list of pending excuses. The list depends on user type (admin or not)
+ */
 export const getPendingExcuses = async (payload: TGetPendingExcusesPayload): Promise<TGetPendingExcusesResponse> => {
   try {
     const response = await makeAuthorizedRequest<TGetPendingExcusesRequestResponse>(
@@ -774,6 +822,9 @@ export interface TCreateExcuseResponse extends TResponse {
   };
 }
 
+/**
+ * API request to create a new excuse record.
+ */
 export const createExcuse = async (payload: TCreateExcusePayload): Promise<TCreateExcuseResponse> => {
   try {
     const response = await makeAuthorizedRequest<TCreateExcuseRequestResponse>(
@@ -838,6 +889,9 @@ interface TUpdateExcuseResponse extends TResponse {
   };
 }
 
+/**
+ * API request to update an excuse record.
+ */
 export const updateExcuse = async (payload: TUpdateExcusePayload): Promise<TUpdateExcuseResponse> => {
   try {
     const response = await makeAuthorizedRequest<TUpdateExcuseRequestResponse>(
@@ -887,6 +941,9 @@ interface TGetPointsByUserResponse extends TResponse {
   };
 }
 
+/**
+ * API request to get the points for a given user.
+ */
 export const getPointsByUser = async (payload: TGetPointsByUserPayload): Promise<TGetPointsByUserResponse> => {
   try {
     const response = await makeAuthorizedRequest<TGetPointsByUserRequestResponse>(
@@ -932,6 +989,9 @@ interface TGetEventSearchResultsResponse extends TResponse {
   };
 }
 
+/**
+ * API request to search for events matching given criteria.
+ */
 export const getEventSearchResults = async (
   payload: TGetEventSearchResultsPayload
 ): Promise<TGetEventSearchResultsResponse> => {

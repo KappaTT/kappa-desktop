@@ -54,6 +54,9 @@ import {
   CLEAR_GLOBAL_ERROR_MESSAGE
 } from '@reducers/voting';
 
+/**
+ * Set the global error message.
+ */
 export const setGlobalError = (data) => {
   return {
     type: SET_GLOBAL_ERROR_MESSAGE,
@@ -62,18 +65,27 @@ export const setGlobalError = (data) => {
   };
 };
 
+/**
+ * Clear the global error message.
+ */
 export const clearGlobalError = () => {
   return {
     type: CLEAR_GLOBAL_ERROR_MESSAGE
   };
 };
 
+/**
+ * Is getting the list of candidates.
+ */
 const gettingCandidates = () => {
   return {
     type: GET_CANDIDATES
   };
 };
 
+/**
+ * Finished getting the candidates successfully.
+ */
 const getCandidatesSuccess = (data) => {
   return {
     type: GET_CANDIDATES_SUCCESS,
@@ -81,6 +93,9 @@ const getCandidatesSuccess = (data) => {
   };
 };
 
+/**
+ * Finished getting the candidates with an error.
+ */
 const getCandidatesFailure = (error) => {
   return {
     type: GET_CANDIDATES_FAILURE,
@@ -88,6 +103,9 @@ const getCandidatesFailure = (error) => {
   };
 };
 
+/**
+ * Get the list of candidates.
+ */
 export const getCandidates = (user: TUser) => {
   return (dispatch) => {
     dispatch(gettingCandidates());
@@ -102,12 +120,18 @@ export const getCandidates = (user: TUser) => {
   };
 };
 
+/**
+ * Is saving a candidate.
+ */
 const savingCandidate = () => {
   return {
     type: SAVE_CANDIDATE
   };
 };
 
+/**
+ * Finished saving a candidate successfully.
+ */
 const saveCandidateSuccess = (data) => {
   return {
     type: SAVE_CANDIDATE_SUCCESS,
@@ -115,6 +139,9 @@ const saveCandidateSuccess = (data) => {
   };
 };
 
+/**
+ * Finished saving a candidate with an error.
+ */
 const saveCandidateFailure = (error) => {
   return {
     type: SAVE_CANDIDATE_FAILURE,
@@ -122,6 +149,9 @@ const saveCandidateFailure = (error) => {
   };
 };
 
+/**
+ * Save a given candidate by email if one exists, create one otherwise.
+ */
 export const saveCandidate = (user: TUser, candidate: Partial<TCandidate>, email?: string) => {
   return (dispatch) => {
     dispatch(savingCandidate());
@@ -146,12 +176,18 @@ export const saveCandidate = (user: TUser, candidate: Partial<TCandidate>, email
   };
 };
 
+/**
+ * Is deleting a candidate.
+ */
 const deletingCandidate = () => {
   return {
     type: DELETE_CANDIDATE
   };
 };
 
+/**
+ * Finished deleting a candidate successfully.
+ */
 const deleteCandidateSuccess = (data) => {
   return {
     type: DELETE_CANDIDATE_SUCCESS,
@@ -159,6 +195,9 @@ const deleteCandidateSuccess = (data) => {
   };
 };
 
+/**
+ * Finished deleting a candidate with an error.
+ */
 const deleteCandidateFailure = (error) => {
   return {
     type: DELETE_CANDIDATE_FAILURE,
@@ -166,6 +205,9 @@ const deleteCandidateFailure = (error) => {
   };
 };
 
+/**
+ * Delete a given candidate by email.
+ */
 export const deleteCandidate = (user: TUser, email: string) => {
   return (dispatch) => {
     dispatch(deletingCandidate());
@@ -180,6 +222,9 @@ export const deleteCandidate = (user: TUser, email: string) => {
   };
 };
 
+/**
+ * Select a given candidate.
+ */
 export const selectCandidate = (email: string) => {
   return {
     type: SELECT_CANDIDATE,
@@ -187,12 +232,18 @@ export const selectCandidate = (email: string) => {
   };
 };
 
+/**
+ * Clear the candidate selection.
+ */
 export const unselectCandidate = () => {
   return {
     type: UNSELECT_CANDIDATE
   };
 };
 
+/**
+ * Edit or create a new candidate.
+ */
 export const editCandidate = (email: string = 'NEW') => {
   return {
     type: EDIT_CANDIDATE,
@@ -200,18 +251,27 @@ export const editCandidate = (email: string = 'NEW') => {
   };
 };
 
+/**
+ * Close the candidate editor.
+ */
 export const cancelEditCandidate = () => {
   return {
     type: CANCEL_EDIT_CANDIDATE
   };
 };
 
+/**
+ * Is getting the session list.
+ */
 const gettingSessions = () => {
   return {
     type: GET_SESSIONS
   };
 };
 
+/**
+ * Finished getting the sessions successfully.
+ */
 const getSessionsSuccess = (data) => {
   return {
     type: GET_SESSIONS_SUCCESS,
@@ -219,6 +279,9 @@ const getSessionsSuccess = (data) => {
   };
 };
 
+/**
+ * Finished getting the sessions with an error.
+ */
 const getSessionsFailure = (error) => {
   return {
     type: GET_SESSIONS_FAILURE,
@@ -226,6 +289,9 @@ const getSessionsFailure = (error) => {
   };
 };
 
+/**
+ * Get the available voting sessions.
+ */
 export const getSessions = (user: TUser) => {
   return (dispatch) => {
     dispatch(gettingSessions());
@@ -240,12 +306,18 @@ export const getSessions = (user: TUser) => {
   };
 };
 
+/**
+ * Is saving a session.
+ */
 const savingSession = () => {
   return {
     type: SAVE_SESSION
   };
 };
 
+/**
+ * Finished saving a session successfully.
+ */
 const saveSessionSuccess = (data) => {
   return {
     type: SAVE_SESSION_SUCCESS,
@@ -253,6 +325,9 @@ const saveSessionSuccess = (data) => {
   };
 };
 
+/**
+ * Finished saving a session with an error.
+ */
 const saveSessionFailure = (error) => {
   return {
     type: SAVE_SESSION_FAILURE,
@@ -260,6 +335,9 @@ const saveSessionFailure = (error) => {
   };
 };
 
+/**
+ * Save a session by id if it exists otherwise create a new one.
+ */
 export const saveSession = (user: TUser, session: Partial<TSession>, _id?: string) => {
   return (dispatch) => {
     dispatch(savingSession());
@@ -284,12 +362,18 @@ export const saveSession = (user: TUser, session: Partial<TSession>, _id?: strin
   };
 };
 
+/**
+ * Is deleting a session.
+ */
 const deletingSession = () => {
   return {
     type: DELETE_SESSION
   };
 };
 
+/**
+ * Finished deleting a session successfully.
+ */
 const deleteSessionSuccess = (data) => {
   return {
     type: DELETE_SESSION_SUCCESS,
@@ -297,6 +381,9 @@ const deleteSessionSuccess = (data) => {
   };
 };
 
+/**
+ * Finished deleting a session with an error.
+ */
 const deleteSessionFailure = (error) => {
   return {
     type: DELETE_SESSION_FAILURE,
@@ -304,6 +391,9 @@ const deleteSessionFailure = (error) => {
   };
 };
 
+/**
+ * Delete a given session.
+ */
 export const deleteSession = (user: TUser, _id: string) => {
   return (dispatch) => {
     dispatch(deletingSession());
@@ -318,12 +408,18 @@ export const deleteSession = (user: TUser, _id: string) => {
   };
 };
 
+/**
+ * Is starting a session.
+ */
 const startingSession = () => {
   return {
     type: START_SESSION
   };
 };
 
+/**
+ * Finished starting a session successfully.
+ */
 const startSessionSuccess = (data) => {
   return {
     type: START_SESSION_SUCCESS,
@@ -331,6 +427,9 @@ const startSessionSuccess = (data) => {
   };
 };
 
+/**
+ * Finished starting a session with an error.
+ */
 const startSessionFailure = (error) => {
   return {
     type: START_SESSION_FAILURE,
@@ -338,6 +437,9 @@ const startSessionFailure = (error) => {
   };
 };
 
+/**
+ * Start a session for voting.
+ */
 export const startSession = (user: TUser, session: TSession) => {
   return (dispatch) => {
     dispatch(startingSession());
@@ -352,12 +454,18 @@ export const startSession = (user: TUser, session: TSession) => {
   };
 };
 
+/**
+ * Is stopping a session.
+ */
 const stoppingSession = () => {
   return {
     type: STOP_SESSION
   };
 };
 
+/**
+ * Finished stopping a session successfully.
+ */
 const stopSessionSuccess = (data) => {
   return {
     type: STOP_SESSION_SUCCESS,
@@ -365,6 +473,9 @@ const stopSessionSuccess = (data) => {
   };
 };
 
+/**
+ * Finished stopping a session with an error.
+ */
 const stopSessionFailure = (error) => {
   return {
     type: STOP_SESSION_FAILURE,
@@ -372,6 +483,9 @@ const stopSessionFailure = (error) => {
   };
 };
 
+/**
+ * Stop a given voting session.
+ */
 export const stopSession = (user: TUser, session: TSession) => {
   return (dispatch) => {
     dispatch(stoppingSession());
@@ -386,12 +500,18 @@ export const stopSession = (user: TUser, session: TSession) => {
   };
 };
 
+/**
+ * Is getting the votes for an active session and candidate.
+ */
 const gettingActiveVotes = () => {
   return {
     type: GET_ACTIVE_VOTES
   };
 };
 
+/**
+ * Finished getting the active votes successfully.
+ */
 const getActiveVotesSuccess = (data) => {
   return {
     type: GET_ACTIVE_VOTES_SUCCESS,
@@ -402,6 +522,9 @@ const getActiveVotesSuccess = (data) => {
   };
 };
 
+/**
+ * Finished getting the active votes with an error.
+ */
 const getActiveVotesFailure = (error) => {
   return {
     type: GET_ACTIVE_VOTES_FAILURE,
@@ -409,6 +532,9 @@ const getActiveVotesFailure = (error) => {
   };
 };
 
+/**
+ * Get the votes for the active session and candidate if available.
+ */
 export const getActiveVotes = (user: TUser) => {
   return (dispatch) => {
     dispatch(gettingActiveVotes());
@@ -423,12 +549,18 @@ export const getActiveVotes = (user: TUser) => {
   };
 };
 
+/**
+ * Is getting the votes for a given candidate.
+ */
 const gettingCandidateVotes = () => {
   return {
     type: GET_CANDIDATE_VOTES
   };
 };
 
+/**
+ * Finished getting the votes successfully.
+ */
 const getCandidateVotesSuccess = (data, useLoadHistory: boolean) => {
   return {
     type: GET_CANDIDATE_VOTES_SUCCESS,
@@ -439,6 +571,9 @@ const getCandidateVotesSuccess = (data, useLoadHistory: boolean) => {
   };
 };
 
+/**
+ * Finished getting the votes with an error.
+ */
 const getCandidateVotesFailure = (error) => {
   return {
     type: GET_CANDIDATE_VOTES_FAILURE,
@@ -446,6 +581,9 @@ const getCandidateVotesFailure = (error) => {
   };
 };
 
+/**
+ * Get the votes for a given candidate and session.
+ */
 export const getCandidateVotes = (
   user: TUser,
   sessionId: string,
@@ -465,12 +603,18 @@ export const getCandidateVotes = (
   };
 };
 
+/**
+ * Is submitting a vote.
+ */
 const submittingVote = () => {
   return {
     type: SUBMIT_VOTE
   };
 };
 
+/**
+ * Finished submitting a vote successfully.
+ */
 const submitVoteSuccess = (data) => {
   return {
     type: SUBMIT_VOTE_SUCCESS,
@@ -478,6 +622,9 @@ const submitVoteSuccess = (data) => {
   };
 };
 
+/**
+ * Finished submitting a vote with an error.
+ */
 const submitVoteFailure = (error) => {
   return {
     type: SUBMIT_VOTE_FAILURE,
@@ -485,6 +632,9 @@ const submitVoteFailure = (error) => {
   };
 };
 
+/**
+ * Submit a vote for a given session and candidate.
+ */
 export const submitVote = (user: TUser, vote: Partial<TVote>) => {
   return (dispatch) => {
     dispatch(submittingVote());
@@ -499,6 +649,9 @@ export const submitVote = (user: TUser, vote: Partial<TVote>) => {
   };
 };
 
+/**
+ * Submit votes for multiple candidates in a given session.
+ */
 export const submitMultiVote = (user: TUser, sessionId: string, candidates: string[]) => {
   return (dispatch) => {
     dispatch(submittingVote());
@@ -513,12 +666,18 @@ export const submitMultiVote = (user: TUser, sessionId: string, candidates: stri
   };
 };
 
+/**
+ * Is creating the next session.
+ */
 const creatingNextSession = () => {
   return {
     type: CREATE_NEXT_SESSION
   };
 };
 
+/**
+ * Finished creating the next session successfully.
+ */
 const createNextSessionSuccess = (data) => {
   return {
     type: CREATE_NEXT_SESSION_SUCCESS,
@@ -526,6 +685,9 @@ const createNextSessionSuccess = (data) => {
   };
 };
 
+/**
+ * Finished creating the next session with an error.
+ */
 const createNextSessionFailure = (error) => {
   return {
     type: CREATE_NEXT_SESSION_FAILURE,
@@ -533,6 +695,9 @@ const createNextSessionFailure = (error) => {
   };
 };
 
+/**
+ * Create the next session based on the current session status.
+ */
 export const createNextSession = (user: TUser, sessionId: string) => {
   return (dispatch) => {
     dispatch(creatingNextSession());
@@ -547,6 +712,9 @@ export const createNextSession = (user: TUser, sessionId: string) => {
   };
 };
 
+/**
+ * Select a given session.
+ */
 export const selectSession = (session: TSession) => {
   return {
     type: SELECT_SESSION,
@@ -554,12 +722,18 @@ export const selectSession = (session: TSession) => {
   };
 };
 
+/**
+ * Clear the session selection.
+ */
 export const unselectSession = () => {
   return {
     type: UNSELECT_SESSION
   };
 };
 
+/**
+ * Edit a given session or create a new one.
+ */
 export const editSession = (_id: string = 'NEW') => {
   return {
     type: EDIT_SESSION,
@@ -567,30 +741,45 @@ export const editSession = (_id: string = 'NEW') => {
   };
 };
 
+/**
+ * Close the session editor.
+ */
 export const cancelEditSession = () => {
   return {
     type: CANCEL_EDIT_SESSION
   };
 };
 
+/**
+ * Show the presentation mode.
+ */
 export const showPresentationMode = () => {
   return {
     type: SHOW_PRESENTATION_MODE
   };
 };
 
+/**
+ * Hide the presentation mode.
+ */
 export const hidePresentationMode = () => {
   return {
     type: HIDE_PRESENTATION_MODE
   };
 };
 
+/**
+ * Show the voting page.
+ */
 export const showVoting = () => {
   return {
     type: SHOW_VOTING
   };
 };
 
+/**
+ * Hide the voting page.
+ */
 export const hideVoting = () => {
   return {
     type: HIDE_VOTING

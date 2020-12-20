@@ -16,30 +16,45 @@ import { TUser, initialUser, purge } from '@backend/auth';
 import { getBatch, setBatch } from '@services/asyncStorage';
 import { log } from '@services/logService';
 
+/**
+ * Show the login modal.
+ */
 export const showModal = () => {
   return {
     type: SHOW_MODAL
   };
 };
 
+/**
+ * Hide the login modal.
+ */
 export const hideModal = () => {
   return {
     type: HIDE_MODAL
   };
 };
 
+/**
+ * Show the sign in view.
+ */
 export const showSignIn = () => {
   return {
     type: SHOW_SIGN_IN
   };
 };
 
+/**
+ * Finish loading user.
+ */
 export const loadedUser = () => {
   return {
     type: LOADED_USER
   };
 };
 
+/**
+ * Update the user object.
+ */
 export const setUser = (user: TUser, authorized: boolean = true) => {
   return {
     type: SET_USER,
@@ -48,6 +63,9 @@ export const setUser = (user: TUser, authorized: boolean = true) => {
   };
 };
 
+/**
+ * Modify the user object.
+ */
 export const modifyUser = (user: TUser) => {
   return {
     type: MODIFY_USER,
@@ -55,6 +73,9 @@ export const modifyUser = (user: TUser) => {
   };
 };
 
+/**
+ * Load the user from device storage.
+ */
 export const loadUser = () => {
   return (dispatch) => {
     getBatch('user', initialUser, true).then((user: TUser | undefined) => {
@@ -67,12 +88,18 @@ export const loadUser = () => {
   };
 };
 
+/**
+ * Is signing in.
+ */
 const signingIn = () => {
   return {
     type: SIGN_IN
   };
 };
 
+/**
+ * Sign out from the account. Clear local storage.
+ */
 export const signOut = () => {
   purge();
 
@@ -81,12 +108,18 @@ export const signOut = () => {
   };
 };
 
+/**
+ * Finish signing in successfully.
+ */
 const signInSuccess = () => {
   return {
     type: SIGN_IN_SUCCESS
   };
 };
 
+/**
+ * Finish signing in with an error.
+ */
 const signInFailure = (err) => {
   return {
     type: SIGN_IN_FAILURE,
@@ -94,6 +127,9 @@ const signInFailure = (err) => {
   };
 };
 
+/**
+ * Sign in with the given email and id token.
+ */
 export const authenticate = (email: string, idToken: string) => {
   return (dispatch) => {
     dispatch(signingIn());
@@ -113,6 +149,9 @@ export const authenticate = (email: string, idToken: string) => {
   };
 };
 
+/**
+ * Sign in with the given secret code.
+ */
 export const authenticateWithSecretCode = (secretCode: string) => {
   return (dispatch) => {
     dispatch(signingIn());
@@ -132,6 +171,9 @@ export const authenticateWithSecretCode = (secretCode: string) => {
   };
 };
 
+/**
+ * Sign in with the given google response.
+ */
 export const signInWithGoogle = (data: { email: string; idToken: string }) => {
   return (dispatch) => {
     dispatch(authenticate(data.email, data.idToken));

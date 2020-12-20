@@ -4,11 +4,17 @@ import { TCandidateDict, TCandidate, TSession, TSessionToCandidateToVoteDict, TV
 import { TDirectory } from '@backend/kappa';
 import { sortUserByName } from '@services/kappaService';
 
+/**
+ * Options for session types.
+ */
 export const TYPE_OPTIONS = [
   { id: 'REGULAR', title: 'One at a time' },
   { id: 'MULTI', title: 'Multiple choice' }
 ];
 
+/**
+ * Options for candidate class years.
+ */
 export const CLASS_YEAR_OPTIONS = [
   { id: 'FR', title: 'Freshman' },
   { id: 'SO', title: 'Sophomore' },
@@ -16,6 +22,9 @@ export const CLASS_YEAR_OPTIONS = [
   { id: 'SR', title: 'Senior' }
 ];
 
+/**
+ * Create a map from candidate email to candidate.
+ */
 export const separateByCandidateEmail = (candidates: TCandidate[]): TCandidateDict => {
   const separated = {};
 
@@ -26,6 +35,9 @@ export const separateByCandidateEmail = (candidates: TCandidate[]): TCandidateDi
   return separated;
 };
 
+/**
+ * Create a map from candidate id to candidate.
+ */
 export const separateByCandidateId = (candidates: TCandidate[]): TCandidateDict => {
   const separated = {};
 
@@ -36,6 +48,9 @@ export const separateByCandidateId = (candidates: TCandidate[]): TCandidateDict 
   return separated;
 };
 
+/**
+ * Merge a list of candidates into an existing candidate email map.
+ */
 export const mergeCandidates = (emailToCandidate: TCandidateDict, newCandidates: TCandidate[]): TCandidateDict => {
   const merged = emailToCandidate;
 
@@ -46,6 +61,9 @@ export const mergeCandidates = (emailToCandidate: TCandidateDict, newCandidates:
   return merged;
 };
 
+/**
+ * Create a map from session id to session.
+ */
 export const separateBySessionId = (
   sessions: TSession[]
 ): {
@@ -60,6 +78,9 @@ export const separateBySessionId = (
   return separated;
 };
 
+/**
+ * Merge a list of sessions with another list of newer session data.
+ */
 export const mergeSessions = (sessions: TSession[], newSessions: TSession[]): TSession[] => {
   const idToSession = separateBySessionId(sessions);
 
@@ -70,9 +91,15 @@ export const mergeSessions = (sessions: TSession[], newSessions: TSession[]): TS
   return Object.values(idToSession).sort(sortSessionByDate);
 };
 
+/**
+ * Sorting function to sort sessions by their date.
+ */
 export const sortSessionByDate = (a: { startDate: string }, b: { startDate: string }) =>
   moment(a.startDate).isBefore(moment(b.startDate)) ? -1 : 1;
 
+/**
+ * Merge a given session-candidate-vote map with an array of new votes.
+ */
 export const mergeVotes = (
   sessionToCandidateToVotes: TSessionToCandidateToVoteDict,
   newVotes: TVote[],
@@ -144,6 +171,9 @@ export const mergeVotes = (
   return mergedVotes;
 };
 
+/**
+ * Get the pretty votes for a given session and candidate.
+ */
 export const getVotes = (
   sessionToCandidateToVotes: TSessionToCandidateToVoteDict,
   sessionId: string,
@@ -166,6 +196,9 @@ export const getVotes = (
   });
 };
 
+/**
+ * Get the votes for a given session.
+ */
 export const getVotesBySession = (
   sessionToCandidateToVotes: TSessionToCandidateToVoteDict,
   sessionId: string
@@ -179,6 +212,9 @@ export const getVotesBySession = (
   return sessionToCandidateToVotes[sessionId];
 };
 
+/**
+ * Compute the next voting state based on the candidate map.
+ */
 export const recomputeVotingState = ({ emailToCandidate }: { emailToCandidate: TCandidateDict }) => {
   const candidateArray = Object.values(emailToCandidate).sort(sortUserByName);
   const idToCandidate = separateByCandidateId(candidateArray);

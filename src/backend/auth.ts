@@ -72,6 +72,9 @@ export const incompleteUser: Partial<TUser> = {
   gradYear: ''
 };
 
+/**
+ * Remove the user from storage.
+ */
 export const purge = async () => {
   return deleteBatch('user', initialUser);
 };
@@ -96,6 +99,9 @@ interface TSignInResponse extends TResponse {
   };
 }
 
+/**
+ * Sign in API request. Returns user object on success.
+ */
 export const signIn = async (payload: TSignInPayload): Promise<TSignInResponse> => {
   try {
     const response = await makeRequest<TSignInRequestResponse>(ENDPOINTS.SIGN_IN(), METHODS.SIGN_IN, {
