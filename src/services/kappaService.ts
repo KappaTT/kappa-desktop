@@ -17,12 +17,18 @@ import {
 import { TUser } from '@backend/auth';
 import { log } from '@services/logService';
 
+/**
+ * Check if a given secret code is valid and has not expired.
+ */
 export const isSecretCodeValid = (secretCode?: string, secretCodeExpiration?: string) => {
   if (!secretCode || !secretCodeExpiration) return false;
 
   return moment(secretCodeExpiration).isAfter(moment());
 };
 
+/**
+ * Check if an event if eligible for check in.
+ */
 export const canCheckIn = (event: TEvent, now: moment.Moment = moment()) => {
   return (
     moment(event.start).isSame(now, 'day') ||
@@ -31,6 +37,9 @@ export const canCheckIn = (event: TEvent, now: moment.Moment = moment()) => {
   );
 };
 
+/**
+ * Create a map from event id to event.
+ */
 export const separateByEventId = (events: TEvent[]) => {
   const separated = {};
 
@@ -41,6 +50,9 @@ export const separateByEventId = (events: TEvent[]) => {
   return separated;
 };
 
+/**
+ * Create a map from event date to list of events on that date.
+ */
 export const separateByDate = (events: TEvent[]) => {
   const separated = {};
 
@@ -57,6 +69,9 @@ export const separateByDate = (events: TEvent[]) => {
   return separated;
 };
 
+/**
+ * Create a map from email to user.
+ */
 export const separateByEmail = (users: TUser[]) => {
   const separated = {};
 
@@ -67,6 +82,9 @@ export const separateByEmail = (users: TUser[]) => {
   return separated;
 };
 
+/**
+ * Get an event with the given id.
+ */
 export const getEventById = (events: TEventDict, eventId: string) => {
   if (events.hasOwnProperty(eventId)) {
     return events[eventId];
@@ -75,6 +93,9 @@ export const getEventById = (events: TEventDict, eventId: string) => {
   return null;
 };
 
+/**
+ * Get a user with the given email.
+ */
 export const getUserByEmail = (directory: TDirectory, email: string) => {
   if (directory.hasOwnProperty(email)) {
     return directory[email];
@@ -83,6 +104,9 @@ export const getUserByEmail = (directory: TDirectory, email: string) => {
   return null;
 };
 
+/**
+ * Merge a list of new user data into the existing directory.
+ */
 export const mergeDirectory = (directory: TDirectory, newUsers: TUser[]) => {
   const mergedDirectory = directory;
 
@@ -93,6 +117,9 @@ export const mergeDirectory = (directory: TDirectory, newUsers: TUser[]) => {
   return mergedDirectory;
 };
 
+/**
+ * Merge a list of new event data into the existing events.
+ */
 export const mergeEvents = (events: TEventDict, newEvents: TEvent[]) => {
   const mergedEvents = events;
 
@@ -103,6 +130,9 @@ export const mergeEvents = (events: TEventDict, newEvents: TEvent[]) => {
   return mergedEvents;
 };
 
+/**
+ * Merge a list of new event data into the existing date-separated events.
+ */
 export const mergeEventDates = (eventDateDict: TEventDateDict, newEvents: TEvent[]) => {
   const separated = eventDateDict;
 
@@ -119,6 +149,9 @@ export const mergeEventDates = (eventDateDict: TEventDateDict, newEvents: TEvent
   return separated;
 };
 
+/**
+ * Remove a given user from the attendance records.
+ */
 export const excludeUserFromRecords = (records: TRecords, target: string) => {
   const newRecords = records;
 
@@ -131,6 +164,9 @@ export const excludeUserFromRecords = (records: TRecords, target: string) => {
   return newRecords;
 };
 
+/**
+ * Remove a given event from the attendance records.
+ */
 export const excludeEventFromRecords = (records: TRecords, target: string) => {
   const newRecords = records;
 
@@ -147,6 +183,9 @@ export const excludeEventFromRecords = (records: TRecords, target: string) => {
   return newRecords;
 };
 
+/**
+ * Merge a list of new attendance and excuse data into the existing records.
+ */
 export const mergeRecords = (
   records: TRecords,
   newRecords: {
@@ -185,6 +224,9 @@ export const mergeRecords = (
   return mergedRecords;
 };
 
+/**
+ * Get the attendance data for a given user and event.
+ */
 export const getAttendance = (records: TRecords, email: string, eventId: string) => {
   if (!records.attended.hasOwnProperty(email)) {
     return undefined;
@@ -193,6 +235,9 @@ export const getAttendance = (records: TRecords, email: string, eventId: string)
   return records.attended[email][eventId];
 };
 
+/**
+ * Get the excuse data for a given user and event.
+ */
 export const getExcuse = (records: TRecords, email: string, eventId: string) => {
   if (!records.excused.hasOwnProperty(email)) {
     return undefined;
@@ -201,6 +246,9 @@ export const getExcuse = (records: TRecords, email: string, eventId: string) => 
   return records.excused[email][eventId];
 };
 
+/**
+ * Get a list of all events a user attended.
+ */
 export const getAttendedEvents = (records: TRecords, email: string) => {
   if (!records.attended.hasOwnProperty(email)) {
     return {};
@@ -209,6 +257,9 @@ export const getAttendedEvents = (records: TRecords, email: string) => {
   return records.attended[email];
 };
 
+/**
+ * Get a list of all excused events a user attended.
+ */
 export const getExcusedEvents = (records: TRecords, email: string) => {
   if (!records.excused.hasOwnProperty(email)) {
     return {};
@@ -217,6 +268,9 @@ export const getExcusedEvents = (records: TRecords, email: string) => {
   return records.excused[email];
 };
 
+/**
+ * Aggregate the users who attended or excused a given event.
+ */
 export const getEventRecords = (directory: TDirectory, records: TRecords, eventId: string) => {
   const attended: {
     [email: string]: TUser;
@@ -261,6 +315,9 @@ export const getEventRecords = (directory: TDirectory, records: TRecords, eventI
   };
 };
 
+/**
+ * Get the record counts for a given user.
+ */
 export const getUserRecordCounts = (records: TRecords, email: string) => {
   let attended = 0;
   let excused = 0;
@@ -288,6 +345,9 @@ export const getUserRecordCounts = (records: TRecords, email: string) => {
   };
 };
 
+/**
+ * Get the number of events in a given type.
+ */
 export const getTypeCount = (events: TEventDict, type: string, allowFuture: boolean = false) => {
   let count = 0;
 
@@ -304,6 +364,9 @@ export const getTypeCount = (events: TEventDict, type: string, allowFuture: bool
   return count;
 };
 
+/**
+ * Get the number of events in a given type that a user attended or excused.
+ */
 export const getTypeCounts = (
   events: TEventDict,
   attended: TAttendanceEventDict,
@@ -345,6 +408,9 @@ export const getTypeCounts = (
   };
 };
 
+/**
+ * Check if a user has valid attendance or an excuse for a given event.
+ */
 export const hasValidCheckIn = (records: TRecords, email: string, eventId: string, allowPending: boolean = false) => {
   const attend = getAttendance(records, email, eventId);
 
@@ -355,6 +421,9 @@ export const hasValidCheckIn = (records: TRecords, email: string, eventId: strin
   return excuse !== undefined && (allowPending || excuse.approved);
 };
 
+/**
+ * Get the mandatory events map.
+ */
 export const getMandatoryEvents = (events: TEventDict) => {
   const mandatory = {};
 
@@ -371,6 +440,9 @@ export const getMandatoryEvents = (events: TEventDict) => {
   return mandatory;
 };
 
+/**
+ * Get the mandatory events a user missed.
+ */
 export const getMissedMandatoryByUser = (records: TRecords, mandatoryEvents: TEventDict, email: string) => {
   const missed = {};
 
@@ -383,6 +455,9 @@ export const getMissedMandatoryByUser = (records: TRecords, mandatoryEvents: TEv
   return missed;
 };
 
+/**
+ * Get the missed events for each user.
+ */
 export const getMissedMandatory = (records: TRecords, mandatoryEvents: TEventDict, directory: TDirectory) => {
   const missed = {};
 
@@ -393,6 +468,9 @@ export const getMissedMandatory = (records: TRecords, mandatoryEvents: TEventDic
   return missed;
 };
 
+/**
+ * Get the users who missed a given mandatory event.
+ */
 export const getMissedMandatoryByEvent = (missedMandatory: TUserEventDict, directory: TDirectory, eventId: string) => {
   const missed = {};
 
@@ -405,6 +483,9 @@ export const getMissedMandatoryByEvent = (missedMandatory: TUserEventDict, direc
   return missed;
 };
 
+/**
+ * Pretty print a phone number.
+ */
 export const prettyPhone = (phone: string) => {
   if (!phone || phone.length === 0) {
     return '';
@@ -417,12 +498,21 @@ export const prettyPhone = (phone: string) => {
   return `(${phone.substring(0, 3)}) ${phone.substring(3, 6)}-${phone.substring(6, 10)}`;
 };
 
+/**
+ * Sorting function to sort events by date.
+ */
 export const sortEventByDate = (a: { start: string }, b: { start: string }) =>
   moment(a.start).isBefore(moment(b.start)) ? -1 : 1;
 
+/**
+ * Sorting function to sort events by date in reverse.
+ */
 export const sortEventsByDateReverse = (a: { start: string }, b: { start: string }) =>
   moment(a.start).isBefore(moment(b.start)) ? 1 : -1;
 
+/**
+ * Sorting function to sort users by their name.
+ */
 export const sortUserByName = (
   a: { familyName: string; givenName: string },
   b: { familyName: string; givenName: string }
@@ -433,6 +523,9 @@ export const sortUserByName = (
   return nameA < nameB ? -1 : nameA > nameB ? 1 : 0;
 };
 
+/**
+ * Convert a point category to the full name.
+ */
 export const getCategoryLongName = (category: string) => {
   switch (category) {
     case 'ANY':
@@ -450,6 +543,9 @@ export const getCategoryLongName = (category: string) => {
   }
 };
 
+/**
+ * Pretty print a user's points.
+ */
 export const prettyPoints = (points: TPointsDict) => {
   if (!points) {
     return 'N/A';
@@ -474,6 +570,9 @@ export const prettyPoints = (points: TPointsDict) => {
   return pretty;
 };
 
+/**
+ * Count the number of points a user has of a given category.
+ */
 export const extractPoints = (points: TPointsDict, type: string) => {
   if (!points || !points.hasOwnProperty(type)) {
     return '0';
@@ -482,6 +581,9 @@ export const extractPoints = (points: TPointsDict, type: string) => {
   return `${points[type]}`;
 };
 
+/**
+ * Get the index of the first future date with events.
+ */
 export const getFutureDateIndex = (
   eventSections: {
     title: string;
@@ -505,6 +607,9 @@ export const getFutureDateIndex = (
   return -1;
 };
 
+/**
+ * Set the global error message.
+ */
 export const setGlobalError = (message: string, code: number) => {
   return {
     globalErrorMessage: message.startsWith('FetchEvent.respondWith')
@@ -515,6 +620,9 @@ export const setGlobalError = (message: string, code: number) => {
   };
 };
 
+/**
+ * Exclude keys from the cache that match a given exclude function.
+ */
 export const excludeFromHistory = (loadHistory: TLoadHistory, exclude?: (key: string) => boolean) => {
   const newLoadHistory = {};
 
@@ -529,6 +637,9 @@ export const excludeFromHistory = (loadHistory: TLoadHistory, exclude?: (key: st
   return newLoadHistory;
 };
 
+/**
+ * Check if the key is in the cache and is recent enough.
+ */
 export const shouldLoad = (loadHistory: TLoadHistory, key: string) => {
   if (!loadHistory.hasOwnProperty(key)) {
     return true;
@@ -544,6 +655,9 @@ export const shouldLoad = (loadHistory: TLoadHistory, key: string) => {
   }
 };
 
+/**
+ * Recompute the kappa redux state with the given events, records, and directory.
+ */
 export const recomputeKappaState = ({
   events,
   records,
