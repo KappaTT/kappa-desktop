@@ -52,10 +52,5 @@
     "prettier": "^2.0.5",
     "typescript": "~3.9.2"
   },
-  "private": true,
-  "prettier": {
-    "trailingComma": "none",
-    "singleQuote": true,
-    "printWidth": 120
-  }
+  "private": true
 }
