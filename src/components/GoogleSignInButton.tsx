@@ -1,7 +1,7 @@
 import React from 'react';
 import GoogleLogin, { GoogleLoginResponse } from 'react-google-login';
 
-import * as secrets from 'secrets';
+import * as secrets from '@secrets';
 
 export const GOOGLE_CLIENT_ID =
   process.env.NODE_ENV !== 'development' ? secrets.GOOGLE_CLIENT_IDS.prod : secrets.GOOGLE_CLIENT_IDS.dev;

@@ -9,6 +9,7 @@
     "skipLibCheck": true,
     "baseUrl": "src",
     "paths": {
+      "@secrets": ["secrets"],
       "@backend": ["backend"],
       "@backend/*": ["backend/*"],
       "@components": ["components"],

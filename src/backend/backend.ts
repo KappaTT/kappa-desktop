@@ -1,6 +1,6 @@
 import { jsonRequest, jsonAuthorizedRequest } from '@services/Networking';
 import { isEmpty } from '@services/utils';
-import * as secrets from 'secrets';
+import * as secrets from '@secrets';
 
 export const M_GET = 'GET';
 export const M_POST = 'POST';

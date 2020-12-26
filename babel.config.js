@@ -7,6 +7,7 @@ module.exports = function (api) {
         'module-resolver',
         {
           alias: {
+            '@secrets': './src/secrets',
             '@backend': './src/backend',
             '@backend/*': './src/backend/*',
             '@components': './src/components',
