@@ -3,6 +3,7 @@ import { StyleSheet, View, Text, ActivityIndicator, TouchableOpacity } from 'rea
 import { useSelector, useDispatch } from 'react-redux';
 import { useIsFocused, NavigationProp } from '@react-navigation/native';
 import moment from 'moment';
+import Constants from 'expo-constants';
 
 import { TRedux } from '@reducers';
 import { _kappa, _nav } from '@reducers/actions';
@@ -361,6 +362,10 @@ const ProfileContent: React.FC<{
             )}
           </View>
         </View>
+
+        <Text style={styles.madeWithText}>
+          {`Whatsoever thy hand findeth to do, do it with thy might.\n\n${Constants.manifest.sdkVersion}\n\nJTC - Web Chair 2019-2021`}
+        </Text>
       </View>
     </View>
   );
@@ -523,6 +528,14 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans-Bold',
     fontSize: 14,
     color: theme.COLORS.PRIMARY
+  },
+  madeWithText: {
+    marginTop: 32,
+    marginBottom: 8,
+    fontFamily: 'OpenSans',
+    fontSize: 12,
+    color: theme.COLORS.BORDER,
+    textAlign: 'center'
   }
 });
 
