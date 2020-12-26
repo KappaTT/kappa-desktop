@@ -6,7 +6,9 @@ import {
   View,
   TextInput,
   NativeSyntheticEvent,
-  TextInputSubmitEditingEventData
+  TextInputSubmitEditingEventData,
+  KeyboardTypeOptions,
+  ReturnKeyTypeOptions
 } from 'react-native';
 
 import { theme } from '@constants';
@@ -15,6 +17,10 @@ const FormattedInput: React.FC<{
   style?: StyleProp<ViewStyle>;
   placeholderText?: string;
   value: string;
+  keyboardType?: KeyboardTypeOptions;
+  returnKeyType?: ReturnKeyTypeOptions;
+  password?: boolean;
+  textContentType?: string;
   maxLength?: number;
   multiline?: boolean;
   numberOfLines?: number;
@@ -30,6 +36,10 @@ const FormattedInput: React.FC<{
   style,
   placeholderText,
   value,
+  keyboardType = 'default',
+  returnKeyType,
+  password = false,
+  textContentType = 'none',
   maxLength,
   multiline = false,
   numberOfLines = 1,
@@ -62,7 +72,8 @@ const FormattedInput: React.FC<{
       style={[
         styles.input,
         style,
-        error && { backgroundColor: theme.COLORS.INPUT_ERROR_LIGHT, borderColor: theme.COLORS.INPUT_ERROR }
+        error && { backgroundColor: theme.COLORS.INPUT_ERROR_LIGHT, borderColor: theme.COLORS.INPUT_ERROR },
+        !editable && { opacity: 0.7 }
       ]}
       autoFocus={autoFocus}
       blurOnSubmit={blurOnSubmit}
@@ -75,6 +86,11 @@ const FormattedInput: React.FC<{
       value={value}
       onChangeText={handleTextChange}
       onSubmitEditing={handleSubmit}
+      keyboardType={keyboardType}
+      returnKeyType={returnKeyType}
+      // @ts-ignore
+      textContentType={textContentType}
+      secureTextEntry={password}
     />
   );
 };
