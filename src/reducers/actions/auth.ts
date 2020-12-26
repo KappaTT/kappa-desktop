@@ -14,7 +14,6 @@ import {
 } from '@reducers/auth';
 import { TUser, initialUser, purge } from '@backend/auth';
 import { getBatch, setBatch } from '@services/asyncStorage';
-import { log } from '@services/logService';
 
 /**
  * Show the login modal.

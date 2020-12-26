@@ -9,7 +9,7 @@
     "import/order": "off",
     "react/jsx-fragments": "off",
     "react/jsx-boolean-value": "off",
-    "@typescript-eslint/no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": "warn",
     "no-unused-expressions": "off",
     "handle-callback-err": "off",
     "prefer-promise-reject-errors": "off"

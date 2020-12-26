@@ -1,4 +1,3 @@
-import { TBlame } from '@backend/backend';
 import { TUser, initialUser } from '@backend/auth';
 
 export const SHOW_MODAL = 'SHOW_MODAL';

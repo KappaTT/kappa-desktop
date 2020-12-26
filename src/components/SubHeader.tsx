@@ -2,7 +2,6 @@ import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 
 import { theme } from '@constants';
-import { HEADER_HEIGHT } from '@services/utils';
 import Icon from '@components/Icon';
 
 const SubHeader: React.FC<{

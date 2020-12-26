@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useLinkTo } from '@react-navigation/native';
 
 import { TRedux } from '@reducers';
-import { _auth, _kappa, _voting, _nav } from '@reducers/actions';
+import { _auth, _kappa, _voting } from '@reducers/actions';
 import { theme } from '@constants';
 import { navigate } from '@navigation/NavigationService';
 import SidebarLayout, { TSidebarElement } from '@navigation/SidebarLayout';

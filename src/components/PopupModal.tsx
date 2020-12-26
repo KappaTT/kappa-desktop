@@ -3,7 +3,7 @@ import { StyleSheet, TouchableOpacity, Animated, Easing, Dimensions, View } from
 
 import { theme } from '@constants';
 
-const { width, height } = Dimensions.get('window');
+const { height } = Dimensions.get('window');
 
 const heightBase = new Animated.Value(height * 0.05);
 

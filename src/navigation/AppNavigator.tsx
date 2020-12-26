@@ -1,5 +1,4 @@
 import React from 'react';
-import { Linking } from 'react-native';
 import {
   NavigationContainer,
   DefaultTheme,
@@ -11,7 +10,6 @@ import {
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import { _nav } from '@reducers/actions';
 import { theme } from '@constants';
 import {
   DirectoryScreen,
@@ -22,7 +20,7 @@ import {
   ProfileScreen,
   VotingManagementScreen
 } from '@screens';
-import { navigate, navigationRef } from '@navigation/NavigationService';
+import { navigationRef } from '@navigation/NavigationService';
 
 // Create stacks
 const LoginStack = createStackNavigator();

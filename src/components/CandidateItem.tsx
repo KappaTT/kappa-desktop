@@ -1,9 +1,9 @@
 import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { TRedux } from '@reducers';
-import { _auth, _kappa, _ui, _voting } from '@reducers/actions';
+import { _voting } from '@reducers/actions';
 import { theme } from '@constants';
 import { TCandidate } from '@backend/voting';
 import Icon from '@components/Icon';

@@ -4,9 +4,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useIsFocused, NavigationProp } from '@react-navigation/native';
 
 import { TRedux } from '@reducers';
-import { _auth, _kappa, _nav } from '@reducers/actions';
+import { _kappa, _nav } from '@reducers/actions';
 import { TUser } from '@backend/auth';
-import { TEvent } from '@backend/kappa';
 import { theme } from '@constants';
 import { HEADER_HEIGHT } from '@services/utils';
 import { shouldLoad } from '@services/kappaService';

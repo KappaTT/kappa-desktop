@@ -4,9 +4,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment';
 
 import { TRedux } from '@reducers';
-import { _auth, _kappa, _ui, _voting } from '@reducers/actions';
+import { _ui, _voting } from '@reducers/actions';
 import { theme } from '@constants';
-import { TSession, TVote } from '@backend/voting';
+import { TSession } from '@backend/voting';
 import { TEvent } from '@backend/kappa';
 import { TToast } from '@reducers/ui';
 import { getVotes } from '@services/votingService';

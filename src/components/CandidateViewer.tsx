@@ -4,13 +4,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment';
 
 import { TRedux } from '@reducers';
-import { _auth, _kappa, _ui, _voting } from '@reducers/actions';
+import { _voting } from '@reducers/actions';
 import { prettyPhone } from '@services/kappaService';
 import { theme } from '@constants';
-import { TCandidate } from '@backend/voting';
 import { TEvent } from '@backend/kappa';
 import Icon from '@components/Icon';
-import RoundButton from '@components/RoundButton';
 import Chip from '@components/Chip';
 import Switch from '@components/Switch';
 

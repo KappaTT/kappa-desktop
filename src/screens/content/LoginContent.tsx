@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Text, Image, ActivityIndicator } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { useIsFocused, NavigationProp, useLinkTo } from '@react-navigation/native';
+import { NavigationProp, useLinkTo } from '@react-navigation/native';
 import { GoogleLoginResponse } from 'react-google-login';
 
 import { TRedux } from '@reducers';
@@ -12,14 +12,11 @@ import { GoogleSignInButton } from '@components';
 const LoginContent: React.FC<{
   navigation: NavigationProp<any, 'Login'>;
 }> = ({ navigation }) => {
-  const isFocused = useIsFocused();
   const linkTo = useLinkTo();
 
   const authorized = useSelector((state: TRedux) => state.auth.authorized);
   const isAuthenticating = useSelector((state: TRedux) => state.auth.isAuthenticating);
   const signInErrorMessage = useSelector((state: TRedux) => state.auth.signInErrorMessage);
-
-  const [googleError, setGoogleError] = React.useState<string>('');
 
   const dispatch = useDispatch();
   const dispatchSignInWithGoogle = React.useCallback(

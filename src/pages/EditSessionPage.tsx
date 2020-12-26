@@ -6,7 +6,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
 import { TRedux } from '@reducers';
-import { _auth, _voting } from '@reducers/actions';
+import { _voting } from '@reducers/actions';
 import { TCandidate, TSession } from '@backend/voting';
 import { TYPE_OPTIONS } from '@services/votingService';
 import { theme } from '@constants';

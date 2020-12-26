@@ -5,7 +5,7 @@ import { useIsFocused, NavigationProp } from '@react-navigation/native';
 import moment from 'moment';
 
 import { TRedux } from '@reducers';
-import { _auth, _kappa, _nav } from '@reducers/actions';
+import { _kappa, _nav } from '@reducers/actions';
 import { TExcuse, TPendingExcuse } from '@backend/kappa';
 import { getExcusedEvents, getEventById, sortEventsByDateReverse, shouldLoad } from '@services/kappaService';
 import { theme } from '@constants';

@@ -7,13 +7,11 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { TRedux } from '@reducers';
 import { _auth } from '@reducers/actions';
-import { incompleteUser } from '@backend/auth';
-import { Images, theme } from '@constants';
+import { Images } from '@constants';
 import AppNavigator from '@navigation/AppNavigator';
 import { navigate } from '@navigation/NavigationService';
 
-import { SIDEBAR_WIDTH } from '@services/utils';
-import { Sidebar, ModalController, ToastController } from '@components';
+import { ModalController, ToastController } from '@components';
 import './styles/global.css';
 
 const assetImages = [Images.Kappa];
@@ -46,7 +44,6 @@ const App = () => {
   const authorized = useSelector((state: TRedux) => state.auth.authorized);
 
   const [isLoadingComplete, setIsLoadingComplete] = React.useState<boolean>(false);
-  const [isNavigatorReady, setIsNavigatorReady] = React.useState<boolean>(false);
 
   const dispatch = useDispatch();
   const dispatchLoadUser = React.useCallback(() => dispatch(_auth.loadUser()), [dispatch]);

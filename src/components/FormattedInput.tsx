@@ -3,7 +3,6 @@ import {
   StyleSheet,
   StyleProp,
   ViewStyle,
-  View,
   TextInput,
   NativeSyntheticEvent,
   TextInputSubmitEditingEventData,

@@ -4,10 +4,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment';
 
 import { TRedux } from '@reducers';
-import { _auth, _voting } from '@reducers/actions';
+import { _voting } from '@reducers/actions';
 import { TCandidate } from '@backend/voting';
 import { theme } from '@constants';
-import { prettyPhone, sortEventByDate } from '@services/kappaService';
+import { prettyPhone } from '@services/kappaService';
 import { CLASS_YEAR_OPTIONS } from '@services/votingService';
 import { Icon, RadioList, FormattedInput, CheckList, Switch } from '@components';
 

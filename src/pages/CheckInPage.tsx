@@ -4,7 +4,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment';
 
 import { TRedux } from '@reducers';
-import { TEvent } from '@backend/kappa';
 import { TToast } from '@reducers/ui';
 import { _kappa, _ui } from '@reducers/actions';
 import { theme } from '@constants';
@@ -34,7 +33,7 @@ const CheckInPage: React.FC<{
 
   const initialEvent = checkInEventId === 'NONE' ? null : getEventById(events, checkInEventId);
 
-  const [openDate, setOpenDate] = React.useState<moment.Moment>(moment());
+  const [openDate] = React.useState<moment.Moment>(moment());
   const [eventId, setEventId] = React.useState<string>(initialEvent ? initialEvent._id : '');
   const [eventCode, setEventCode] = React.useState<string>('');
 

@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, ScrollView, TouchableOpacity, ActivityIndicator
 import { useSelector, useDispatch } from 'react-redux';
 
 import { TRedux } from '@reducers';
-import { _auth, _kappa } from '@reducers/actions';
+import { _kappa } from '@reducers/actions';
 import { theme } from '@constants';
 import { prettyPhone, getUserByEmail } from '@services/kappaService';
 import { Icon, Switch, RadioList, FormattedInput } from '@components';

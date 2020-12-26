@@ -1,7 +1,5 @@
 import {
   TEvent,
-  TAttendanceUserDict,
-  TExcuseUserDict,
   TRecords,
   TDirectory,
   TEventDateDict,
@@ -9,9 +7,7 @@ import {
   TUserEventDict,
   TLoadHistory,
   TPointsUserDict,
-  TExcuse,
-  TPendingExcuse,
-  TAttendance
+  TPendingExcuse
 } from '@backend/kappa';
 import {
   getEventById,

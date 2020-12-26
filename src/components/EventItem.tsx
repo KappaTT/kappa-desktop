@@ -4,15 +4,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment';
 
 import { TRedux } from '@reducers';
-import { TToast } from '@reducers/ui';
-import { _auth, _kappa, _ui } from '@reducers/actions';
+import { _kappa } from '@reducers/actions';
 import {
-  hasValidCheckIn,
   getAttendance,
   getExcuse,
   getEventRecords,
-  getMissedMandatoryByEvent,
-  sortUserByName,
   prettyPoints,
   shouldLoad,
   canCheckIn

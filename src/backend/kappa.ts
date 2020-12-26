@@ -1,4 +1,4 @@
-import { ENDPOINTS, METHODS, TResponse, makeAuthorizedRequest, pass, fail, TBlame } from '@backend/backend';
+import { ENDPOINTS, METHODS, TResponse, makeAuthorizedRequest, pass, fail } from '@backend/backend';
 import { TUser } from '@backend/auth';
 import { log } from '@services/logService';
 import moment from 'moment';

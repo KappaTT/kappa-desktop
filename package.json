@@ -5,7 +5,8 @@
     "web": "expo start --web",
     "predeploy": "expo build:web",
     "deploy": "netlify deploy --prod",
-    "validate": "npx tsc --noEmit"
+    "validate": "npx tsc --noEmit",
+    "eslint": "eslint --config ./.eslintrc.json --ext .js,.ts,.jsx,.tsx src/"
   },
   "dependencies": {
     "@expo/vector-icons": "^10.0.0",

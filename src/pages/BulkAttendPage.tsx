@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, ScrollView, TouchableOpacity, ActivityIndicator
 import { useSelector, useDispatch } from 'react-redux';
 
 import { TRedux } from '@reducers';
-import { _auth, _kappa } from '@reducers/actions';
+import { _kappa } from '@reducers/actions';
 import { hasValidCheckIn } from '@services/kappaService';
 import { theme } from '@constants';
 import { Icon, CheckList } from '@components';

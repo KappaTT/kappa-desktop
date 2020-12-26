@@ -1,27 +1,21 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
-import { useSelector, useDispatch } from 'react-redux';
-import { useIsFocused, NavigationProp } from '@react-navigation/native';
-import moment from 'moment';
+import { StyleSheet, View } from 'react-native';
+import { NavigationProp } from '@react-navigation/native';
 
-import { TRedux } from '@reducers';
-import { _auth, _kappa, _nav } from '@reducers/actions';
 import { theme } from '@constants';
 import { HEADER_HEIGHT } from '@services/utils';
-import { Header, Icon } from '@components';
+import { Header } from '@components';
 
 const EventTemplatesContent: React.FC<{
   navigation: NavigationProp<any, 'Event Templates'>;
 }> = ({ navigation }) => {
-  const isFocused = useIsFocused();
-
   return (
     <View style={styles.container}>
       <Header title="Event Templates">
-        <View style={styles.headerChildren}></View>
+        <View style={styles.headerChildren} />
       </Header>
 
-      <View style={styles.content}></View>
+      <View style={styles.content} />
     </View>
   );
 };

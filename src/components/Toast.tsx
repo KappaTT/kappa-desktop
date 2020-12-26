@@ -1,7 +1,6 @@
 import React from 'react';
 import { StyleSheet, TouchableOpacity, Animated, Easing, View, Text } from 'react-native';
 
-import { theme } from '@constants';
 import { TToast } from '@reducers/ui';
 import { HEADER_HEIGHT, SIDEBAR_WIDTH, TOAST_HEIGHT } from '@services/utils';
 

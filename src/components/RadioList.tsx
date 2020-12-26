@@ -1,7 +1,6 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
-import { theme } from '@constants';
 import CheckListButton from '@components/CheckListButton';
 
 const RadioList: React.FC<{

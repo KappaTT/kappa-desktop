@@ -4,10 +4,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment';
 
 import { TRedux } from '@reducers';
-import { _auth, _kappa } from '@reducers/actions';
+import { _kappa } from '@reducers/actions';
 import { theme } from '@constants';
 import { TPendingExcuse } from '@backend/kappa';
-import RoundButton from '@components/RoundButton';
 import Icon from '@components/Icon';
 import Switch from '@components/Switch';
 

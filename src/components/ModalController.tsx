@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { TRedux } from '@reducers';
-import { _auth, _kappa, _voting } from '@reducers/actions';
+import { _kappa, _voting } from '@reducers/actions';
 import { TEvent } from '@backend/kappa';
 import { incompleteUser } from '@backend/auth';
 import {

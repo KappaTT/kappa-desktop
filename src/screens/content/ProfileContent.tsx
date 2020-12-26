@@ -1,11 +1,11 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useIsFocused, NavigationProp } from '@react-navigation/native';
 import moment from 'moment';
 
 import { TRedux } from '@reducers';
-import { _auth, _kappa, _nav } from '@reducers/actions';
+import { _kappa, _nav } from '@reducers/actions';
 import { TEvent } from '@backend/kappa';
 import { theme } from '@constants';
 import { TPoints, POINTS_SO, GM_SO, POINTS_JR, GM_JR, POINTS_SR, GM_SR, getClassYear } from '@constants/Points';

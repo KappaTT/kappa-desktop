@@ -1,20 +1,11 @@
 import React from 'react';
-import {
-  StyleSheet,
-  View,
-  ScrollView,
-  FlatList,
-  Text,
-  ActivityIndicator,
-  TouchableOpacity,
-  Dimensions
-} from 'react-native';
+import { StyleSheet, View, FlatList, Text, ActivityIndicator, TouchableOpacity, Dimensions } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useIsFocused, NavigationProp } from '@react-navigation/native';
 import moment from 'moment';
 
 import { TRedux } from '@reducers';
-import { _auth, _kappa, _nav, _ui, _voting } from '@reducers/actions';
+import { _kappa, _nav, _voting } from '@reducers/actions';
 import { shouldLoad } from '@services/kappaService';
 import { TCandidate, TSession } from '@backend/voting';
 import { theme } from '@constants';

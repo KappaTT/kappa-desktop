@@ -30,7 +30,7 @@ const RequestExcusePage: React.FC<{
 
   const initialEvent = checkInEventId === 'NONE' ? null : getEventById(events, checkInEventId);
 
-  const [openDate, setOpenDate] = React.useState<moment.Moment>(moment());
+  const [openDate] = React.useState<moment.Moment>(moment());
   const [reason, setReason] = React.useState<string>('');
   const [selectedEvent, setSelectedEvent] = React.useState<TEvent>(initialEvent);
 
