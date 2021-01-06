@@ -1,3 +1,5 @@
+export const isDarkMatch = window.matchMedia('(prefers-color-scheme: dark)');
+
 export default {
   COLORS: {
     DEFAULT: '#172B4D',
