@@ -9,9 +9,9 @@ export interface TPoints {
 
 export const POINTS_SO: TPoints = {
   PROF: 3,
-  PHIL: 3,
+  PHIL: 2,
   BRO: 5,
-  RUSH: 5
+  RUSH: 4
 };
 
 export const GM_SO = 70;

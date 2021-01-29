@@ -309,7 +309,7 @@ const ProfileContent: React.FC<{
 
         <View style={styles.splitPropertyRow}>
           <View style={[styles.splitProperty, { opacity: classYear === 'FR' || classYear === 'SO' ? 1 : 0.4 }]}>
-            <Text style={styles.subHeadingText}>Sophomore</Text>
+            <Text style={styles.subHeadingText}>Freshman and Sophomore</Text>
 
             {renderRequirements(POINTS_SO, GM_SO)}
           </View>
