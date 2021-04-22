@@ -31,3 +31,7 @@ export const GOOGLE_CLIENT_IDS = {
 ## Preview
 
 ![screenshot](./readme/screenshot.png)
+
+## License
+
+This project is [GPLv2 licensed](./LICENSE)
