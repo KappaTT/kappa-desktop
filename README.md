@@ -1,6 +1,6 @@
 # kappa-desktop
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/06850475-210a-452a-9c2c-0acf54de50df/deploy-status)](https://app.netlify.com/sites/kappa-app/deploys) [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/jtaylorchang/kappa-desktop.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/jtaylorchang/kappa-desktop/context:javascript) [![Lines of Code](https://tokei.rs/b1/github/jtaylorchang/kappa-desktop)](https://github.com/jtaylorchang/kappa-desktop)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/06850475-210a-452a-9c2c-0acf54de50df/deploy-status)](https://app.netlify.com/sites/kappa-app/deploys) ![GitHub](https://img.shields.io/github/license/kappatt/kappa-desktop) [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/jtaylorchang/kappa-desktop.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/jtaylorchang/kappa-desktop/context:javascript) [![Lines of Code](https://tokei.rs/b1/github/jtaylorchang/kappa-desktop)](https://github.com/jtaylorchang/kappa-desktop)
 
 <img src="assets/icon.png" width="256" />
 
