@@ -49,6 +49,9 @@ const EditEventPage: React.FC<{
   const [rushPoints, setRushPoints] = React.useState<string>(
     initialEvent ? extractPoints(initialEvent.points, 'RUSH') : ''
   );
+  const [chatPoints, setChatPoints] = React.useState<string>(
+    initialEvent ? extractPoints(initialEvent.points, 'CHAT') : ''
+  );
   const [anyPoints, setAnyPoints] = React.useState<string>(
     initialEvent ? extractPoints(initialEvent.points, 'ANY') : ''
   );
@@ -104,6 +107,7 @@ const EditEventPage: React.FC<{
       PHIL: parseInt(philPoints || '0', 10),
       BRO: parseInt(broPoints || '0', 10),
       RUSH: parseInt(rushPoints || '0', 10),
+      CHAT: parseInt(chatPoints || '0', 10),
       ANY: parseInt(anyPoints || '0', 10)
     };
 
@@ -125,6 +129,7 @@ const EditEventPage: React.FC<{
     philPoints,
     broPoints,
     rushPoints,
+    chatPoints,
     anyPoints,
     onPressSave
   ]);
@@ -191,6 +196,10 @@ const EditEventPage: React.FC<{
     setRushPoints(text);
   }, []);
 
+  const onChangeChat = React.useCallback((text: string) => {
+    setChatPoints(text);
+  }, []);
+
   const onChangeAny = React.useCallback((text: string) => {
     setAnyPoints(text);
   }, []);
@@ -247,6 +256,7 @@ const EditEventPage: React.FC<{
                 { id: 'Professional', title: 'Professional' },
                 { id: 'Rush', title: 'Rush' },
                 { id: 'Brotherhood', title: 'Brotherhood' },
+                { id: 'Kappa Chat', title: 'Kappa Chat' },
                 { id: 'Misc', title: 'Misc' }
               ]}
               selected={type}
@@ -440,6 +450,18 @@ const EditEventPage: React.FC<{
               value={rushPoints}
               formatter={numberFormatter}
               onChangeText={onChangeRush}
+            />
+
+            <View style={styles.propertyHeaderContainer}>
+              <Text style={styles.propertyHeader}>Kappa Chat</Text>
+            </View>
+
+            <FormattedInput
+              placeholderText="points"
+              maxLength={1}
+              value={chatPoints}
+              formatter={numberFormatter}
+              onChangeText={onChangeChat}
             />
 
             <View style={styles.propertyHeaderContainer}>

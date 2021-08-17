@@ -228,6 +228,16 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
                 )}
               </View>
               <View style={styles.splitProperty}>
+                <Text style={styles.propertyHeader}>Kappa Chat</Text>
+                {isGettingPoints ? (
+                  <ActivityIndicator style={styles.propertyLoader} color={theme.COLORS.PRIMARY} />
+                ) : (
+                  <Text style={styles.propertyValue}>
+                    {points.hasOwnProperty(brother.email) ? points[brother.email].CHAT : '0'}
+                  </Text>
+                )}
+              </View>
+              <View style={styles.splitProperty}>
                 <Text style={styles.propertyHeader}>Any</Text>
                 {isGettingPoints ? (
                   <ActivityIndicator style={styles.propertyLoader} color={theme.COLORS.PRIMARY} />
