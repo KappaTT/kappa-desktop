@@ -95,6 +95,7 @@ export interface TEventSearch {
   broPoints: string;
   rushPoints: string;
   chatPoints: string;
+  divPoints: string;
   anyPoints: string;
 }
 

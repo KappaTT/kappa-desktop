@@ -165,6 +165,10 @@ const ProfileContent: React.FC<{
           <Text style={styles.propertyHeader}>Kappa Chat</Text>
           <Text style={styles.propertyValue}>{points.CHAT}</Text>
         </View>
+        <View style={styles.splitProperty}>
+          <Text style={styles.propertyHeader}>Diversity</Text>
+          <Text style={styles.propertyValue}>{points.DIV}</Text>
+        </View>
 
         <View style={styles.splitProperty}>
           <Text style={styles.propertyHeader}>GM</Text>
@@ -285,6 +289,16 @@ const ProfileContent: React.FC<{
             ) : (
               <Text style={styles.propertyValue}>
                 {points.hasOwnProperty(user.email) ? points[user.email].CHAT : '0'}
+              </Text>
+            )}
+          </View>
+          <View style={styles.splitProperty}>
+            <Text style={styles.propertyHeader}>Diversity</Text>
+            {isGettingPoints ? (
+              <ActivityIndicator style={styles.propertyLoader} color={theme.COLORS.PRIMARY} />
+            ) : (
+              <Text style={styles.propertyValue}>
+                {points.hasOwnProperty(user.email) ? points[user.email].DIV : '0'}
               </Text>
             )}
           </View>

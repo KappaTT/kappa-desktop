@@ -52,6 +52,9 @@ const EditEventPage: React.FC<{
   const [chatPoints, setChatPoints] = React.useState<string>(
     initialEvent ? extractPoints(initialEvent.points, 'CHAT') : ''
   );
+  const [divPoints, setDivPoints] = React.useState<string>(
+    initialEvent ? extractPoints(initialEvent.points, 'DIV') : ''
+  );
   const [anyPoints, setAnyPoints] = React.useState<string>(
     initialEvent ? extractPoints(initialEvent.points, 'ANY') : ''
   );
@@ -108,6 +111,7 @@ const EditEventPage: React.FC<{
       BRO: parseInt(broPoints || '0', 10),
       RUSH: parseInt(rushPoints || '0', 10),
       CHAT: parseInt(chatPoints || '0', 10),
+      DIV: parseInt(divPoints || '0', 10),
       ANY: parseInt(anyPoints || '0', 10)
     };
 
@@ -130,6 +134,7 @@ const EditEventPage: React.FC<{
     broPoints,
     rushPoints,
     chatPoints,
+    divPoints,
     anyPoints,
     onPressSave
   ]);
@@ -200,6 +205,10 @@ const EditEventPage: React.FC<{
     setChatPoints(text);
   }, []);
 
+  const onChangeDiv = React.useCallback((text: string) => {
+    setDivPoints(text);
+  }, []);
+
   const onChangeAny = React.useCallback((text: string) => {
     setAnyPoints(text);
   }, []);
@@ -257,6 +266,7 @@ const EditEventPage: React.FC<{
                 { id: 'Rush', title: 'Rush' },
                 { id: 'Brotherhood', title: 'Brotherhood' },
                 { id: 'Kappa Chat', title: 'Kappa Chat' },
+                { id: 'Diversity', title: 'Diversity' },
                 { id: 'Misc', title: 'Misc' }
               ]}
               selected={type}
@@ -462,6 +472,18 @@ const EditEventPage: React.FC<{
               value={chatPoints}
               formatter={numberFormatter}
               onChangeText={onChangeChat}
+            />
+
+            <View style={styles.propertyHeaderContainer}>
+              <Text style={styles.propertyHeader}>Diversity</Text>
+            </View>
+
+            <FormattedInput
+              placeholderText="points"
+              maxLength={1}
+              value={divPoints}
+              formatter={numberFormatter}
+              onChangeText={onChangeDiv}
             />
 
             <View style={styles.propertyHeaderContainer}>

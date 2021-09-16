@@ -6,6 +6,7 @@ export interface TPoints {
   BRO: number;
   RUSH: number;
   CHAT: number;
+  DIV: number;
 }
 
 export const POINTS_SO: TPoints = {
@@ -13,7 +14,8 @@ export const POINTS_SO: TPoints = {
   PHIL: 3,
   BRO: 5,
   RUSH: 5,
-  CHAT: 2
+  CHAT: 1,
+  DIV: 1
 };
 
 export const GM_SO = 70;
@@ -23,7 +25,8 @@ export const POINTS_JR: TPoints = {
   PHIL: 2,
   BRO: 4,
   RUSH: 4,
-  CHAT: 2
+  CHAT: 1,
+  DIV: 1
 };
 
 export const GM_JR = 60;
@@ -33,7 +36,8 @@ export const POINTS_SR: TPoints = {
   PHIL: 1,
   BRO: 3,
   RUSH: 3,
-  CHAT: 2
+  CHAT: 1,
+  DIV: 1
 };
 
 export const GM_SR = 50;

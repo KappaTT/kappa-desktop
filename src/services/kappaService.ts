@@ -540,6 +540,8 @@ export const getCategoryLongName = (category: string) => {
       return 'Rush';
     case 'CHAT':
       return 'Kappa Chat';
+    case 'DIV':
+      return 'Diversity';
     default:
       return '';
   }
