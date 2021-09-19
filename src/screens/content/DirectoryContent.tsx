@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, Text, ActivityIndicator, TouchableOpacity, FlatList } from 'react-native';
+import { SearchBar } from 'react-native-elements';
 import { useSelector, useDispatch } from 'react-redux';
 import { useIsFocused, NavigationProp } from '@react-navigation/native';
 
@@ -104,10 +105,48 @@ const DirectoryContent: React.FC<{
     );
   };
 
+  const [searchState, setSearchState] = React.useState({
+    searchText: '',
+    filteredData: []
+  });
+
+  const search = (searchText) => {
+    let filteredData = directoryArray.filter(function (item) {
+      const fullName = item.givenName.toLowerCase() + ' ' + item.familyName.toLowerCase();
+      return fullName.includes(searchText.toLowerCase());
+    });
+
+    setSearchState({ searchText: searchText, filteredData: filteredData });
+  };
+
   return (
     <View style={styles.container}>
       <Header title="Brothers">
         <View style={styles.headerChildren}>
+          <View style={styles.headerSearchBarContainer}>
+            <SearchBar
+              round={true}
+              autoCapitalize="none"
+              autoCorrect={false}
+              lightTheme={true}
+              placeholder="Search Brothers..."
+              containerStyle={{
+                backgroundColor: 'transparent',
+                borderTopColor: 'transparent',
+                borderBottomColor: 'transparent'
+              }}
+              inputContainerStyle={{
+                backgroundColor: 'transparent',
+                height: 35
+              }}
+              inputStyle={{
+                fontSize: 14
+              }}
+              onChangeText={(searchText) => search(searchText)}
+              value={searchState.searchText}
+            />
+          </View>
+
           {user.role.toLowerCase() === 'web' && (
             <View style={styles.headerButtonContainer}>
               <TouchableOpacity activeOpacity={0.6} onPress={dispatchEditNewUser}>
@@ -137,7 +176,9 @@ const DirectoryContent: React.FC<{
       <View style={styles.content}>
         <FlatList
           ref={(ref) => (scrollRef.current = ref)}
-          data={directoryArray}
+          data={
+            searchState.filteredData && searchState.filteredData.length > 0 ? searchState.filteredData : directoryArray
+          }
           keyExtractor={keyExtractor}
           renderItem={renderItem}
           ListEmptyComponent={
@@ -194,6 +235,10 @@ const styles = StyleSheet.create({
     marginTop: '40vh',
     textAlign: 'center',
     fontFamily: 'OpenSans'
+  },
+  headerSearchBarContainer: {
+    marginTop: 8,
+    marginBottom: 8
   }
 });
 
