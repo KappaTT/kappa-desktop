@@ -113,7 +113,11 @@ const DirectoryContent: React.FC<{
   const search = (searchText) => {
     let filteredData = directoryArray.filter(function (item) {
       const fullName = item.givenName.toLowerCase() + ' ' + item.familyName.toLowerCase();
-      return fullName.includes(searchText.toLowerCase());
+      return (
+        fullName.includes(searchText.toLowerCase()) ||
+        item.phone.includes(searchText.toLowerCase()) ||
+        item.email.includes(searchText.toLowerCase())
+      );
     });
 
     setSearchState({ searchText: searchText, filteredData: filteredData });

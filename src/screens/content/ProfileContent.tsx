@@ -129,6 +129,12 @@ const ProfileContent: React.FC<{
   }, [user, missedMandatory]);
 
   const classYear = React.useMemo(() => getClassYear(user.firstYear), [user.firstYear]);
+  let pointsRequired = POINTS_SO;
+  if (classYear == 'JR') {
+    pointsRequired = POINTS_JR;
+  } else if (classYear == 'SR') {
+    pointsRequired = POINTS_SR;
+  }
 
   React.useEffect(() => {
     if (isFocused && user.sessionToken) {
@@ -247,7 +253,14 @@ const ProfileContent: React.FC<{
             {isGettingPoints ? (
               <ActivityIndicator style={styles.propertyLoader} color={theme.COLORS.PRIMARY} />
             ) : (
-              <Text style={styles.propertyValue}>
+              <Text
+                style={[
+                  styles.propertyValue,
+                  points.hasOwnProperty(user.email) && points[user.email].PROF >= pointsRequired.PROF
+                    ? styles.pointsSatisfied
+                    : styles.pointsNotSatisfied
+                ]}
+              >
                 {points.hasOwnProperty(user.email) ? points[user.email].PROF : '0'}
               </Text>
             )}
@@ -257,7 +270,14 @@ const ProfileContent: React.FC<{
             {isGettingPoints ? (
               <ActivityIndicator style={styles.propertyLoader} color={theme.COLORS.PRIMARY} />
             ) : (
-              <Text style={styles.propertyValue}>
+              <Text
+                style={[
+                  styles.propertyValue,
+                  points.hasOwnProperty(user.email) && points[user.email].PHIL >= pointsRequired.PHIL
+                    ? styles.pointsSatisfied
+                    : styles.pointsNotSatisfied
+                ]}
+              >
                 {points.hasOwnProperty(user.email) ? points[user.email].PHIL : '0'}
               </Text>
             )}
@@ -267,7 +287,14 @@ const ProfileContent: React.FC<{
             {isGettingPoints ? (
               <ActivityIndicator style={styles.propertyLoader} color={theme.COLORS.PRIMARY} />
             ) : (
-              <Text style={styles.propertyValue}>
+              <Text
+                style={[
+                  styles.propertyValue,
+                  points.hasOwnProperty(user.email) && points[user.email].BRO >= pointsRequired.BRO
+                    ? styles.pointsSatisfied
+                    : styles.pointsNotSatisfied
+                ]}
+              >
                 {points.hasOwnProperty(user.email) ? points[user.email].BRO : '0'}
               </Text>
             )}
@@ -277,7 +304,14 @@ const ProfileContent: React.FC<{
             {isGettingPoints ? (
               <ActivityIndicator style={styles.propertyLoader} color={theme.COLORS.PRIMARY} />
             ) : (
-              <Text style={styles.propertyValue}>
+              <Text
+                style={[
+                  styles.propertyValue,
+                  points.hasOwnProperty(user.email) && points[user.email].RUSH >= pointsRequired.RUSH
+                    ? styles.pointsSatisfied
+                    : styles.pointsNotSatisfied
+                ]}
+              >
                 {points.hasOwnProperty(user.email) ? points[user.email].RUSH : '0'}
               </Text>
             )}
@@ -287,7 +321,14 @@ const ProfileContent: React.FC<{
             {isGettingPoints ? (
               <ActivityIndicator style={styles.propertyLoader} color={theme.COLORS.PRIMARY} />
             ) : (
-              <Text style={styles.propertyValue}>
+              <Text
+                style={[
+                  styles.propertyValue,
+                  points.hasOwnProperty(user.email) && points[user.email].CHAT >= pointsRequired.CHAT
+                    ? styles.pointsSatisfied
+                    : styles.pointsNotSatisfied
+                ]}
+              >
                 {points.hasOwnProperty(user.email) ? points[user.email].CHAT : '0'}
               </Text>
             )}
@@ -297,7 +338,14 @@ const ProfileContent: React.FC<{
             {isGettingPoints ? (
               <ActivityIndicator style={styles.propertyLoader} color={theme.COLORS.PRIMARY} />
             ) : (
-              <Text style={styles.propertyValue}>
+              <Text
+                style={[
+                  styles.propertyValue,
+                  points.hasOwnProperty(user.email) && points[user.email].DIV >= pointsRequired.DIV
+                    ? styles.pointsSatisfied
+                    : styles.pointsNotSatisfied
+                ]}
+              >
                 {points.hasOwnProperty(user.email) ? points[user.email].DIV : '0'}
               </Text>
             )}
@@ -480,6 +528,12 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontFamily: 'OpenSans',
     fontSize: 15
+  },
+  pointsSatisfied: {
+    color: '#008000'
+  },
+  pointsNotSatisfied: {
+    color: '#ff0000'
   },
   propertyLoader: {
     alignSelf: 'flex-start'

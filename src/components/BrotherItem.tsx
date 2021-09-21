@@ -15,6 +15,7 @@ import {
   getTypeCounts
 } from '@services/kappaService';
 import { theme } from '@constants';
+import { POINTS_SO, POINTS_JR, POINTS_SR, getClassYear } from '@constants/Points';
 import { TUser } from '@backend/auth';
 import { TEvent } from '@backend/kappa';
 import { isEmpty } from '@services/utils';
@@ -44,6 +45,15 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
   const gmCounts = getTypeCounts(events, attended, excused, 'GM');
 
   const isWebChair = React.useMemo(() => user.role?.toLowerCase() === 'web', [user.role]);
+  const isScribe = React.useMemo(() => user.role?.toLowerCase() === 'scribe', [user.role]);
+
+  const classYear = React.useMemo(() => getClassYear(user.firstYear), [user.firstYear]);
+  let pointsRequired = POINTS_SO;
+  if (classYear == 'JR') {
+    pointsRequired = POINTS_JR;
+  } else if (classYear == 'SR') {
+    pointsRequired = POINTS_SR;
+  }
 
   const dispatch = useDispatch();
   const dispatchGetAttendance = React.useCallback(
@@ -192,7 +202,16 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
                 {isGettingPoints ? (
                   <ActivityIndicator style={styles.propertyLoader} color={theme.COLORS.PRIMARY} />
                 ) : (
-                  <Text style={styles.propertyValue}>
+                  <Text
+                    style={[
+                      isScribe &&
+                      points.hasOwnProperty(brother.email) &&
+                      points[brother.email].PROF >= pointsRequired.PROF
+                        ? styles.pointsSatisfied
+                        : isScribe && styles.pointsNotSatisfied,
+                      styles.propertyValue
+                    ]}
+                  >
                     {points.hasOwnProperty(brother.email) ? points[brother.email].PROF : '0'}
                   </Text>
                 )}
@@ -202,7 +221,16 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
                 {isGettingPoints ? (
                   <ActivityIndicator style={styles.propertyLoader} color={theme.COLORS.PRIMARY} />
                 ) : (
-                  <Text style={styles.propertyValue}>
+                  <Text
+                    style={[
+                      isScribe &&
+                      points.hasOwnProperty(brother.email) &&
+                      points[brother.email].PHIL >= pointsRequired.PHIL
+                        ? styles.pointsSatisfied
+                        : isScribe && styles.pointsNotSatisfied,
+                      styles.propertyValue
+                    ]}
+                  >
                     {points.hasOwnProperty(brother.email) ? points[brother.email].PHIL : '0'}
                   </Text>
                 )}
@@ -212,7 +240,16 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
                 {isGettingPoints ? (
                   <ActivityIndicator style={styles.propertyLoader} color={theme.COLORS.PRIMARY} />
                 ) : (
-                  <Text style={styles.propertyValue}>
+                  <Text
+                    style={[
+                      isScribe &&
+                      points.hasOwnProperty(brother.email) &&
+                      points[brother.email].BRO >= pointsRequired.BRO
+                        ? styles.pointsSatisfied
+                        : isScribe && styles.pointsNotSatisfied,
+                      styles.propertyValue
+                    ]}
+                  >
                     {points.hasOwnProperty(brother.email) ? points[brother.email].BRO : '0'}
                   </Text>
                 )}
@@ -222,7 +259,16 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
                 {isGettingPoints ? (
                   <ActivityIndicator style={styles.propertyLoader} color={theme.COLORS.PRIMARY} />
                 ) : (
-                  <Text style={styles.propertyValue}>
+                  <Text
+                    style={[
+                      isScribe &&
+                      points.hasOwnProperty(brother.email) &&
+                      points[brother.email].RUSH >= pointsRequired.RUSH
+                        ? styles.pointsSatisfied
+                        : isScribe && styles.pointsNotSatisfied,
+                      styles.propertyValue
+                    ]}
+                  >
                     {points.hasOwnProperty(brother.email) ? points[brother.email].RUSH : '0'}
                   </Text>
                 )}
@@ -232,7 +278,16 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
                 {isGettingPoints ? (
                   <ActivityIndicator style={styles.propertyLoader} color={theme.COLORS.PRIMARY} />
                 ) : (
-                  <Text style={styles.propertyValue}>
+                  <Text
+                    style={[
+                      isScribe &&
+                      points.hasOwnProperty(brother.email) &&
+                      points[brother.email].CHAT >= pointsRequired.CHAT
+                        ? styles.pointsSatisfied
+                        : isScribe && styles.pointsNotSatisfied,
+                      styles.propertyValue
+                    ]}
+                  >
                     {points.hasOwnProperty(brother.email) ? points[brother.email].CHAT : '0'}
                   </Text>
                 )}
@@ -242,7 +297,16 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
                 {isGettingPoints ? (
                   <ActivityIndicator style={styles.propertyLoader} color={theme.COLORS.PRIMARY} />
                 ) : (
-                  <Text style={styles.propertyValue}>
+                  <Text
+                    style={[
+                      isScribe &&
+                      points.hasOwnProperty(brother.email) &&
+                      points[brother.email].DIV >= pointsRequired.DIV
+                        ? styles.pointsSatisfied
+                        : isScribe && styles.pointsNotSatisfied,
+                      styles.propertyValue
+                    ]}
+                  >
                     {points.hasOwnProperty(brother.email) ? points[brother.email].DIV : '0'}
                   </Text>
                 )}
@@ -436,6 +500,12 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontFamily: 'OpenSans',
     fontSize: 15
+  },
+  pointsSatisfied: {
+    color: '#008000'
+  },
+  pointsNotSatisfied: {
+    color: '#ff0000'
   },
   propertyLoader: {
     alignSelf: 'flex-start'
