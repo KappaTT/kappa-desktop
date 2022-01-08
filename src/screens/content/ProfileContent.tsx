@@ -168,10 +168,6 @@ const ProfileContent: React.FC<{
           <Text style={styles.propertyValue}>{points.RUSH}</Text>
         </View>
         <View style={styles.splitProperty}>
-          <Text style={styles.propertyHeader}>Kappa Chat</Text>
-          <Text style={styles.propertyValue}>{points.CHAT}</Text>
-        </View>
-        <View style={styles.splitProperty}>
           <Text style={styles.propertyHeader}>Diversity</Text>
           <Text style={styles.propertyValue}>{points.DIV}</Text>
         </View>
@@ -313,23 +309,6 @@ const ProfileContent: React.FC<{
                 ]}
               >
                 {points.hasOwnProperty(user.email) ? points[user.email].RUSH : '0'}
-              </Text>
-            )}
-          </View>
-          <View style={styles.splitProperty}>
-            <Text style={styles.propertyHeader}>Kappa Chat</Text>
-            {isGettingPoints ? (
-              <ActivityIndicator style={styles.propertyLoader} color={theme.COLORS.PRIMARY} />
-            ) : (
-              <Text
-                style={[
-                  styles.propertyValue,
-                  points.hasOwnProperty(user.email) && points[user.email].CHAT >= pointsRequired.CHAT
-                    ? styles.pointsSatisfied
-                    : styles.pointsNotSatisfied
-                ]}
-              >
-                {points.hasOwnProperty(user.email) ? points[user.email].CHAT : '0'}
               </Text>
             )}
           </View>
