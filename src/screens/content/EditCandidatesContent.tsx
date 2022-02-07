@@ -52,6 +52,7 @@ const EditCandidatesContent: React.FC<{
   const dispatchGetEvents = React.useCallback(() => dispatch(_kappa.getEvents(user)), [dispatch, user]);
   const dispatchGetCandidates = React.useCallback(() => dispatch(_voting.getCandidates(user)), [dispatch, user]);
   const dispatchEditNewCandidate = React.useCallback(() => dispatch(_voting.editCandidate()), [dispatch]);
+  const dispatchEditNewMultCandidate = React.useCallback(() => dispatch(_voting.editMultCandidate()), [dispatch]);
   const dispatchSelectCandidate = React.useCallback(
     (candidate: TCandidate) => dispatch(_voting.selectCandidate(candidate.email)),
     [dispatch]
@@ -193,6 +194,9 @@ const EditCandidatesContent: React.FC<{
       <Header title="Edit Candidates">
         <View style={styles.headerChildren}>
           <View style={styles.headerButtonContainer}>
+            <TouchableOpacity activeOpacity={0.6} onPress={dispatchEditNewMultCandidate}>
+              <Text style={styles.headerButtonText}>New Candidate (.csv)</Text>
+            </TouchableOpacity>
             <TouchableOpacity activeOpacity={0.6} onPress={dispatchEditNewCandidate}>
               <Text style={styles.headerButtonText}>New Candidate</Text>
             </TouchableOpacity>

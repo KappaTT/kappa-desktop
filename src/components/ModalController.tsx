@@ -20,6 +20,7 @@ import {
 import Ghost from '@components/Ghost';
 import PopupModal from '@components/PopupModal';
 import FullPageModal from '@components/FullPageModal';
+import EditMultCandidatePage from '@pages/EditMultCandidatePage';
 
 const ModalController: React.FC = () => {
   const authorized = useSelector((state: TRedux) => state.auth.authorized);
@@ -34,6 +35,7 @@ const ModalController: React.FC = () => {
   const bulkAttendanceEventId = useSelector((state: TRedux) => state.kappa.bulkAttendanceEventId);
   const isCreatingBulkAttendance = useSelector((state: TRedux) => state.kappa.isCreatingBulkAttendance);
   const editingCandidateEmail = useSelector((state: TRedux) => state.voting.editingCandidateEmail);
+  const editingMultCandidateEmail = useSelector((state: TRedux) => state.voting.editingMultCandidateEmail);
   const isSavingCandidate = useSelector((state: TRedux) => state.voting.isSavingCandidate);
   const editingSessionId = useSelector((state: TRedux) => state.voting.editingSessionId);
   const isSavingSession = useSelector((state: TRedux) => state.voting.isSavingSession);
@@ -51,6 +53,9 @@ const ModalController: React.FC = () => {
   const dispatchCancelEditUser = React.useCallback(() => dispatch(_kappa.cancelEditUser()), [dispatch]);
   const dispatchHideBulkAttendance = React.useCallback(() => dispatch(_kappa.hideBulkAttendance()), [dispatch]);
   const dispatchCancelEditCandidate = React.useCallback(() => dispatch(_voting.cancelEditCandidate()), [dispatch]);
+  const dispatchCancelEditMultCandidate = React.useCallback(() => dispatch(_voting.cancelEditMultCandidate()), [
+    dispatch
+  ]);
   const dispatchCancelEditSession = React.useCallback(() => dispatch(_voting.cancelEditSession()), [dispatch]);
   const dispatchHidePresentationMode = React.useCallback(() => dispatch(_voting.hidePresentationMode()), [dispatch]);
   const dispatchHideVoting = React.useCallback(() => dispatch(_voting.hideVoting()), [dispatch]);
@@ -114,6 +119,14 @@ const ModalController: React.FC = () => {
         onDoneClosing={dispatchCancelEditCandidate}
       >
         <EditCandidatePage onPressCancel={dispatchCancelEditCandidate} />
+      </PopupModal>
+
+      <PopupModal
+        visible={editingMultCandidateEmail !== ''}
+        allowClose={!isSavingCandidate}
+        onDoneClosing={dispatchCancelEditMultCandidate}
+      >
+        <EditMultCandidatePage onPressCancel={dispatchCancelEditMultCandidate} />
       </PopupModal>
 
       <PopupModal

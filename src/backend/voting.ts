@@ -28,6 +28,7 @@ export interface TSession {
   candidateOrder: string[];
   currentCandidateId: string;
   active: boolean;
+  gmId: string;
   type?: 'REGULAR' | 'MULTI';
   maxVotes?: number;
 }

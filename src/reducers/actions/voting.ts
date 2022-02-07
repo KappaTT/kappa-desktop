@@ -51,7 +51,9 @@ import {
   SUBMIT_VOTE_SUCCESS,
   SUBMIT_VOTE_FAILURE,
   SET_GLOBAL_ERROR_MESSAGE,
-  CLEAR_GLOBAL_ERROR_MESSAGE
+  CLEAR_GLOBAL_ERROR_MESSAGE,
+  EDIT_MULT_CANDIDATE,
+  CANCEL_EDIT_MULT_CANDIDATE
 } from '@reducers/voting';
 
 /**
@@ -176,6 +178,18 @@ export const saveCandidate = (user: TUser, candidate: Partial<TCandidate>, email
   };
 };
 
+export const saveSuccess = (data) => {
+  return (dispatch) => {
+    dispatch(saveCandidateSuccess(data));
+  };
+};
+
+export const saveFailure = (error) => {
+  return (dispatch) => {
+    dispatch(saveCandidateFailure(error));
+  };
+};
+
 /**
  * Is deleting a candidate.
  */
@@ -257,6 +271,25 @@ export const editCandidate = (email: string = 'NEW') => {
 export const cancelEditCandidate = () => {
   return {
     type: CANCEL_EDIT_CANDIDATE
+  };
+};
+
+/**
+ * Edit or create multiple new candidates
+ */
+export const editMultCandidate = (email: string = 'NEW') => {
+  return {
+    type: EDIT_MULT_CANDIDATE,
+    email
+  };
+};
+
+/**
+ * Close the multiple candidate editor.
+ */
+export const cancelEditMultCandidate = () => {
+  return {
+    type: CANCEL_EDIT_MULT_CANDIDATE
   };
 };
 

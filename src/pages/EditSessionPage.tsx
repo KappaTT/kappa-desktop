@@ -11,6 +11,8 @@ import { TCandidate, TSession } from '@backend/voting';
 import { TYPE_OPTIONS } from '@services/votingService';
 import { theme } from '@constants';
 import { Icon, FormattedInput, RadioList, CheckList, CandidateReorder, Switch } from '@components';
+import { sortEventByDate, getEventById } from '@services/kappaService';
+import { useEffect } from 'react';
 
 const numberFormatter = (text: string) => {
   return text !== undefined ? text.replace(/\D/g, '') : '';
@@ -22,6 +24,10 @@ const EditSessionPage: React.FC<{
   const user = useSelector((state: TRedux) => state.auth.user);
   const candidateArray = useSelector((state: TRedux) => state.voting.candidateArray);
   const sessionArray = useSelector((state: TRedux) => state.voting.sessionArray);
+  const events = useSelector((state: TRedux) => state.kappa.events);
+  const checkInEventId = useSelector((state: TRedux) => state.kappa.checkInEventId);
+  const futureEventArray = useSelector((state: TRedux) => state.kappa.futureEventArray);
+  const records = useSelector((state: TRedux) => state.kappa.records);
   const editingSessionId = useSelector((state: TRedux) => state.voting.editingSessionId);
   const isSavingSession = useSelector((state: TRedux) => state.voting.isSavingSession);
   const isDeletingSession = useSelector((state: TRedux) => state.voting.isDeletingSession);
@@ -43,6 +49,23 @@ const EditSessionPage: React.FC<{
     candidateOrder
   ]);
 
+  const initialEvent = checkInEventId === 'NONE' ? null : getEventById(events, checkInEventId);
+  const [eventId, setEventId] = React.useState<string>(initialEvent ? initialEvent._id : '');
+  const [openDate] = React.useState<moment.Moment>(moment());
+  const eventOptions = React.useMemo(() => {
+    return futureEventArray
+      .filter((event) => event.eventType === 'GM')
+      .sort(sortEventByDate)
+      .map((event) => ({
+        id: event._id,
+        title: event.title,
+        subtitle: moment(event.start).format('ddd LLL')
+      }));
+  }, [futureEventArray, openDate, records, user.email]);
+  const onChangeEventId = React.useCallback((chosen: string) => {
+    setEventId(chosen);
+  }, []);
+
   const dispatch = useDispatch();
   const dispatchSaveSession = React.useCallback(
     () =>
@@ -55,12 +78,13 @@ const EditSessionPage: React.FC<{
             maxVotes: parseInt(maxVotes, 10),
             startDate: startDate.toISOString(),
             candidateOrder,
-            currentCandidateId
+            currentCandidateId,
+            gmId: eventId
           },
           editingSessionId !== 'NEW' ? editingSessionId : undefined
         )
       ),
-    [candidateOrder, currentCandidateId, dispatch, editingSessionId, maxVotes, name, startDate, type, user]
+    [candidateOrder, currentCandidateId, eventId, dispatch, editingSessionId, maxVotes, name, startDate, type, user]
   );
   const dispatchDeleteSession = React.useCallback(() => dispatch(_voting.deleteSession(user, editingSessionId)), [
     dispatch,
@@ -317,6 +341,39 @@ const EditSessionPage: React.FC<{
     );
   };
 
+  const renderGMSelectionSection = () => {
+    return (
+      <View style={styles.sectionContent}>
+        <ScrollView>
+          <View style={styles.scrollContent}>
+            <View style={styles.propertyHeaderContainer}>
+              <Text style={styles.propertyHeader}>Event</Text>
+              <Text style={styles.propertyHeaderRequired}>*</Text>
+            </View>
+
+            {eventOptions.length > 0 ? (
+              <React.Fragment>
+                <RadioList options={eventOptions} selected={eventId} onChange={onChangeEventId} />
+
+                <Text style={styles.description}>
+                  You may only check into an event on the same day it happened. If you forgot to check in and it is the
+                  same day, you can still submit the code. If it isn't, please send a late request and the exec board
+                  will consider it. Regular excuses must be requested before an event.
+                </Text>
+              </React.Fragment>
+            ) : (
+              <Text style={styles.description}>
+                No events available to check in for. You may only check into an event on the same day it happened. If
+                you forgot to check in and it is the same day, you can still submit the code. If it isn't, please send a
+                late request and the exec board will consider it. Regular excuses must be requested before an event.
+              </Text>
+            )}
+          </View>
+        </ScrollView>
+      </View>
+    );
+  };
+
   const renderCandidateSelectionSection = () => {
     return (
       <View style={styles.sectionContent}>
@@ -394,6 +451,10 @@ const EditSessionPage: React.FC<{
 
       <View style={styles.content}>
         <View style={styles.section}>{renderDetailsSection()}</View>
+
+        {renderDivider(null)}
+
+        <View style={styles.section}>{renderGMSelectionSection()}</View>
 
         {renderDivider(null)}
 

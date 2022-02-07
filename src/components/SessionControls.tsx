@@ -4,12 +4,14 @@ import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment';
 
 import { TRedux } from '@reducers';
-import { _ui, _voting } from '@reducers/actions';
+import { _ui, _voting, _kappa } from '@reducers/actions';
 import { theme } from '@constants';
 import { TSession } from '@backend/voting';
 import { TEvent } from '@backend/kappa';
 import { TToast } from '@reducers/ui';
 import { getVotes } from '@services/votingService';
+import { getEventRecords } from '@services/kappaService';
+
 import RoundButton from '@components/RoundButton';
 import Icon from '@components/Icon';
 import HorizontalSegmentBar from '@components/HorizontalSegmentBar';
@@ -19,6 +21,7 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
   const user = useSelector((state: TRedux) => state.auth.user);
   const eventArray = useSelector((state: TRedux) => state.kappa.eventArray);
   const directory = useSelector((state: TRedux) => state.kappa.directory);
+  const records = useSelector((state: TRedux) => state.kappa.records);
   const directorySize = useSelector((state: TRedux) => state.kappa.directorySize);
   const candidateArray = useSelector((state: TRedux) => state.voting.candidateArray);
   const sessionToCandidateToVotes = useSelector((state: TRedux) => state.voting.sessionToCandidateToVotes);
@@ -88,6 +91,18 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
   const approvedVotes = React.useMemo(() => votes.filter((vote) => vote.verdict === true), [votes]);
   const rejectedVotes = React.useMemo(() => votes.filter((vote) => vote.verdict !== true), [votes]);
 
+  const gmInfo = getEventRecords(directory, records, session.gmId);
+
+  const gmAttendance = React.useMemo(() => gmInfo.attended, [gmInfo]);
+
+  const missingVotes = React.useMemo(
+    () =>
+      gmAttendance
+        .filter((brother) => !approvedVotes.some((vote) => vote.userEmail === brother.email))
+        .map((brother) => ` ${brother.familyName}, ${brother.givenName} `),
+    [gmAttendance]
+  );
+
   const candidateApprovalData = React.useMemo(
     () => [
       {
@@ -101,12 +116,12 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
         color: theme.COLORS.BLACK
       },
       {
-        count: directorySize - approvedVotes.length - rejectedVotes.length,
+        count: gmAttendance.length - approvedVotes.length - rejectedVotes.length,
         label: 'Abstained',
         color: theme.COLORS.BORDER
       }
     ],
-    [approvedVotes.length, directorySize, rejectedVotes.length]
+    [approvedVotes.length, gmAttendance, rejectedVotes.length]
   );
 
   const approvedCandidates = React.useMemo(
@@ -328,6 +343,11 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
                 arrow to advance to the next candidate. The candidates who have been approved will appear in the list
                 below.
               </Text>
+            </View>
+
+            <View style={styles.instructions}>
+              <Text style={styles.propertyHeader}>Missing Votes</Text>
+              <Text style={styles.description}>{missingVotes}</Text>
             </View>
 
             <View

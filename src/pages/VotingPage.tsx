@@ -10,11 +10,13 @@ import { getVotes, getVotesBySession } from '@services/votingService';
 import { theme } from '@constants';
 import { Icon, RoundButton, FormattedInput } from '@components';
 import { TCandidate } from '@backend/voting';
+import { getAttendance } from '@services/kappaService';
 
 const VotingPage: React.FC<{
   onPressCancel(): void;
 }> = ({ onPressCancel }) => {
   const user = useSelector((state: TRedux) => state.auth.user);
+  const records = useSelector((state: TRedux) => state.kappa.records);
   const eventArray = useSelector((state: TRedux) => state.kappa.eventArray);
   const sessionArray = useSelector((state: TRedux) => state.voting.sessionArray);
   const candidateArray = useSelector((state: TRedux) => state.voting.candidateArray);
@@ -28,6 +30,11 @@ const VotingPage: React.FC<{
   const [selectedCandidates, setSelectedCandidates] = React.useState<string[]>([]);
 
   const activeSession = React.useMemo(() => sessionArray.find((session) => session.active) || null, [sessionArray]);
+
+  const userAttended = React.useMemo(
+    () => (getAttendance(records, user.email, activeSession?.gmId) !== undefined ? true : false),
+    [activeSession]
+  );
 
   const maxVotes = React.useMemo(() => (activeSession?.maxVotes !== undefined ? activeSession.maxVotes : 0), [
     activeSession
@@ -113,10 +120,10 @@ const VotingPage: React.FC<{
     votes
   ]);
 
-  const readyToSubmit = React.useMemo(() => selectedCandidates.length > 0 && selectedCandidates.length <= maxVotes, [
-    maxVotes,
-    selectedCandidates.length
-  ]);
+  const readyToSubmit = React.useMemo(
+    () => userAttended === true && selectedCandidates.length > 0 && selectedCandidates.length <= maxVotes,
+    [maxVotes, selectedCandidates.length, userAttended]
+  );
 
   const onChangeReason = React.useCallback((text: string) => setReason(text), []);
 
@@ -295,10 +302,14 @@ const VotingPage: React.FC<{
               <View style={[styles.section, { marginRight: 16 }]}>
                 <View style={styles.candidateHeader}>
                   <View style={styles.candidateName}>
-                    <Text style={styles.name}>Vote to reject</Text>
+                    <Text style={styles.name}>Vote to Reject</Text>
                   </View>
 
-                  <RoundButton label="  Reject  " loading={isSubmittingVote} onPress={onPressReject} />
+                  {userAttended === true ? (
+                    <RoundButton label="  Reject  " loading={isSubmittingVote} onPress={onPressReject} />
+                  ) : (
+                    <Text style={styles.description}>No session active or you have not checked into GM</Text>
+                  )}
                 </View>
 
                 <Text style={styles.description}>
@@ -329,10 +340,14 @@ const VotingPage: React.FC<{
               <View style={[styles.section, { marginLeft: 16 }]}>
                 <View style={styles.candidateHeader}>
                   <View style={styles.candidateName}>
-                    <Text style={styles.name}>Vote to approve</Text>
+                    <Text style={styles.name}>Vote to Approve</Text>
                   </View>
 
-                  <RoundButton label="Approve" loading={isSubmittingVote} onPress={onPressApprove} />
+                  {userAttended === true ? (
+                    <RoundButton label="Approve" loading={isSubmittingVote} onPress={onPressApprove} />
+                  ) : (
+                    <Text style={styles.description}>No session active or you have not checked into GM</Text>
+                  )}
                 </View>
 
                 <Text style={styles.description}>

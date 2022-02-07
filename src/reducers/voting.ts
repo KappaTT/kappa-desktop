@@ -29,6 +29,8 @@ export const SELECT_CANDIDATE = 'SELECT_CANDIDATE';
 export const UNSELECT_CANDIDATE = 'UNSELECT_CANDIDATE';
 export const EDIT_CANDIDATE = 'EDIT_CANDIDATE';
 export const CANCEL_EDIT_CANDIDATE = 'CANCEL_EDIT_CANDIDATE';
+export const EDIT_MULT_CANDIDATE = 'EDIT_MULT_CANDIDATE';
+export const CANCEL_EDIT_MULT_CANDIDATE = 'CANCEL_EDIT_MULT_CANDIDATE';
 
 export const GET_SESSIONS = 'GET_SESSIONS';
 export const GET_SESSIONS_SUCCESS = 'GET_SESSIONS_SUCCESS';
@@ -87,6 +89,7 @@ export interface TVotingState {
 
   selectedCandidateEmail: string;
   editingCandidateEmail: string;
+  editingMultCandidateEmail: string;
 
   isGettingSessions: boolean;
   getSessionsError: boolean;
@@ -161,6 +164,7 @@ const initialState: TVotingState = {
 
   selectedCandidateEmail: '',
   editingCandidateEmail: '',
+  editingMultCandidateEmail: '',
 
   isGettingSessions: false,
   getSessionsError: false,
@@ -269,6 +273,7 @@ export default (state = initialState, action: any): TVotingState => {
         ...state,
         isSavingCandidate: false,
         editingCandidateEmail: '',
+        editingMultCandidateEmail: '',
         ...recomputeVotingState({
           emailToCandidate: mergeCandidates(state.emailToCandidate, [action.candidate])
         })
@@ -320,6 +325,16 @@ export default (state = initialState, action: any): TVotingState => {
       return {
         ...state,
         editingCandidateEmail: ''
+      };
+    case EDIT_MULT_CANDIDATE:
+      return {
+        ...state,
+        editingMultCandidateEmail: action.email
+      };
+    case CANCEL_EDIT_MULT_CANDIDATE:
+      return {
+        ...state,
+        editingMultCandidateEmail: ''
       };
     case GET_SESSIONS:
       return {
