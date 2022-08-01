@@ -235,6 +235,8 @@ const EditProfilePage: React.FC<{
     );
   };
 
+  
+  //New Brother Button
   const renderContactSection = () => {
     return (
       <View style={styles.sectionContent}>
