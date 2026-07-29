@@ -12,6 +12,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import { theme } from '@constants';
 import {
+  CoursesScreen,
   DirectoryScreen,
   EditCandidatesScreen,
   EventsScreen,
@@ -27,6 +28,7 @@ const LoginStack = createStackNavigator();
 const MessagesStack = createStackNavigator();
 const EventsStack = createStackNavigator();
 const DirectoryStack = createStackNavigator();
+const CoursesStack = createStackNavigator();
 const EditCandidatesStack = createStackNavigator();
 const VotingManagementStack = createStackNavigator();
 const ProfileStack = createStackNavigator();
@@ -52,6 +54,14 @@ const DirectoryStackNavigator = () => {
     <DirectoryStack.Navigator screenOptions={{ headerShown: false }}>
       <DirectoryStack.Screen name="Directory" component={DirectoryScreen} />
     </DirectoryStack.Navigator>
+  );
+};
+
+const CoursesStackNavigator = () => {
+  return (
+    <CoursesStack.Navigator screenOptions={{ headerShown: false }}>
+      <CoursesStack.Screen name="Courses" component={CoursesScreen} />
+    </CoursesStack.Navigator>
   );
 };
 
@@ -121,6 +131,7 @@ const LinkingArray: { routeName: string; link: string }[] = [
   { routeName: 'Login', link: 'login' },
   { routeName: 'Events', link: 'events' },
   { routeName: 'Directory', link: 'directory' },
+  { routeName: 'Courses', link: 'courses' },
   { routeName: 'Messages', link: 'messages' },
   { routeName: 'Profile', link: 'profile' },
   { routeName: 'Edit Candidates', link: 'edit-candidates' },
@@ -145,6 +156,7 @@ const AppNavigator = () => {
         <Tab.Screen name="Login" component={LoginStackNavigator} />
         <Tab.Screen name="Events" component={EventsStackNavigator} />
         <Tab.Screen name="Directory" component={DirectoryStackNavigator} />
+        <Tab.Screen name="Courses" component={CoursesStackNavigator} />
         <Tab.Screen name="Messages" component={MessagesStackNavigator} />
         <Tab.Screen name="Profile" component={ProfileStackNavigator} />
         <Tab.Screen name="Edit Candidates" component={EditCandidatesNavigator} />

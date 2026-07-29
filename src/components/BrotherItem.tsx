@@ -14,6 +14,7 @@ import {
   getExcusedEvents,
   getTypeCounts
 } from '@services/kappaService';
+import { getCurrentTerm, sortCoursesByCode } from '@services/coursesService';
 import { theme } from '@constants';
 import { POINTS_SO, POINTS_JR, POINTS_SR, getClassYear } from '@constants/Points';
 import { TUser } from '@backend/auth';
@@ -36,6 +37,9 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
   const isGettingAttendance = useSelector((state: TRedux) => state.kappa.isGettingAttendance);
   const getAttendanceError = useSelector((state: TRedux) => state.kappa.getAttendanceError);
   const isDeletingUser = useSelector((state: TRedux) => state.kappa.isDeletingUser);
+  const courseArray = useSelector((state: TRedux) => state.courses.courseArray);
+  const isGettingCourses = useSelector((state: TRedux) => state.courses.isGettingCourses);
+  const getCoursesError = useSelector((state: TRedux) => state.courses.getCoursesError);
 
   const [expanded, setExpanded] = React.useState<boolean>(false);
   const [readyToDelete, setReadyToDelete] = React.useState<boolean>(false);
@@ -46,6 +50,20 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
 
   const isWebChair = React.useMemo(() => user.role?.toLowerCase() === 'web', [user.role]);
   const isScribe = React.useMemo(() => user.role?.toLowerCase() === 'scribe', [user.role]);
+
+  const currentTerm = React.useMemo(() => getCurrentTerm(), []);
+
+  const brotherClasses = React.useMemo(
+    () =>
+      courseArray
+        .filter((course) =>
+          (course.enrollments || []).some(
+            (enrollment) => enrollment.email === brother.email && enrollment.term === currentTerm
+          )
+        )
+        .sort(sortCoursesByCode),
+    [brother.email, courseArray, currentTerm]
+  );
 
   const classYear = React.useMemo(() => getClassYear(user.firstYear), [user.firstYear]);
   let pointsRequired = POINTS_SO;
@@ -193,6 +211,25 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
             </TouchableOpacity>
           </View>
         </View>
+
+        {brother.hideClasses !== true && (
+          <View style={[styles.splitPropertyRow, { marginTop: 12 }]}>
+            <View style={styles.splitProperty}>
+              <Text style={styles.propertyHeader}>Classes ({currentTerm})</Text>
+              {isGettingCourses && brotherClasses.length === 0 ? (
+                <ActivityIndicator style={styles.propertyLoader} color={theme.COLORS.PRIMARY} />
+              ) : (
+                <Text style={styles.propertyValue}>
+                  {brotherClasses.length > 0
+                    ? brotherClasses.map((course) => course.code).join('  ·  ')
+                    : getCoursesError
+                    ? 'Could not load classes'
+                    : 'None this semester'}
+                </Text>
+              )}
+            </View>
+          </View>
+        )}
 
         {user.privileged && (
           <React.Fragment>

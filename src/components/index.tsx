@@ -1,5 +1,7 @@
+import AdviceItem from './AdviceItem';
 import BrotherItem from './BrotherItem';
 import CandidateItem from './CandidateItem';
+import CourseItem from './CourseItem';
 import CandidateReorder from './CandidateReorder';
 import CandidateViewer from './CandidateViewer';
 import CheckList from './CheckList';
@@ -33,8 +35,10 @@ import Toast from './Toast';
 import ToastController from './ToastController';
 
 export {
+  AdviceItem,
   BrotherItem,
   CandidateItem,
+  CourseItem,
   CandidateReorder,
   CandidateViewer,
   CheckList,

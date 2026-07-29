@@ -40,6 +40,7 @@ const SidebarLayout: TSidebarElement[] = [
   Header('Chapter', [
     Nav('Events', 'Events', '/events'),
     Nav('Brothers', 'Directory', '/directory'),
+    Nav('Courses', 'Courses', '/courses'),
     Nav('Voting', '')
   ]),
   Header('Attendance', [Nav('Check In', ''), Nav('Request Excuse', '')]),

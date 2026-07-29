@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useIsFocused, NavigationProp } from '@react-navigation/native';
 
 import { TRedux } from '@reducers';
-import { _kappa, _nav } from '@reducers/actions';
+import { _courses, _kappa, _nav } from '@reducers/actions';
 import { TUser } from '@backend/auth';
 import { theme } from '@constants';
 import { HEADER_HEIGHT } from '@services/utils';
@@ -29,8 +29,12 @@ const DirectoryContent: React.FC<{
   const isGettingExcuses = useSelector((state: TRedux) => state.kappa.isGettingExcuses);
   const getExcusesError = useSelector((state: TRedux) => state.kappa.getExcusesError);
   const getDirectoryErrorMessage = useSelector((state: TRedux) => state.kappa.getDirectoryErrorMessage);
+  const coursesLoadHistory = useSelector((state: TRedux) => state.courses.loadHistory);
+  const isGettingCourses = useSelector((state: TRedux) => state.courses.isGettingCourses);
+  const getCoursesError = useSelector((state: TRedux) => state.courses.getCoursesError);
 
   const dispatch = useDispatch();
+  const dispatchGetCourses = React.useCallback(() => dispatch(_courses.getCourses(user)), [dispatch, user]);
   const dispatchGetEvents = React.useCallback(() => dispatch(_kappa.getEvents(user)), [dispatch, user]);
   const dispatchGetMyAttendance = React.useCallback(
     (overwrite: boolean = false) => dispatch(_kappa.getMyAttendance(user, overwrite)),
@@ -60,6 +64,8 @@ const DirectoryContent: React.FC<{
         dispatchGetMyAttendance(force);
       if (!isGettingExcuses && (force || (!getExcusesError && shouldLoad(loadHistory, 'excuses'))))
         dispatchGetExcuses();
+      if (!isGettingCourses && (force || (!getCoursesError && shouldLoad(coursesLoadHistory, 'courses'))))
+        dispatchGetCourses();
     },
     [
       isGettingEvents,
@@ -75,7 +81,11 @@ const DirectoryContent: React.FC<{
       dispatchGetMyAttendance,
       isGettingExcuses,
       getExcusesError,
-      dispatchGetExcuses
+      dispatchGetExcuses,
+      isGettingCourses,
+      getCoursesError,
+      coursesLoadHistory,
+      dispatchGetCourses
     ]
   );
 

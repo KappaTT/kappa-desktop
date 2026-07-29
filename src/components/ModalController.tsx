@@ -3,12 +3,14 @@ import { StyleSheet } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { TRedux } from '@reducers';
-import { _kappa, _voting } from '@reducers/actions';
+import { _courses, _kappa, _voting } from '@reducers/actions';
 import { TEvent } from '@backend/kappa';
 import { incompleteUser } from '@backend/auth';
 import {
+  AddCoursePage,
   BulkAttendPage,
   CheckInPage,
+  EditAdvicePage,
   EditEventPage,
   EditProfilePage,
   RequestExcusePage,
@@ -42,6 +44,10 @@ const ModalController: React.FC = () => {
   const isDeletingSession = useSelector((state: TRedux) => state.voting.isDeletingSession);
   const isShowingPresentationMode = useSelector((state: TRedux) => state.voting.isShowingPresentationMode);
   const isShowingVoting = useSelector((state: TRedux) => state.voting.isShowingVoting);
+  const isAddingCourse = useSelector((state: TRedux) => state.courses.isAddingCourse);
+  const isEnrolling = useSelector((state: TRedux) => state.courses.isEnrolling);
+  const editingAdviceCourseId = useSelector((state: TRedux) => state.courses.editingAdviceCourseId);
+  const isSavingAdvice = useSelector((state: TRedux) => state.courses.isSavingAdvice);
 
   const dispatch = useDispatch();
   const dispatchCancelEditEvent = React.useCallback(() => dispatch(_kappa.cancelEditEvent()), [dispatch]);
@@ -59,6 +65,8 @@ const ModalController: React.FC = () => {
   const dispatchCancelEditSession = React.useCallback(() => dispatch(_voting.cancelEditSession()), [dispatch]);
   const dispatchHidePresentationMode = React.useCallback(() => dispatch(_voting.hidePresentationMode()), [dispatch]);
   const dispatchHideVoting = React.useCallback(() => dispatch(_voting.hideVoting()), [dispatch]);
+  const dispatchHideAddCourse = React.useCallback(() => dispatch(_courses.hideAddCourse()), [dispatch]);
+  const dispatchCancelEditAdvice = React.useCallback(() => dispatch(_courses.cancelEditAdvice()), [dispatch]);
 
   const userIsIncomplete = React.useMemo(() => {
     if (!authorized || !user) return false;
@@ -135,6 +143,18 @@ const ModalController: React.FC = () => {
         onDoneClosing={dispatchCancelEditSession}
       >
         <EditSessionPage onPressCancel={dispatchCancelEditSession} />
+      </PopupModal>
+
+      <PopupModal visible={isAddingCourse} allowClose={!isEnrolling} onDoneClosing={dispatchHideAddCourse}>
+        <AddCoursePage onPressCancel={dispatchHideAddCourse} />
+      </PopupModal>
+
+      <PopupModal
+        visible={editingAdviceCourseId !== ''}
+        allowClose={!isSavingAdvice}
+        onDoneClosing={dispatchCancelEditAdvice}
+      >
+        <EditAdvicePage onPressCancel={dispatchCancelEditAdvice} />
       </PopupModal>
 
       <FullPageModal visible={isShowingPresentationMode} onDoneClosing={dispatchHidePresentationMode}>

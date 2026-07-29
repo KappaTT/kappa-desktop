@@ -1,4 +1,5 @@
 import ChapterSettingsScreen from './ChapterSettingsScreen';
+import CoursesScreen from './CoursesScreen';
 import DirectoryScreen from './DirectoryScreen';
 import EditCandidatesScreen from './EditCandidatesScreen';
 import EventsScreen from './EventsScreen';
@@ -10,6 +11,7 @@ import VotingManagementScreen from './VotingManagementScreen';
 
 export {
   ChapterSettingsScreen,
+  CoursesScreen,
   DirectoryScreen,
   EditCandidatesScreen,
   EventsScreen,

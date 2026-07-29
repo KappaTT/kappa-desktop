@@ -94,6 +94,15 @@ const EditProfilePage: React.FC<{
   const [role, setRole] = React.useState<string>(initialUser?.role || '');
   const [privileged, setPrivileged] = React.useState<boolean>(initialUser?.privileged || false);
 
+  const isSelf = React.useMemo(() => editingUserEmail === '' || editingUserEmail === user.email, [
+    editingUserEmail,
+    user.email
+  ]);
+
+  const [hideClasses, setHideClasses] = React.useState<boolean>(
+    (isSelf ? user.hideClasses : initialUser?.hideClasses) || false
+  );
+
   const canEditPrivileged = React.useMemo(() => user.privileged, [user.privileged]);
   const canEditWeb = React.useMemo(() => user.privileged && user.role.toLowerCase() === 'web', [
     user.privileged,
@@ -114,7 +123,8 @@ const EditProfilePage: React.FC<{
               gradYear: gradYear || '',
               semester: pledgeClass,
               role,
-              privileged
+              privileged,
+              ...(isSelf ? { hideClasses } : {})
             })
           : canEditPrivileged
           ? _kappa.updateUser(user, initialUser ? initialUser.email : '', {
@@ -123,11 +133,13 @@ const EditProfilePage: React.FC<{
               familyName,
               firstYear,
               gradYear: gradYear || '',
-              semester: pledgeClass
+              semester: pledgeClass,
+              ...(isSelf ? { hideClasses } : {})
             })
           : _kappa.updateUser(user, initialUser ? initialUser.email : '', {
               phone,
-              gradYear
+              gradYear,
+              ...(isSelf ? { hideClasses } : {})
             })
       ),
     [
@@ -144,7 +156,9 @@ const EditProfilePage: React.FC<{
       pledgeClass,
       role,
       privileged,
-      canEditPrivileged
+      canEditPrivileged,
+      isSelf,
+      hideClasses
     ]
   );
 
@@ -197,6 +211,10 @@ const EditProfilePage: React.FC<{
     setPrivileged(newValue);
   }, []);
 
+  const onChangeHideClasses = React.useCallback((newValue: boolean) => {
+    setHideClasses(newValue);
+  }, []);
+
   const renderHeader = () => {
     return (
       <React.Fragment>
@@ -235,7 +253,6 @@ const EditProfilePage: React.FC<{
     );
   };
 
-  
   //New Brother Button
   const renderContactSection = () => {
     return (
@@ -308,6 +325,21 @@ const EditProfilePage: React.FC<{
             <Text style={styles.description}>
               This phone number will be shared with brothers and used if anyone needs to contact you.
             </Text>
+
+            {isSelf && (
+              <React.Fragment>
+                <View style={styles.propertyHeaderContainer}>
+                  <Text style={styles.propertyHeader}>Hide my classes</Text>
+                </View>
+
+                <Switch value={hideClasses} onValueChange={onChangeHideClasses} />
+
+                <Text style={styles.description}>
+                  Hide the classes you are taking from your profile on the Brothers page. Brothers can still see you on
+                  the roster of each class on the Courses page.
+                </Text>
+              </React.Fragment>
+            )}
 
             {!canEditPrivileged && (
               <Text style={styles.description}>
