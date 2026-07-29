@@ -43,6 +43,7 @@ export interface TAdvice {
   anonymous: boolean;
   category: TAdviceCategory;
   professor: string;
+  term?: string;
   text: string;
   createdAt: string;
   updatedAt?: string;

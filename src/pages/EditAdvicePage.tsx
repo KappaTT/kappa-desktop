@@ -6,7 +6,7 @@ import { TRedux } from '@reducers';
 import { _courses } from '@reducers/actions';
 import { theme } from '@constants';
 import { TAdviceCategory } from '@backend/courses';
-import { ADVICE_CATEGORIES } from '@services/coursesService';
+import { ADVICE_CATEGORIES, getAdviceTermOptions } from '@services/coursesService';
 import { Switch, RadioList, FormattedInput } from '@components';
 
 const EditAdvicePage: React.FC<{
@@ -34,8 +34,21 @@ const EditAdvicePage: React.FC<{
 
   const [category, setCategory] = React.useState<TAdviceCategory>(initialAdvice?.category || 'GENERAL');
   const [professor, setProfessor] = React.useState<string>(initialAdvice?.professor || '');
+  const [term, setTerm] = React.useState<string>(initialAdvice?.term || '');
   const [text, setText] = React.useState<string>(initialAdvice?.text || '');
   const [anonymous, setAnonymous] = React.useState<boolean>(initialAdvice?.anonymous || false);
+
+  const termOptions = React.useMemo(() => {
+    const options = getAdviceTermOptions();
+    const initialTerm = initialAdvice?.term || '';
+
+    // keep an older term selectable when the advice predates the rolling option window
+    if (initialTerm !== '' && !options.find((option) => option.id === initialTerm)) {
+      options.push({ id: initialTerm, title: initialTerm });
+    }
+
+    return options;
+  }, [initialAdvice]);
 
   const dispatch = useDispatch();
   const dispatchSaveAdvice = React.useCallback(
@@ -47,6 +60,7 @@ const EditAdvicePage: React.FC<{
             ? {
                 category,
                 professor,
+                term,
                 text,
                 anonymous
               }
@@ -54,13 +68,14 @@ const EditAdvicePage: React.FC<{
                 courseId: editingAdviceCourseId,
                 category,
                 professor,
+                term,
                 text,
                 anonymous
               },
           editingAdviceId
         )
       ),
-    [dispatch, user, initialAdvice, category, professor, text, anonymous, editingAdviceCourseId, editingAdviceId]
+    [dispatch, user, initialAdvice, category, professor, term, text, anonymous, editingAdviceCourseId, editingAdviceId]
   );
 
   const readyToSave = React.useMemo(() => text.trim() !== '', [text]);
@@ -71,6 +86,10 @@ const EditAdvicePage: React.FC<{
 
   const onChangeProfessor = React.useCallback((newText: string) => {
     setProfessor(newText);
+  }, []);
+
+  const onChangeTerm = React.useCallback((chosen: string) => {
+    setTerm(chosen);
   }, []);
 
   const onChangeText = React.useCallback((newText: string) => {
@@ -144,6 +163,17 @@ const EditAdvicePage: React.FC<{
 
             <Text style={styles.description}>
               Optionally name the professor your advice applies to, since courses can differ a lot by professor.
+            </Text>
+
+            <View style={styles.propertyHeaderContainer}>
+              <Text style={styles.propertyHeader}>Semester taken</Text>
+            </View>
+
+            <RadioList options={termOptions} selected={term} onChange={onChangeTerm} />
+
+            <Text style={styles.description}>
+              Optionally share when you took the class so brothers know how current your advice is. If you post
+              anonymously, the semester is hidden from other brothers as well.
             </Text>
           </View>
         </ScrollView>

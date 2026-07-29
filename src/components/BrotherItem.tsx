@@ -212,24 +212,22 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
           </View>
         </View>
 
-        {brother.hideClasses !== true && (
-          <View style={[styles.splitPropertyRow, { marginTop: 12 }]}>
-            <View style={styles.splitProperty}>
-              <Text style={styles.propertyHeader}>Classes ({currentTerm})</Text>
-              {isGettingCourses && brotherClasses.length === 0 ? (
-                <ActivityIndicator style={styles.propertyLoader} color={theme.COLORS.PRIMARY} />
-              ) : (
-                <Text style={styles.propertyValue}>
-                  {brotherClasses.length > 0
-                    ? brotherClasses.map((course) => course.code).join('  ·  ')
-                    : getCoursesError
-                    ? 'Could not load classes'
-                    : 'None this semester'}
-                </Text>
-              )}
-            </View>
+        <View style={[styles.splitPropertyRow, { marginTop: 12 }]}>
+          <View style={styles.splitProperty}>
+            <Text style={styles.propertyHeader}>Classes ({currentTerm})</Text>
+            {isGettingCourses && brotherClasses.length === 0 ? (
+              <ActivityIndicator style={styles.propertyLoader} color={theme.COLORS.PRIMARY} />
+            ) : (
+              <Text style={styles.propertyValue}>
+                {brotherClasses.length > 0
+                  ? brotherClasses.map((course) => course.code).join('  ·  ')
+                  : getCoursesError
+                  ? 'Could not load classes'
+                  : 'None this semester'}
+              </Text>
+            )}
           </View>
-        )}
+        </View>
 
         {user.privileged && (
           <React.Fragment>

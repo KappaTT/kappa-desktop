@@ -132,13 +132,9 @@ const CourseItem: React.FC<{ course: TCourse }> = ({ course }) => {
         <Text style={styles.sectionHeader}>Taking it {currentTerm}</Text>
 
         {currentTermGroup ? (
-          <View style={styles.rosterRow}>
-            {currentTermGroup.enrollments.map((enrollment) => (
-              <Text key={enrollment._id} style={styles.rosterName}>
-                {getBrotherName(enrollment.email)}
-              </Text>
-            ))}
-          </View>
+          <Text style={styles.rosterName}>
+            {currentTermGroup.enrollments.map((enrollment) => getBrotherName(enrollment.email)).join('  ·  ')}
+          </Text>
         ) : (
           <Text style={styles.emptyText}>No one yet this semester</Text>
         )}
@@ -155,13 +151,9 @@ const CourseItem: React.FC<{ course: TCourse }> = ({ course }) => {
           pastTermGroups.map((group) => (
             <React.Fragment key={group.term}>
               <Text style={styles.sectionHeader}>{group.term}</Text>
-              <View style={styles.rosterRow}>
-                {group.enrollments.map((enrollment) => (
-                  <Text key={enrollment._id} style={styles.rosterName}>
-                    {getBrotherName(enrollment.email)}
-                  </Text>
-                ))}
-              </View>
+              <Text style={styles.rosterName}>
+                {group.enrollments.map((enrollment) => getBrotherName(enrollment.email)).join('  ·  ')}
+              </Text>
             </React.Fragment>
           ))}
       </React.Fragment>
@@ -236,21 +228,18 @@ const CourseItem: React.FC<{ course: TCourse }> = ({ course }) => {
         )}
 
         {course.approved !== false &&
-          (webChair ? (
-            isDeletingCourse ? (
-              <ActivityIndicator style={styles.adminAction} color={theme.COLORS.PRIMARY_RED} />
-            ) : (
-              <TouchableOpacity
-                activeOpacity={0.6}
-                onPress={confirmingDelete ? dispatchDeleteCourse : () => setConfirmingDelete(true)}
-              >
-                <Text style={[styles.deleteText, styles.adminAction]}>
-                  {confirmingDelete ? 'Confirm delete (removes all enrollments and advice)' : 'Delete this class'}
-                </Text>
-              </TouchableOpacity>
-            )
+          webChair &&
+          (isDeletingCourse ? (
+            <ActivityIndicator style={styles.adminAction} color={theme.COLORS.PRIMARY_RED} />
           ) : (
-            <Text style={styles.moderationHint}>Contact the web chair to delete classes or advice</Text>
+            <TouchableOpacity
+              activeOpacity={0.6}
+              onPress={confirmingDelete ? dispatchDeleteCourse : () => setConfirmingDelete(true)}
+            >
+              <Text style={[styles.deleteText, styles.adminAction]}>
+                {confirmingDelete ? 'Confirm delete (removes all enrollments and advice)' : 'Delete this class'}
+              </Text>
+            </TouchableOpacity>
           ))}
       </View>
     );
@@ -273,7 +262,7 @@ const CourseItem: React.FC<{ course: TCourse }> = ({ course }) => {
           )}
         </View>
 
-        {user.privileged === true && renderAdminActions()}
+        {((user.privileged === true && course.approved === false) || webChair) && renderAdminActions()}
 
         {renderRoster()}
         {renderAdvice()}
@@ -395,11 +384,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center'
   },
-  moderationHint: {
-    fontFamily: 'OpenSans',
-    fontSize: 12,
-    color: theme.COLORS.DARK_GRAY
-  },
   disabledAction: {
     opacity: 0.4
   },
@@ -413,13 +397,8 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     color: theme.COLORS.GRAY
   },
-  rosterRow: {
-    marginTop: 4,
-    flexDirection: 'row',
-    flexWrap: 'wrap'
-  },
   rosterName: {
-    marginRight: 16,
+    marginTop: 4,
     fontFamily: 'OpenSans',
     fontSize: 15
   },

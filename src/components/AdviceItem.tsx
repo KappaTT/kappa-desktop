@@ -48,6 +48,7 @@ const AdviceItem: React.FC<{ advice: TAdvice; courseId: string }> = ({ advice, c
         <View style={styles.headerLeft}>
           <Text style={styles.categoryLabel}>{getAdviceCategoryTitle(advice.category)}</Text>
           {advice.professor !== '' && <Text style={styles.professorLabel}>{advice.professor}</Text>}
+          {!!advice.term && <Text style={styles.termLabel}>Took it {advice.term}</Text>}
         </View>
 
         <View style={styles.headerRight}>
@@ -110,6 +111,12 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans-SemiBold',
     fontSize: 13,
     color: theme.COLORS.DARK_GRAY
+  },
+  termLabel: {
+    marginLeft: 8,
+    fontFamily: 'OpenSans',
+    fontSize: 13,
+    color: theme.COLORS.GRAY
   },
   headerRight: {
     flexDirection: 'row',

@@ -67,6 +67,31 @@ export const getTermOptions = () => {
   ];
 };
 
+/**
+ * Get the term options for advice: not specified, then every term from the current one back to Fall 2023.
+ */
+export const getAdviceTermOptions = () => {
+  const options = [{ id: '', title: 'Not specified' }];
+
+  const floor = getTermValue('Fall 2023');
+
+  let [season, yearText] = getCurrentTerm().split(' ');
+  let year = parseInt(yearText, 10);
+
+  while (getTermValue(`${season} ${year}`) >= floor) {
+    options.push({ id: `${season} ${year}`, title: `${season} ${year}` });
+
+    if (season === 'Fall') {
+      season = 'Spring';
+    } else {
+      season = 'Fall';
+      year -= 1;
+    }
+  }
+
+  return options;
+};
+
 export const sortCoursesByCode = (a: { code: string }, b: { code: string }) => a.code.localeCompare(b.code);
 
 /**

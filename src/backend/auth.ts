@@ -36,9 +36,6 @@ export interface TUser {
   // ONBOARDING
   phone?: string;
   gradYear?: string;
-
-  // PRIVACY
-  hideClasses?: boolean;
 }
 
 export const initialUser: TUser = {
@@ -58,10 +55,7 @@ export const initialUser: TUser = {
 
   // ONBOARDING
   phone: '',
-  gradYear: '',
-
-  // PRIVACY
-  hideClasses: false
+  gradYear: ''
 };
 
 export const incompleteUser: Partial<TUser> = {
