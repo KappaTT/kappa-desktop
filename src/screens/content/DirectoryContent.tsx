@@ -9,7 +9,7 @@ import { _courses, _kappa, _nav } from '@reducers/actions';
 import { TUser } from '@backend/auth';
 import { theme } from '@constants';
 import { HEADER_HEIGHT } from '@services/utils';
-import { shouldLoad } from '@services/kappaService';
+import { shouldLoad, isPNM } from '@services/kappaService';
 import { Header, Icon, BrotherItem } from '@components';
 
 const DirectoryContent: React.FC<{
@@ -133,6 +133,14 @@ const DirectoryContent: React.FC<{
     setSearchState({ searchText: searchText, filteredData: filteredData });
   };
 
+  const visibleUsers = React.useMemo(
+    () => (searchState.filteredData && searchState.filteredData.length > 0 ? searchState.filteredData : directoryArray),
+    [directoryArray, searchState.filteredData]
+  );
+
+  const brothers = React.useMemo(() => visibleUsers.filter((item: TUser) => !isPNM(item)), [visibleUsers]);
+  const pnms = React.useMemo(() => visibleUsers.filter((item: TUser) => isPNM(item)), [visibleUsers]);
+
   return (
     <View style={styles.container}>
       <Header title="Brothers">
@@ -190,15 +198,25 @@ const DirectoryContent: React.FC<{
       <View style={styles.content}>
         <FlatList
           ref={(ref) => (scrollRef.current = ref)}
-          data={
-            searchState.filteredData && searchState.filteredData.length > 0 ? searchState.filteredData : directoryArray
-          }
+          data={brothers}
           keyExtractor={keyExtractor}
           renderItem={renderItem}
           ListEmptyComponent={
-            <React.Fragment>
-              <Text style={styles.errorMessage}>{getDirectoryErrorMessage || 'No users'}</Text>
-            </React.Fragment>
+            pnms.length > 0 ? null : (
+              <React.Fragment>
+                <Text style={styles.errorMessage}>{getDirectoryErrorMessage || 'No users'}</Text>
+              </React.Fragment>
+            )
+          }
+          ListFooterComponent={
+            pnms.length > 0 ? (
+              <React.Fragment>
+                <Text style={styles.pnmSectionLabel}>PNMs</Text>
+                {pnms.map((item: TUser) => (
+                  <BrotherItem key={item._id} brother={item} />
+                ))}
+              </React.Fragment>
+            ) : null
           }
         />
       </View>
@@ -209,6 +227,15 @@ const DirectoryContent: React.FC<{
 const styles = StyleSheet.create({
   container: {
     flex: 1
+  },
+  pnmSectionLabel: {
+    marginHorizontal: 16,
+    marginTop: 24,
+    marginBottom: 4,
+    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 13,
+    textTransform: 'uppercase',
+    color: theme.COLORS.GRAY
   },
   headerChildren: {
     flex: 1,

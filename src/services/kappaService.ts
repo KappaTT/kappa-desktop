@@ -94,6 +94,13 @@ export const getEventById = (events: TEventDict, eventId: string) => {
 };
 
 /**
+ * Check if the given user is a potential new member.
+ */
+export const isPNM = (user: { type?: string }) => {
+  return user?.type === 'PNM';
+};
+
+/**
  * Get a user with the given email.
  */
 export const getUserByEmail = (directory: TDirectory, email: string) => {
@@ -302,7 +309,13 @@ export const getEventRecords = (directory: TDirectory, records: TRecords, eventI
   }
 
   for (const [email, user] of Object.entries(directory)) {
-    if (!attended.hasOwnProperty(email) && !excused.hasOwnProperty(email) && !pending.hasOwnProperty(email)) {
+    // PNMs have no GM obligation, so they are never counted as absent
+    if (
+      !isPNM(user) &&
+      !attended.hasOwnProperty(email) &&
+      !excused.hasOwnProperty(email) &&
+      !pending.hasOwnProperty(email)
+    ) {
       absent[email] = user;
     }
   }
@@ -462,6 +475,11 @@ export const getMissedMandatory = (records: TRecords, mandatoryEvents: TEventDic
   const missed = {};
 
   for (const user of Object.values(directory)) {
+    // PNMs have no mandatory GM obligations
+    if (isPNM(user)) {
+      continue;
+    }
+
     missed[user.email] = getMissedMandatoryByUser(records, mandatoryEvents, user.email);
   }
 
@@ -677,7 +695,8 @@ export const recomputeKappaState = ({
   const futureEvents = separateByEventId(futureEventArray);
   const eventsSize = eventArray.length;
   const directoryArray = Object.values(directory).sort(sortUserByName);
-  const directorySize = directoryArray.length;
+  // directorySize is the denominator for GM attendance / voting completeness, which excludes PNMs
+  const directorySize = directoryArray.filter((user) => !isPNM(user)).length;
   const eventsByDate = separateByDate(eventArray);
   const mandatoryEvents = getMandatoryEvents(events);
   const missedMandatory = getMissedMandatory(records, mandatoryEvents, directory);

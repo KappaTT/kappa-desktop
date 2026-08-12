@@ -36,6 +36,22 @@ const Sidebar: React.FC = () => {
   const dispatchShowVoting = React.useCallback(() => dispatch(_voting.showVoting()), [dispatch]);
   const dispatchSignOut = React.useCallback(() => dispatch(_auth.signOut()), [dispatch]);
 
+  // PNMs cannot vote, so remove the Voting entry from dropdown children before the
+  // dropdown computes its height from children.length
+  const visibleElement = React.useCallback(
+    (element: TSidebarElement): TSidebarElement => {
+      if (element.type !== 'DROP' || user.type !== 'PNM') {
+        return element;
+      }
+
+      return {
+        ...element,
+        children: element.children.filter((child) => child.label !== 'Voting')
+      };
+    },
+    [user.type]
+  );
+
   const unreadMessages = React.useMemo(() => {
     if (pendingExcusesArray.length > 0) return true;
 
@@ -143,7 +159,7 @@ const Sidebar: React.FC = () => {
             <React.Fragment key={element.label}>
               {element.type === 'DROP' && (
                 <SidebarDropdown
-                  element={sidebarNav[element.label]}
+                  element={visibleElement(sidebarNav[element.label])}
                   expanded={sidebarNav[element.label].expanded}
                   selectedRouteName={selectedRouteName}
                   onPress={onPressElement}

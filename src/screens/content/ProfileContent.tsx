@@ -9,7 +9,17 @@ import { TRedux } from '@reducers';
 import { _kappa, _nav } from '@reducers/actions';
 import { TEvent } from '@backend/kappa';
 import { theme } from '@constants';
-import { TPoints, POINTS_SO, GM_SO, POINTS_JR, GM_JR, POINTS_SR, GM_SR, getClassYear } from '@constants/Points';
+import {
+  TPoints,
+  POINTS_SO,
+  GM_SO,
+  POINTS_JR,
+  GM_JR,
+  POINTS_SR,
+  GM_SR,
+  POINTS_PNM,
+  getClassYear
+} from '@constants/Points';
 import { LINK_LINKTREE } from '@constants/Links';
 import { HEADER_HEIGHT, isEmpty } from '@services/utils';
 import {
@@ -19,7 +29,8 @@ import {
   getAttendedEvents,
   getExcusedEvents,
   getTypeCounts,
-  isSecretCodeValid
+  isSecretCodeValid,
+  isPNM
 } from '@services/kappaService';
 import { Header, Icon, HorizontalSegmentBar, LinkContainer } from '@components';
 
@@ -130,7 +141,9 @@ const ProfileContent: React.FC<{
 
   const classYear = React.useMemo(() => getClassYear(user.firstYear), [user.firstYear]);
   let pointsRequired = POINTS_SO;
-  if (classYear == 'JR') {
+  if (isPNM(user)) {
+    pointsRequired = POINTS_PNM;
+  } else if (classYear == 'JR') {
     pointsRequired = POINTS_JR;
   } else if (classYear == 'SR') {
     pointsRequired = POINTS_SR;
@@ -148,7 +161,7 @@ const ProfileContent: React.FC<{
     }
   }, [dispatchSetSelectedPage, isFocused]);
 
-  const renderRequirements = (points: TPoints, gm: number) => {
+  const renderRequirements = (points: TPoints, gm: number | null) => {
     return (
       <View style={styles.splitPropertyRow}>
         <View style={styles.splitProperty}>
@@ -163,19 +176,23 @@ const ProfileContent: React.FC<{
           <Text style={styles.propertyHeader}>Bro</Text>
           <Text style={styles.propertyValue}>{points.BRO}</Text>
         </View>
-        <View style={styles.splitProperty}>
-          <Text style={styles.propertyHeader}>Rush</Text>
-          <Text style={styles.propertyValue}>{points.RUSH}</Text>
-        </View>
+        {points.RUSH > 0 && (
+          <View style={styles.splitProperty}>
+            <Text style={styles.propertyHeader}>Rush</Text>
+            <Text style={styles.propertyValue}>{points.RUSH}</Text>
+          </View>
+        )}
         <View style={styles.splitProperty}>
           <Text style={styles.propertyHeader}>Diversity</Text>
           <Text style={styles.propertyValue}>{points.DIV}</Text>
         </View>
 
-        <View style={styles.splitProperty}>
-          <Text style={styles.propertyHeader}>GM</Text>
-          <Text style={styles.propertyValue}>{gm}%</Text>
-        </View>
+        {gm !== null && (
+          <View style={styles.splitProperty}>
+            <Text style={styles.propertyHeader}>GM</Text>
+            <Text style={styles.propertyValue}>{gm}%</Text>
+          </View>
+        )}
       </View>
     );
   };
@@ -241,7 +258,7 @@ const ProfileContent: React.FC<{
           </View>
         </View>
 
-        <Text style={styles.headingText}>Points and GM Attendance</Text>
+        <Text style={styles.headingText}>{isPNM(user) ? 'Points' : 'Points and GM Attendance'}</Text>
 
         <View style={styles.splitPropertyRow}>
           <View style={styles.splitProperty}>
@@ -295,23 +312,25 @@ const ProfileContent: React.FC<{
               </Text>
             )}
           </View>
-          <View style={styles.splitProperty}>
-            <Text style={styles.propertyHeader}>Rush</Text>
-            {isGettingPoints ? (
-              <ActivityIndicator style={styles.propertyLoader} color={theme.COLORS.PRIMARY} />
-            ) : (
-              <Text
-                style={[
-                  styles.propertyValue,
-                  points.hasOwnProperty(user.email) && points[user.email].RUSH >= pointsRequired.RUSH
-                    ? styles.pointsSatisfied
-                    : styles.pointsNotSatisfied
-                ]}
-              >
-                {points.hasOwnProperty(user.email) ? points[user.email].RUSH : '0'}
-              </Text>
-            )}
-          </View>
+          {!isPNM(user) && (
+            <View style={styles.splitProperty}>
+              <Text style={styles.propertyHeader}>Rush</Text>
+              {isGettingPoints ? (
+                <ActivityIndicator style={styles.propertyLoader} color={theme.COLORS.PRIMARY} />
+              ) : (
+                <Text
+                  style={[
+                    styles.propertyValue,
+                    points.hasOwnProperty(user.email) && points[user.email].RUSH >= pointsRequired.RUSH
+                      ? styles.pointsSatisfied
+                      : styles.pointsNotSatisfied
+                  ]}
+                >
+                  {points.hasOwnProperty(user.email) ? points[user.email].RUSH : '0'}
+                </Text>
+              )}
+            </View>
+          )}
           <View style={styles.splitProperty}>
             <Text style={styles.propertyHeader}>Diversity</Text>
             {isGettingPoints ? (
@@ -340,9 +359,11 @@ const ProfileContent: React.FC<{
             )}
           </View>
 
-          <View style={styles.chartArea}>
-            <HorizontalSegmentBar data={chartData} />
-          </View>
+          {!isPNM(user) && (
+            <View style={styles.chartArea}>
+              <HorizontalSegmentBar data={chartData} />
+            </View>
+          )}
         </View>
 
         {!isGettingAttendance && mandatory.length > 0 && (
@@ -362,25 +383,35 @@ const ProfileContent: React.FC<{
 
         <Text style={styles.headingText}>Requirements</Text>
 
-        <View style={styles.splitPropertyRow}>
-          <View style={[styles.splitProperty, { opacity: classYear === 'FR' || classYear === 'SO' ? 1 : 0.4 }]}>
-            <Text style={styles.subHeadingText}>Freshman and Sophomore</Text>
+        {isPNM(user) ? (
+          <View style={styles.splitPropertyRow}>
+            <View style={styles.splitProperty}>
+              <Text style={styles.subHeadingText}>Potential New Member</Text>
 
-            {renderRequirements(POINTS_SO, GM_SO)}
+              {renderRequirements(POINTS_PNM, null)}
+            </View>
           </View>
+        ) : (
+          <View style={styles.splitPropertyRow}>
+            <View style={[styles.splitProperty, { opacity: classYear === 'FR' || classYear === 'SO' ? 1 : 0.4 }]}>
+              <Text style={styles.subHeadingText}>Freshman and Sophomore</Text>
 
-          <View style={[styles.splitProperty, { opacity: classYear === 'JR' ? 1 : 0.4 }]}>
-            <Text style={styles.subHeadingText}>Junior</Text>
+              {renderRequirements(POINTS_SO, GM_SO)}
+            </View>
 
-            {renderRequirements(POINTS_JR, GM_JR)}
+            <View style={[styles.splitProperty, { opacity: classYear === 'JR' ? 1 : 0.4 }]}>
+              <Text style={styles.subHeadingText}>Junior</Text>
+
+              {renderRequirements(POINTS_JR, GM_JR)}
+            </View>
+
+            <View style={[styles.splitProperty, { opacity: classYear === 'SR' ? 1 : 0.4 }]}>
+              <Text style={styles.subHeadingText}>Senior</Text>
+
+              {renderRequirements(POINTS_SR, GM_SR)}
+            </View>
           </View>
-
-          <View style={[styles.splitProperty, { opacity: classYear === 'SR' ? 1 : 0.4 }]}>
-            <Text style={styles.subHeadingText}>Senior</Text>
-
-            {renderRequirements(POINTS_SR, GM_SR)}
-          </View>
-        </View>
+        )}
 
         <Text style={styles.headingText}>Links</Text>
 

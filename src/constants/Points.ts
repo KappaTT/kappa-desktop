@@ -38,6 +38,15 @@ export const POINTS_SR: TPoints = {
 
 export const GM_SR = 50;
 
+// potential new members track points with their own requirements and have no RUSH or GM obligations
+export const POINTS_PNM: TPoints = {
+  PROF: 6,
+  PHIL: 2,
+  BRO: 7,
+  RUSH: 0,
+  DIV: 2
+};
+
 /**
  * Calculates a user's class year based on the first year they attended college
  */

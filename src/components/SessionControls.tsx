@@ -10,7 +10,7 @@ import { TSession } from '@backend/voting';
 import { TEvent } from '@backend/kappa';
 import { TToast } from '@reducers/ui';
 import { getVotes } from '@services/votingService';
-import { getEventRecords } from '@services/kappaService';
+import { getEventRecords, isPNM } from '@services/kappaService';
 
 import RoundButton from '@components/RoundButton';
 import Icon from '@components/Icon';
@@ -93,7 +93,8 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
 
   const gmInfo = getEventRecords(directory, records, session.gmId);
 
-  const gmAttendance = React.useMemo(() => gmInfo.attended, [gmInfo]);
+  // PNMs cannot vote, so they never count toward missing votes or the abstained total
+  const gmAttendance = React.useMemo(() => gmInfo.attended.filter((brother) => !isPNM(brother)), [gmInfo]);
 
   const missingVotes = React.useMemo(
     () =>

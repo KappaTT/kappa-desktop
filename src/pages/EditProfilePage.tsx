@@ -93,6 +93,7 @@ const EditProfilePage: React.FC<{
   const [pledgeClass, setPledgeClass] = React.useState<string>(initialUser?.semester || '');
   const [role, setRole] = React.useState<string>(initialUser?.role || '');
   const [privileged, setPrivileged] = React.useState<boolean>(initialUser?.privileged || false);
+  const [type, setType] = React.useState<string>(initialUser?.type === 'PNM' ? 'PNM' : 'B');
 
   const canEditPrivileged = React.useMemo(() => user.privileged, [user.privileged]);
   const canEditWeb = React.useMemo(() => user.privileged && user.role.toLowerCase() === 'web', [
@@ -113,6 +114,7 @@ const EditProfilePage: React.FC<{
               firstYear,
               gradYear: gradYear || '',
               semester: pledgeClass,
+              type,
               role,
               privileged
             })
@@ -144,8 +146,17 @@ const EditProfilePage: React.FC<{
       pledgeClass,
       role,
       privileged,
+      type,
       canEditPrivileged
     ]
+  );
+
+  const typeOptions = React.useMemo(
+    () => [
+      { id: 'B', title: 'Brother' },
+      { id: 'PNM', title: 'Potential New Member' }
+    ],
+    []
   );
 
   const prettyPhoneValue = React.useMemo(() => prettyPhone(phone), [phone]);
@@ -191,6 +202,10 @@ const EditProfilePage: React.FC<{
 
   const onChangeRole = React.useCallback((text: string) => {
     setRole(text);
+  }, []);
+
+  const onChangeType = React.useCallback((chosen: string) => {
+    setType(chosen);
   }, []);
 
   const onChangePrivileged = React.useCallback((newValue: boolean) => {
@@ -383,6 +398,18 @@ const EditProfilePage: React.FC<{
       <View style={styles.sectionContent}>
         <ScrollView>
           <View style={styles.scrollContent}>
+            <View style={styles.propertyHeaderContainer}>
+              <Text style={styles.propertyHeader}>Member Type</Text>
+              <Text style={styles.propertyHeaderRequired}>*</Text>
+            </View>
+
+            <RadioList disabled={!canEditWeb} options={typeOptions} selected={type} onChange={onChangeType} />
+
+            <Text style={styles.description}>
+              Potential new members track their own points requirements, have no GM attendance, and cannot vote. Change
+              this to Brother when a PNM initiates.
+            </Text>
+
             <View style={styles.propertyHeaderContainer}>
               <Text style={styles.propertyHeader}>Exec Role</Text>
               <Text style={styles.propertyHeaderRequired}>*</Text>

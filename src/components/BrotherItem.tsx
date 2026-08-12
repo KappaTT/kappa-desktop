@@ -12,11 +12,12 @@ import {
   prettyPhone,
   getAttendedEvents,
   getExcusedEvents,
-  getTypeCounts
+  getTypeCounts,
+  isPNM
 } from '@services/kappaService';
 import { getCurrentTerm, sortCoursesByCode } from '@services/coursesService';
 import { theme } from '@constants';
-import { POINTS_SO, POINTS_JR, POINTS_SR, getClassYear } from '@constants/Points';
+import { POINTS_SO, POINTS_JR, POINTS_SR, POINTS_PNM, getClassYear } from '@constants/Points';
 import { TUser } from '@backend/auth';
 import { TEvent } from '@backend/kappa';
 import { isEmpty } from '@services/utils';
@@ -67,7 +68,9 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
 
   const classYear = React.useMemo(() => getClassYear(user.firstYear), [user.firstYear]);
   let pointsRequired = POINTS_SO;
-  if (classYear == 'JR') {
+  if (isPNM(brother)) {
+    pointsRequired = POINTS_PNM;
+  } else if (classYear == 'JR') {
     pointsRequired = POINTS_JR;
   } else if (classYear == 'SR') {
     pointsRequired = POINTS_SR;
@@ -289,25 +292,27 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
                   </Text>
                 )}
               </View>
-              <View style={styles.splitProperty}>
-                <Text style={styles.propertyHeader}>Rush</Text>
-                {isGettingPoints ? (
-                  <ActivityIndicator style={styles.propertyLoader} color={theme.COLORS.PRIMARY} />
-                ) : (
-                  <Text
-                    style={[
-                      isScribe &&
-                      points.hasOwnProperty(brother.email) &&
-                      points[brother.email].RUSH >= pointsRequired.RUSH
-                        ? styles.pointsSatisfied
-                        : isScribe && styles.pointsNotSatisfied,
-                      styles.propertyValue
-                    ]}
-                  >
-                    {points.hasOwnProperty(brother.email) ? points[brother.email].RUSH : '0'}
-                  </Text>
-                )}
-              </View>
+              {!isPNM(brother) && (
+                <View style={styles.splitProperty}>
+                  <Text style={styles.propertyHeader}>Rush</Text>
+                  {isGettingPoints ? (
+                    <ActivityIndicator style={styles.propertyLoader} color={theme.COLORS.PRIMARY} />
+                  ) : (
+                    <Text
+                      style={[
+                        isScribe &&
+                        points.hasOwnProperty(brother.email) &&
+                        points[brother.email].RUSH >= pointsRequired.RUSH
+                          ? styles.pointsSatisfied
+                          : isScribe && styles.pointsNotSatisfied,
+                        styles.propertyValue
+                      ]}
+                    >
+                      {points.hasOwnProperty(brother.email) ? points[brother.email].RUSH : '0'}
+                    </Text>
+                  )}
+                </View>
+              )}
               <View style={styles.splitProperty}>
                 <Text style={styles.propertyHeader}>Diversity</Text>
                 {isGettingPoints ? (
@@ -338,9 +343,11 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
                 )}
               </View>
 
-              <View style={styles.chartArea}>
-                <HorizontalSegmentBar data={chartData} />
-              </View>
+              {!isPNM(brother) && (
+                <View style={styles.chartArea}>
+                  <HorizontalSegmentBar data={chartData} />
+                </View>
+              )}
             </View>
 
             <View style={styles.dangerZone}>
@@ -396,7 +403,7 @@ const BrotherItem: React.FC<{ brother: TUser }> = ({ brother }) => {
               )}
             </View>
 
-            {!isGettingAttendance && mandatory.length > 0 && (
+            {!isGettingAttendance && !isPNM(brother) && mandatory.length > 0 && (
               <React.Fragment>
                 <Text style={styles.mandatoryHeaderText}>Missed Mandatory</Text>
 
