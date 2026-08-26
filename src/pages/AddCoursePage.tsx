@@ -227,8 +227,8 @@ const AddCoursePage: React.FC<{
             <RadioList options={termOptions} selected={term} onChange={onChangeTerm} />
 
             <Text style={styles.description}>
-              Choose the semester you are taking the class. Your past semesters stay visible so brothers can find people
-              who already took a course.
+              Choose the semester you are taking or took the class. Your past semesters stay visible so brothers can
+              find people who already took a course.
             </Text>
           </View>
         </ScrollView>
