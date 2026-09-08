@@ -12,7 +12,7 @@ export const POINTS_SO: TPoints = {
   PROF: 3,
   PHIL: 3,
   BRO: 5,
-  RUSH: 5,
+  RUSH: 6,
   DIV: 2
 };
 
@@ -22,7 +22,7 @@ export const POINTS_JR: TPoints = {
   PROF: 2,
   PHIL: 2,
   BRO: 4,
-  RUSH: 4,
+  RUSH: 5,
   DIV: 2
 };
 
@@ -32,7 +32,7 @@ export const POINTS_SR: TPoints = {
   PROF: 1,
   PHIL: 1,
   BRO: 3,
-  RUSH: 3,
+  RUSH: 4,
   DIV: 2
 };
 
@@ -48,22 +48,28 @@ export const POINTS_PNM: TPoints = {
 };
 
 /**
- * Calculates a user's class year based on the first year they attended college
+ * Calculates a user's class year based on their expected graduation term, e.g. "Spring 2027" or "Fall 2027".
+ * Spring graduations are treated as mid-May and fall graduations as mid-December.
  */
-export const getClassYear = (firstYear: string) => {
-  if (!firstYear) return '';
+export const getClassYear = (gradYear: string) => {
+  if (!gradYear) return '';
 
-  const now = moment();
+  const match = gradYear.trim().match(/^(Spring|Fall)?\s*(\d{4})$/i);
 
-  const firstYearMoment = moment(`${firstYear}-08-01`);
+  if (!match) return '';
 
-  const difference = now.diff(firstYearMoment, 'years', true);
+  const term = (match[1] || 'Spring').toLowerCase();
+  const year = match[2];
 
-  if (difference >= 3) {
+  const gradMoment = term === 'fall' ? moment(`${year}-12-15`) : moment(`${year}-05-15`);
+
+  const yearsUntilGraduation = gradMoment.diff(moment(), 'years', true);
+
+  if (yearsUntilGraduation < 1) {
     return 'SR';
-  } else if (difference >= 2) {
+  } else if (yearsUntilGraduation < 2) {
     return 'JR';
-  } else if (difference >= 1) {
+  } else if (yearsUntilGraduation < 3) {
     return 'SO';
   } else {
     return 'FR';
