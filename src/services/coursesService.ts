@@ -50,28 +50,10 @@ export const getTermValue = (term: string) => {
 };
 
 /**
- * Get the term options for enrolling: previous, current and next term.
+ * Get the term options for enrolling: every term from the current one back to Fall 2023.
  */
 export const getTermOptions = () => {
-  const currentTerm = getCurrentTerm();
-  const [season, yearText] = currentTerm.split(' ');
-  const year = parseInt(yearText, 10);
-
-  const previousTerm = season === 'Fall' ? `Spring ${year}` : `Fall ${year - 1}`;
-  const nextTerm = season === 'Fall' ? `Spring ${year + 1}` : `Fall ${year}`;
-
-  return [
-    { id: previousTerm, title: previousTerm },
-    { id: currentTerm, title: currentTerm },
-    { id: nextTerm, title: nextTerm }
-  ];
-};
-
-/**
- * Get the term options for advice: not specified, then every term from the current one back to Fall 2023.
- */
-export const getAdviceTermOptions = () => {
-  const options = [{ id: '', title: 'Not specified' }];
+  const options: { id: string; title: string }[] = [];
 
   const floor = getTermValue('Fall 2023');
 
@@ -89,7 +71,21 @@ export const getAdviceTermOptions = () => {
     }
   }
 
+  // a device clock set before Fall 2023 would otherwise produce no options at all
+  if (options.length === 0) {
+    const currentTerm = getCurrentTerm();
+
+    options.push({ id: currentTerm, title: currentTerm });
+  }
+
   return options;
+};
+
+/**
+ * Get the term options for advice: not specified, then every term from the current one back to Fall 2023.
+ */
+export const getAdviceTermOptions = () => {
+  return [{ id: '', title: 'Not specified' }, ...getTermOptions()];
 };
 
 export const sortCoursesByCode = (a: { code: string }, b: { code: string }) => a.code.localeCompare(b.code);
@@ -144,6 +140,22 @@ export const isWebChair = (user: { role?: string; privileged?: boolean }) => {
  */
 export const getUserEnrollment = (course: TCourse, email: string, term: string) => {
   return (course.enrollments || []).find((enrollment) => enrollment.email === email && enrollment.term === term);
+};
+
+/**
+ * Check if the given user is enrolled in a course for any term.
+ */
+export const hasUserEnrollment = (course: TCourse, email: string) => {
+  return (course.enrollments || []).some((enrollment) => enrollment.email === email);
+};
+
+/**
+ * Check if the given user is enrolled in a course for a term before the given one.
+ */
+export const hasPastUserEnrollment = (course: TCourse, email: string, currentTerm: string) => {
+  return (course.enrollments || []).some(
+    (enrollment) => enrollment.email === email && getTermValue(enrollment.term) < getTermValue(currentTerm)
+  );
 };
 
 /**

@@ -144,9 +144,10 @@ export const enroll = (
 /**
  * Is dropping a course.
  */
-const unenrolling = () => {
+const unenrolling = (enrollmentId: string) => {
   return {
-    type: UNENROLL_COURSE
+    type: UNENROLL_COURSE,
+    enrollmentId
   };
 };
 
@@ -176,7 +177,7 @@ const unenrollFailure = (error) => {
  */
 export const unenroll = (user: TUser, enrollmentId: string, courseId: string) => {
   return (dispatch) => {
-    dispatch(unenrolling());
+    dispatch(unenrolling(enrollmentId));
 
     Courses.deleteEnrollment({ user, _id: enrollmentId }).then((res) => {
       if (res.success) {

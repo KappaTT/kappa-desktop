@@ -65,6 +65,7 @@ export interface TCoursesState {
   enrollErrorMessage: string;
 
   isUnenrolling: boolean;
+  unenrollingId: string;
   unenrollError: boolean;
   unenrollErrorMessage: string;
 
@@ -120,6 +121,7 @@ const initialState: TCoursesState = {
   enrollErrorMessage: '',
 
   isUnenrolling: false,
+  unenrollingId: '',
   unenrollError: false,
   unenrollErrorMessage: '',
 
@@ -221,6 +223,7 @@ export default (state = initialState, action: any): TCoursesState => {
       return {
         ...state,
         isUnenrolling: true,
+        unenrollingId: action.enrollmentId,
         unenrollError: false,
         unenrollErrorMessage: ''
       };
@@ -228,12 +231,14 @@ export default (state = initialState, action: any): TCoursesState => {
       return {
         ...state,
         isUnenrolling: false,
+        unenrollingId: '',
         courseArray: removeEnrollment(state.courseArray, action.courseId, action.enrollment._id)
       };
     case UNENROLL_COURSE_FAILURE:
       return {
         ...state,
         isUnenrolling: false,
+        unenrollingId: '',
         unenrollError: true,
         unenrollErrorMessage: action.error.message,
         ...setGlobalError(action.error.message, action.error.code)
