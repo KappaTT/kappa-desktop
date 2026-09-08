@@ -139,7 +139,7 @@ const ProfileContent: React.FC<{
     return Object.values(missedMandatory[user.email]).sort(sortEventsByDateReverse);
   }, [user, missedMandatory]);
 
-  const classYear = React.useMemo(() => getClassYear(user.firstYear), [user.firstYear]);
+  const classYear = React.useMemo(() => getClassYear(user.gradYear), [user.gradYear]);
   let pointsRequired = POINTS_SO;
   if (isPNM(user)) {
     pointsRequired = POINTS_PNM;
