@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { TRedux } from '@reducers';
 import { _voting } from '@reducers/actions';
 import { getVotes } from '@services/votingService';
+import { isWebChair } from '@services/coursesService';
 import { theme } from '@constants';
 import { TCandidate } from '@backend/voting';
 import Icon from '@components/Icon';
@@ -72,7 +73,7 @@ const SessionCandidateItem: React.FC<{ candidate: TCandidate; disabled?: boolean
                 {candidate.familyName}, {candidate.givenName}
               </Text>
 
-              <RectangleChip active={votes.length > 0} label={`${votes.length}`} />
+              {isWebChair(user) && <RectangleChip active={votes.length > 0} label={`${votes.length}`} />}
 
               {candidate.approved && (
                 <Icon

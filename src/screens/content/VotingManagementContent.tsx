@@ -7,6 +7,7 @@ import moment from 'moment';
 import { TRedux } from '@reducers';
 import { _kappa, _nav, _voting } from '@reducers/actions';
 import { shouldLoad } from '@services/kappaService';
+import { isWebChair } from '@services/coursesService';
 import { TCandidate, TSession } from '@backend/voting';
 import { theme } from '@constants';
 import { HEADER_HEIGHT } from '@services/utils';
@@ -125,6 +126,7 @@ const VotingManagementContent: React.FC<{
   const loadVotes = React.useCallback(
     (force: boolean) => {
       if (
+        isWebChair(user) &&
         !isGettingCandidateVotes &&
         selectedSession !== null &&
         selectedSession.currentCandidateId !== '' &&
@@ -135,7 +137,14 @@ const VotingManagementContent: React.FC<{
       )
         dispatchGetCandidateVotes(selectedSession._id, selectedSession.currentCandidateId);
     },
-    [dispatchGetCandidateVotes, getCandidateVotesError, isGettingCandidateVotes, selectedSession, votingLoadHistory]
+    [
+      dispatchGetCandidateVotes,
+      getCandidateVotesError,
+      isGettingCandidateVotes,
+      selectedSession,
+      user,
+      votingLoadHistory
+    ]
   );
 
   const onSubtitlePress = React.useCallback(() => {
