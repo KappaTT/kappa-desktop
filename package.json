@@ -6,8 +6,8 @@
   "scripts": {
     "start": "expo start",
     "web": "expo start --web",
-    "predeploy": "expo build:web",
-    "deploy": "netlify deploy --prod",
+    "predeploy": "unset PREFIX && . \"${NVM_DIR:-$HOME/.nvm}/nvm.sh\" && nvm exec --silent 16 expo build:web",
+    "deploy": "PATH=\"$(echo \"$PATH\" | tr ':' '\\n' | grep -vE '/yarn--|/\\.nvm/' | paste -sd: -)\" netlify deploy --prod --no-build --dir web-build",
     "validate": "npx tsc --noEmit",
     "eslint": "eslint --config ./.eslintrc.json --ext .js,.ts,.jsx,.tsx src/"
   },
