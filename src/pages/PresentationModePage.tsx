@@ -7,6 +7,7 @@ import { TRedux } from '@reducers';
 import { _voting } from '@reducers/actions';
 import { TEvent } from '@backend/kappa';
 import { getVotes } from '@services/votingService';
+import { isWebChair } from '@services/coursesService';
 import { theme } from '@constants';
 import { Icon, HorizontalSegmentBar } from '@components';
 
@@ -216,13 +217,15 @@ const PresentationModePage: React.FC<{
                   ))}
                   {attendedEvents.length === 0 && <Text style={styles.noEvents}>No events</Text>}
 
-                  <View style={[styles.progressBar, { marginTop: 16 }]}>
-                    <HorizontalSegmentBar
-                      showAllLabels={true}
-                      borderColor={theme.COLORS.SUPER_LIGHT_BLUE_GRAY}
-                      data={candidateApprovalData}
-                    />
-                  </View>
+                  {isWebChair(user) && (
+                    <View style={[styles.progressBar, { marginTop: 16 }]}>
+                      <HorizontalSegmentBar
+                        showAllLabels={true}
+                        borderColor={theme.COLORS.SUPER_LIGHT_BLUE_GRAY}
+                        data={candidateApprovalData}
+                      />
+                    </View>
+                  )}
                 </View>
               ) : (
                 <View style={styles.candidateArea}>

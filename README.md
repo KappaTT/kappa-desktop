@@ -25,8 +25,9 @@ export const GOOGLE_CLIENT_IDS = {
 
 ## Deploy
 
-1. `npm install -g netlify-cli` if you don't have netlify installed
-2. `yarn deploy`
+1. `npm install -g netlify-cli` if you don't have netlify installed (needs Node 20+)
+2. `nvm install 16` if you don't have Node 16 installed (the Expo web build only runs on Node 16)
+3. `yarn deploy` — builds with Node 16 via nvm, then publishes `web-build/` with the Netlify CLI on your system Node
 
 ## Preview
 
