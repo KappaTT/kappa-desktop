@@ -11,6 +11,7 @@ import { TEvent } from '@backend/kappa';
 import { TToast } from '@reducers/ui';
 import { getVotes } from '@services/votingService';
 import { getEventRecords, isPNM } from '@services/kappaService';
+import { isWebChair } from '@services/coursesService';
 
 import RoundButton from '@components/RoundButton';
 import Icon from '@components/Icon';
@@ -69,6 +70,9 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
     session,
     user.email
   ]);
+
+  // Only the web chair may see how brothers voted
+  const canSeeVotes = React.useMemo(() => isWebChair(user), [user]);
 
   const attendedEvents = React.useMemo(() => {
     if (!currentCandidate) return [];
@@ -208,11 +212,11 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
   }, [dispatchCreateNextSession]);
 
   const refreshVotes = React.useCallback(() => {
-    if (!isGettingCandidateVotes && session.currentCandidateId !== '')
+    if (canSeeVotes && !isGettingCandidateVotes && session.currentCandidateId !== '')
       dispatchGetCandidateVotes(session._id, session.currentCandidateId, false);
 
     setVotingRefreshDate(moment());
-  }, [dispatchGetCandidateVotes, isGettingCandidateVotes, session]);
+  }, [canSeeVotes, dispatchGetCandidateVotes, isGettingCandidateVotes, session]);
 
   React.useEffect(() => {
     if (createNextSessionDate !== null && createNextSessionSession !== null) {
@@ -322,12 +326,14 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
                   ))}
                   {attendedEvents.length === 0 && <Text style={styles.noEvents}>No events</Text>}
 
-                  <View style={[styles.progressBar, { marginTop: 16 }]}>
-                    <HorizontalSegmentBar
-                      borderColor={theme.COLORS.SUPER_LIGHT_BLUE_GRAY}
-                      data={candidateApprovalData}
-                    />
-                  </View>
+                  {canSeeVotes && (
+                    <View style={[styles.progressBar, { marginTop: 16 }]}>
+                      <HorizontalSegmentBar
+                        borderColor={theme.COLORS.SUPER_LIGHT_BLUE_GRAY}
+                        data={candidateApprovalData}
+                      />
+                    </View>
+                  )}
                 </View>
               )}
             </View>
@@ -346,10 +352,12 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
               </Text>
             </View>
 
-            <View style={styles.instructions}>
-              <Text style={styles.propertyHeader}>Missing Votes</Text>
-              <Text style={styles.description}>{missingVotes}</Text>
-            </View>
+            {canSeeVotes && (
+              <View style={styles.instructions}>
+                <Text style={styles.propertyHeader}>Missing Votes</Text>
+                <Text style={styles.description}>{missingVotes}</Text>
+              </View>
+            )}
 
             <View
               style={[styles.activeContent, !isSessionActive && { opacity: 0.5 }]}
@@ -382,34 +390,38 @@ const SessionControls: React.FC<{ session: TSession }> = ({ session }) => {
                       <Text style={styles.noVotes}>No candidates</Text>
                     )}
                   </View>
-                  <View style={styles.dividerWrapper}>
-                    <View style={styles.divider} />
-                  </View>
-                  <View style={styles.goodVotes}>
-                    <Text style={styles.voteCategoryTitle}>Voted to Approve</Text>
-
-                    {approvedVotes.map((vote) => (
-                      <View key={vote._id} style={styles.voteContainer}>
-                        <Text style={styles.voteTitle}>{vote.userName}</Text>
-                        <Text style={styles.voteSubtitle}>Approved</Text>
+                  {canSeeVotes && (
+                    <React.Fragment>
+                      <View style={styles.dividerWrapper}>
+                        <View style={styles.divider} />
                       </View>
-                    ))}
-                    {approvedVotes.length === 0 && <Text style={styles.noVotes}>No votes</Text>}
-                  </View>
-                  <View style={styles.dividerWrapper}>
-                    <View style={styles.divider} />
-                  </View>
-                  <View style={styles.badVotes}>
-                    <Text style={styles.voteCategoryTitle}>Voted to Reject</Text>
+                      <View style={styles.goodVotes}>
+                        <Text style={styles.voteCategoryTitle}>Voted to Approve</Text>
 
-                    {rejectedVotes.map((vote) => (
-                      <View key={vote._id} style={styles.voteContainer}>
-                        <Text style={styles.voteTitle}>{vote.userName}</Text>
-                        <Text style={styles.voteSubtitle}>{vote.reason}</Text>
+                        {approvedVotes.map((vote) => (
+                          <View key={vote._id} style={styles.voteContainer}>
+                            <Text style={styles.voteTitle}>{vote.userName}</Text>
+                            <Text style={styles.voteSubtitle}>Approved</Text>
+                          </View>
+                        ))}
+                        {approvedVotes.length === 0 && <Text style={styles.noVotes}>No votes</Text>}
                       </View>
-                    ))}
-                    {rejectedVotes.length === 0 && <Text style={styles.noVotes}>No votes</Text>}
-                  </View>
+                      <View style={styles.dividerWrapper}>
+                        <View style={styles.divider} />
+                      </View>
+                      <View style={styles.badVotes}>
+                        <Text style={styles.voteCategoryTitle}>Voted to Reject</Text>
+
+                        {rejectedVotes.map((vote) => (
+                          <View key={vote._id} style={styles.voteContainer}>
+                            <Text style={styles.voteTitle}>{vote.userName}</Text>
+                            <Text style={styles.voteSubtitle}>{vote.reason}</Text>
+                          </View>
+                        ))}
+                        {rejectedVotes.length === 0 && <Text style={styles.noVotes}>No votes</Text>}
+                      </View>
+                    </React.Fragment>
+                  )}
                 </View>
               </View>
             </View>
