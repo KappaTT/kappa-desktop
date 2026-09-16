@@ -129,7 +129,8 @@ export const sortAdviceByDate = (a: { createdAt: string }, b: { createdAt: strin
   b.createdAt.localeCompare(a.createdAt);
 
 /**
- * Check if the given user is the web chair, the only role that can delete classes and moderate advice.
+ * Check if the given user is the web chair, the only role that can delete classes, moderate advice,
+ * and see how brothers voted.
  */
 export const isWebChair = (user: { role?: string; privileged?: boolean }) => {
   return user.privileged === true && user.role?.toLowerCase() === 'web';
